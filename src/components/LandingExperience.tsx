@@ -6,7 +6,7 @@ import { splashGraphItems } from "@/data/splashGraph";
 import PreviewLink from "@/components/PreviewLink";
 import { cn } from "@/lib/utils";
 
-const AUTO_ADVANCE_MS = 240;
+const AUTO_ADVANCE_MS = 85;
 
 export default function LandingExperience() {
   const cards = useMemo(() => splashGraphItems, []);
@@ -79,10 +79,10 @@ export default function LandingExperience() {
                   ? "Final card: Urmzd Mukhammadnaim"
                   : `${activeCard.label}: ${activeCard.description}`
               }
-              initial={{ opacity: 0, rotateX: -12, y: 24 }}
-              animate={{ opacity: 1, rotateX: 0, y: 0 }}
-              exit={{ opacity: 0, rotateX: 12, y: -24 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
+              initial={{ opacity: 0, scale: 0.9, rotateX: -20 }}
+              animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+              exit={{ opacity: 0, scale: 1.1, rotateX: 20 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
             >
               <div className="rolodex-card-inner">
                 <div
