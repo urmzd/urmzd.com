@@ -9,6 +9,13 @@ interface Props {
 }
 
 const { title, description = "Personal website of urmzd" } = Astro.props;
+
+// Preload critical splash images on landing page
+const preloadImages = [
+  "/images/splash/real/001_persepolis.jpg",
+  "/images/splash/real/002_achaemenid.jpg",
+  "/images/splash/real/025_fedora.png"
+];
 ---
 
 <!doctype html>
@@ -25,6 +32,10 @@ const { title, description = "Personal website of urmzd" } = Astro.props;
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    {/* Preload critical images for faster loading */}
+    {preloadImages.map((img) => (
+      <link rel="preload" as="image" href={img} />
+    ))}
     <title>{title}</title>
   </head>
   <body class="min-h-screen bg-background text-foreground antialiased">
