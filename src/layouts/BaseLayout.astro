@@ -1,0 +1,35 @@
+---
+import "@/styles/global.css";
+import Header from "@/components/Header.astro";
+import SocialDock from "@/components/SocialDock";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Personal website of urmzd" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-background text-foreground antialiased">
+    <Header />
+    <slot />
+    <SocialDock client:visible />
+  </body>
+</html>
