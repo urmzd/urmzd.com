@@ -2,11 +2,22 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { ChevronRight } from "lucide-react";
 import { splashGraphItems } from "@/data/splashGraph";
 import PreviewLink from "@/components/PreviewLink";
 import { cn } from "@/lib/utils";
 
-const AUTO_ADVANCE_MS = 85;
+const AUTO_ADVANCE_MS = 120;
+
+// Preload images for smooth transitions
+const preloadImage = (src: string) => {
+  if (typeof window === "undefined") return;
+  const link = document.createElement("link");
+  link.rel = "preload";
+  link.as = "image";
+  link.href = src;
+  document.head.appendChild(link);
+};
 
 export default function LandingExperience() {
   const cards = useMemo(() => splashGraphItems, []);
@@ -15,6 +26,15 @@ export default function LandingExperience() {
   const wheelLockRef = useRef(false);
   const isFinal = index >= cards.length - 1;
   const activeCard = cards[Math.min(index, cards.length - 1)];
+
+  // Preload next card on mount and index change
+  useEffect(() => {
+    preloadImage(activeCard.image);
+    const nextIndex = Math.min(index + 1, cards.length - 1);
+    if (nextIndex !== index) {
+      preloadImage(cards[nextIndex].image);
+    }
+  }, [index, activeCard, cards]);
 
   useEffect(() => {
     if (paused || isFinal) {
@@ -68,10 +88,6 @@ export default function LandingExperience() {
               )}
               style={{
                 ["--card-bg" as string]: `url(${activeCard.image})`,
-                ["--card-grunge" as string]:
-                  activeCard.id === "fedora"
-                    ? "url(/images/splash/real/024_alternative.jpg.avif)"
-                    : undefined,
               }}
               role="listitem"
               aria-label={
@@ -92,32 +108,32 @@ export default function LandingExperience() {
                   )}
                   aria-hidden="true"
                 />
-                {activeCard.id === "fedora" && (
-                  <div className="rolodex-grunge" aria-hidden="true" />
-                )}
+                {/* grunge overlay removed to avoid mixing backgrounds */}
                 {activeCard.id === "fedora" ? (
                   <div className="rolodex-face rolodex-final-face" aria-live="polite">
                     <div className="final-card">
-                      <h1 className="final-card-title">Urmzd Mukhammadnaim</h1>
-                      <p className="final-card-subtitle">Software Engineer</p>
-                      <p className="final-card-intro">
-                        Hello! I'm Urmzd, a software engineer passionate about building
-                        great software.
-                      </p>
-                      <p className="final-card-phonetic">
-                        trying to live up to my{" "}
-                        <PreviewLink
-                          href="https://en.wikipedia.org/wiki/Ahura_Mazda"
-                          className="final-card-link"
-                          width={220}
-                          height={140}
-                        >
-                          <span aria-label="name, linked to Ahura Mazda page">
-                            name ↗
-                          </span>
-                        </PreviewLink>
-                      </p>
-                    </div>
+                        <h1 className="final-card-title">
+                          <span style={{fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, monospace', fontSize: '1em', opacity: 0.7}}>&lt;/</span>
+                          <span> Urmzd Mukhammadnaim </span>
+                          <span style={{fontFamily: 'ui-monospace, SFMono-Regular, Menlo, Monaco, monospace', fontSize: '1em', opacity: 0.7}}>&gt;</span>
+                        </h1>
+                        <p className="final-card-phonetic" aria-label="phonetic pronunciation">
+                          Pronunciation: ouur-MISD moo-HA-mid-NEEM — /aʊrˈmɪzd muːˈxɑmədnaɪm/
+                        </p>
+                        <p className="final-card-phonetic">
+                          trying to live up to my{" "}
+                          <PreviewLink
+                            href="https://en.wikipedia.org/wiki/Ahura_Mazda"
+                            className="final-card-link"
+                            width={220}
+                            height={140}
+                          >
+                            <span aria-label="name, linked to Ahura Mazda page">
+                              name↗
+                            </span>
+                          </PreviewLink>
+                        </p>
+                      </div>
                   </div>
                 ) : (
                   <div className="rolodex-face">
@@ -132,17 +148,6 @@ export default function LandingExperience() {
           )}
         </AnimatePresence>
       </div>
-
-      {!isFinal && (
-        <button
-          className="landing-skip"
-          type="button"
-          aria-label="Skip to final card"
-          onClick={() => setIndex(cards.length - 1)}
-        >
-          Skip
-        </button>
-      )}
     </div>
   );
 }
