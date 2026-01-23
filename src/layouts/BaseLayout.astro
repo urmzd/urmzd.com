@@ -10,11 +10,11 @@ interface Props {
 
 const { title, description = "Personal website of urmzd" } = Astro.props;
 
-// Preload critical splash images on landing page
+// Preload critical splash images on landing page (optimized WebP format)
 const preloadImages = [
-  "/images/splash/real/001_persepolis.jpg",
-  "/images/splash/real/002_achaemenid.jpg",
-  "/images/splash/real/025_fedora.png"
+  "/images/splash/real/001_persepolis.webp",
+  "/images/splash/real/002_achaemenid.webp",
+  "/images/splash/real/025_fedora.webp"
 ];
 ---
 
