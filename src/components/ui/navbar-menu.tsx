@@ -1,11 +1,9 @@
-"use client";
-import React from "react";
-import { motion } from "motion/react";
-
-
+'use client';
+import React from 'react';
+import { motion } from 'motion/react';
 
 const transition = {
-  type: "spring",
+  type: 'spring',
   mass: 0.5,
   damping: 11.5,
   stiffness: 100,
@@ -98,9 +96,7 @@ export const ProductItem = ({
         className="shrink-0 rounded-md shadow-2xl"
       />
       <div>
-        <h4 className="text-xl font-bold mb-1 text-foreground">
-          {title}
-        </h4>
+        <h4 className="text-xl font-bold mb-1 text-foreground">{title}</h4>
         <p className="text-neutral-700 text-sm max-w-[10rem] dark:text-neutral-300">
           {description}
         </p>
@@ -109,12 +105,12 @@ export const ProductItem = ({
   );
 };
 
-export const HoveredLink = ({ children, ...rest }: any) => {
+export const HoveredLink = ({
+  children,
+  ...rest
+}: React.AnchorHTMLAttributes<HTMLAnchorElement> & { children: React.ReactNode }) => {
   return (
-    <a
-      {...rest}
-      className="text-muted-foreground hover:text-foreground"
-    >
+    <a {...rest} className="text-muted-foreground hover:text-foreground">
       {children}
     </a>
   );
