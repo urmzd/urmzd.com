@@ -938,6 +938,29 @@
   .copy-button.copied {
     @apply border-green-500 text-green-500;
   }
+
+  /* Heading link button */
+  .heading-enhanced {
+    @apply relative;
+  }
+
+  .heading-link-button {
+    @apply ml-2 inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground opacity-0 transition-all;
+    vertical-align: middle;
+  }
+
+  .heading-enhanced:hover .heading-link-button,
+  .heading-link-button:focus {
+    @apply opacity-100;
+  }
+
+  .heading-link-button:hover {
+    @apply text-foreground;
+  }
+
+  .heading-link-button.copied {
+    @apply text-green-500 opacity-100;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
