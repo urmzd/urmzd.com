@@ -88,13 +88,13 @@ export const welcomeTimelineData: TimelineEntryData[] = [
             <YouTubeEmbed id="dTXesih2y7A" title="Graphics design work" />
             <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4">
               <PreviewLink href="https://www.behance.net/gallery/243044625/Title-Sequence-%28Intro%29">
-                Title Sequences ↗
+                Title Sequences
               </PreviewLink>
               <PreviewLink href="https://www.behance.net/gallery/144658347/3D-Realism">
-                3D Realism ↗
+                3D Realism
               </PreviewLink>
               <PreviewLink href="https://www.behance.net/gallery/144658193/Low-Polygon">
-                Low Polygon ↗
+                Low Polygon
               </PreviewLink>
             </div>
           </>
@@ -111,7 +111,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         content: (
           <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400">
             Started{' '}
-            <PreviewLink href="https://en.wikipedia.org/wiki/Muay_Thai">Muay Thai ↗</PreviewLink>
+            <PreviewLink href="https://en.wikipedia.org/wiki/Muay_Thai">Muay Thai</PreviewLink>
           </p>
         ),
       },
@@ -175,7 +175,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
           <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400">
             Started{' '}
             <PreviewLink href="https://en.wikipedia.org/wiki/Brazilian_jiu-jitsu">
-              Brazilian Jiu-Jitsu ↗
+              Brazilian Jiu-Jitsu
             </PreviewLink>
           </p>
         ),
@@ -204,12 +204,15 @@ export const welcomeTimelineData: TimelineEntryData[] = [
       {
         label: 'Education',
         content: (
-          <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
-            Graduated from Dalhousie University in May with a Bachelor of Computer Science (Hons), a
-            minor in Mathematics, and a certificate in Artificial Intelligence & Intelligent
-            Systems. During my time at Dalhousie I connected and worked with amazing people through
-            internships, contracts, and projects.
-          </p>
+          <>
+            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
+              Graduated from Dalhousie University in May with a Bachelor of Computer Science (Hons),
+              a minor in Mathematics, and a certificate in Artificial Intelligence & Intelligent
+              Systems. During my time at Dalhousie I connected and worked with amazing people
+              through internships, contracts, and projects.
+            </p>
+            <PreviewLink href="https://www.arxiv.org/abs/2601.09736">Honors Thesis</PreviewLink>
+          </>
         ),
       },
       {
