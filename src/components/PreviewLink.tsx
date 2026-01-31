@@ -2,6 +2,7 @@
 
 import { LinkPreview } from '@/components/ui/link-preview';
 import { cn } from '@/lib/utils';
+import { ArrowUpRight } from 'lucide-react';
 
 interface PreviewLinkProps {
   href: string;
@@ -28,6 +29,7 @@ export default function PreviewLink({
     >
       <a href={href} target="_blank" rel="noreferrer">
         {children}
+        <ArrowUpRight className="inline-block ml-0.5 h-4 w-4" />
       </a>
     </LinkPreview>
   );
