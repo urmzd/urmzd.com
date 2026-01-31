@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 
 interface Particle {
   x: number;
@@ -15,8 +15,6 @@ interface PlexusBackgroundProps {
   className?: string;
   particleCount?: number;
   connectionDistance?: number;
-  particleColor?: string;
-  lineColor?: string;
   gravityStrength?: number;
 }
 
@@ -24,8 +22,6 @@ export function PlexusBackground({
   className = '',
   particleCount = 100,
   connectionDistance = 120,
-  particleColor = 'rgba(255, 255, 255, 0.5)',
-  lineColor = 'rgba(255, 255, 255,',
   gravityStrength = 800,
 }: PlexusBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -34,6 +30,32 @@ export function PlexusBackground({
   const isAttractingRef = useRef(false);
   const animationFrameRef = useRef<number>(0);
   const resizeTimeoutRef = useRef<number>(0);
+
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  // Detect theme and listen for changes
+  useEffect(() => {
+    const checkDarkMode = () => {
+      return document.documentElement.classList.contains('dark');
+    };
+
+    setIsDarkMode(checkDarkMode());
+
+    const observer = new MutationObserver(() => {
+      setIsDarkMode(checkDarkMode());
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Compute colors based on theme
+  const particleColor = isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)';
+  const lineColor = isDarkMode ? 'rgba(255, 255, 255,' : 'rgba(0, 0, 0,';
 
   const initParticles = useCallback(
     (width: number, height: number) => {
