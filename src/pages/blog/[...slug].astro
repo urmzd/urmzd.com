@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 import { getCollection, render } from 'astro:content';
 import { calculateReadTime } from '@/lib/readTime';
 import CodeBlockEnhancer from '@/components/CodeBlockEnhancer';
+import HeadingLinkEnhancer from '@/components/HeadingLinkEnhancer';
 import ShareButton from '@/components/ShareButton';
 import TableOfContents from '@/components/TableOfContents';
 import MobileTOC from '@/components/MobileTOC';
@@ -84,4 +85,5 @@ const showTOC = tocHeadings.length >= 3;
     </div>
   </article>
   <CodeBlockEnhancer client:idle />
+  <HeadingLinkEnhancer client:load />
 </BaseLayout>
