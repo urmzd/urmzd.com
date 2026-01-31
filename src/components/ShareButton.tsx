@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   IconShare,
   IconBrandX,
@@ -7,13 +7,13 @@ import {
   IconBrandFacebook,
   IconLink,
   IconCheck,
-} from "@tabler/icons-react";
+} from '@tabler/icons-react';
 
 interface ShareButtonProps {
   url: string;
   title: string;
   description?: string;
-  variant?: "icon" | "button";
+  variant?: 'icon' | 'button';
 }
 
 interface ShareOption {
@@ -25,8 +25,8 @@ interface ShareOption {
 export default function ShareButton({
   url,
   title,
-  description = "",
-  variant = "button",
+  description = '',
+  variant = 'button',
 }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -39,8 +39,8 @@ export default function ShareButton({
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleNativeShare = async () => {
@@ -69,11 +69,11 @@ export default function ShareButton({
       }, 1500);
     } catch {
       // Fallback for older browsers
-      const textArea = document.createElement("textarea");
+      const textArea = document.createElement('textarea');
       textArea.value = url;
       document.body.appendChild(textArea);
       textArea.select();
-      document.execCommand("copy");
+      document.execCommand('copy');
       document.body.removeChild(textArea);
       setCopied(true);
       setTimeout(() => {
@@ -85,49 +85,49 @@ export default function ShareButton({
 
   const shareOptions: ShareOption[] = [
     {
-      name: "X",
+      name: 'X',
       icon: <IconBrandX size={18} />,
       action: () => {
         window.open(
           `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
-          "_blank",
-          "noopener,noreferrer"
+          '_blank',
+          'noopener,noreferrer'
         );
         setIsOpen(false);
       },
     },
     {
-      name: "LinkedIn",
+      name: 'LinkedIn',
       icon: <IconBrandLinkedin size={18} />,
       action: () => {
         window.open(
           `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-          "_blank",
-          "noopener,noreferrer"
+          '_blank',
+          'noopener,noreferrer'
         );
         setIsOpen(false);
       },
     },
     {
-      name: "Facebook",
+      name: 'Facebook',
       icon: <IconBrandFacebook size={18} />,
       action: () => {
         window.open(
           `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-          "_blank",
-          "noopener,noreferrer"
+          '_blank',
+          'noopener,noreferrer'
         );
         setIsOpen(false);
       },
     },
     {
-      name: copied ? "Copied!" : "Copy Link",
+      name: copied ? 'Copied!' : 'Copy Link',
       icon: copied ? <IconCheck size={18} /> : <IconLink size={18} />,
       action: handleCopyLink,
     },
   ];
 
-  const supportsNativeShare = typeof navigator !== "undefined" && navigator.share;
+  const supportsNativeShare = typeof navigator !== 'undefined' && navigator.share;
 
   return (
     <div className="relative" ref={menuRef}>
@@ -136,12 +136,12 @@ export default function ShareButton({
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className={`flex items-center gap-2 rounded-lg border border-border bg-background/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground ${
-          variant === "icon" ? "p-2" : ""
+          variant === 'icon' ? 'p-2' : ''
         }`}
         aria-label="Share"
       >
         <IconShare size={18} />
-        {variant === "button" && <span>Share</span>}
+        {variant === 'button' && <span>Share</span>}
       </motion.button>
 
       {!supportsNativeShare && (

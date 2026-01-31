@@ -8,7 +8,9 @@ interface Props {
 
 function parseVideoUrl(url: string): { platform: 'youtube' | 'vimeo'; id: string } | null {
   // YouTube patterns
-  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  const ytMatch = url.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/
+  );
   if (ytMatch) return { platform: 'youtube', id: ytMatch[1] };
 
   // Vimeo patterns
@@ -49,13 +51,14 @@ if (!resolvedPlatform || !resolvedId) {
 const embedUrl = getEmbedUrl(resolvedPlatform, resolvedId);
 ---
 
-<div class="relative w-full aspect-video rounded-lg overflow-hidden border border-[var(--color-border)]">
+<div
+  class="relative w-full aspect-video rounded-lg overflow-hidden border border-[var(--color-border)]"
+>
   <iframe
     src={embedUrl}
     title={title}
     class="absolute inset-0 w-full h-full"
     frameborder="0"
     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowfullscreen
-  ></iframe>
+    allowfullscreen></iframe>
 </div>

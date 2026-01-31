@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { LinkPreview } from "@/components/ui/link-preview";
-import { cn } from "@/lib/utils";
+import { LinkPreview } from '@/components/ui/link-preview';
+import { cn } from '@/lib/utils';
 
 interface PreviewLinkProps {
   href: string;
@@ -21,7 +21,7 @@ export default function PreviewLink({
   return (
     <LinkPreview
       url={href}
-      className={cn("font-medium underline underline-offset-4", className)}
+      className={cn('font-medium underline underline-offset-4', className)}
       width={width}
       height={height}
       triggerAsChild
