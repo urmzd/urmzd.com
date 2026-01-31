@@ -1,0 +1,121 @@
+---
+title: "Hey, I'm Urmzd!"
+description: "My welcome message to the world"
+pubDate: 2025-01-31
+tags: ["introduction", "personal"]
+---
+
+import PreviewLink from '../components/PreviewLink';
+import WelcomeTimeline from '../components/WelcomeTimeline';
+
+Hey! I'm Urmzd Mukhammadnaim (pronounced *oor-moost moo-ha-mid-ni-eem*), and welcome to **urmzd.com**! I'm a man in love with knowledge and writing.
+
+As is often the case, the responsibilities of adulthood have pushed my love affairs onto an ever growing backlog. As a Software Engineer, this effectively meant that
+I'd likely never get back to it.
+
+However, I couldn't accept that. As part of a larger initiative to pay homage to my heritage and to the <PreviewLink client:load href="https://en.wikipedia.org/wiki/Ahura_Mazda">name</PreviewLink> my father gave me.
+I decided to block off some time and start working on this blog. I plan to explore history, martial arts, technology, art, music, science, math and philosophy,
+and all the amazing creations and discoveries of humanity. From technical deep-dives to opinions, research and even the odd essay,
+I plan on publishing a little bit of everything here.
+
+As someone who values transparency and honesty, all of the contents for this site are published on <PreviewLink client:load href="https://github.com/urmzd/urmzd.com">github.com/urmzd/urmzd.com</PreviewLink>.
+There, you can explore, analyze, and critique it to your heart's desire.
+You can open up issues if you want to request a specific topic be covered. Alternatively, if you aren't in tech like the vast majority of people,
+just shoot an email to [hello@urmzd.com](mailto:hello@urmzd.com). I commit to responding as reasonably soon as I can. For now, I plan on publishing one written piece a week, but more often if time allows for it!
+
+A small note before we continue, all blog posts will comprise of small snippets at the end of them, and they differ from the topic being covered. I hope that by sharing small snippets
+from different domains, it'll promote people to explore topics beyond what they know or believe they know.
+
+So without further ado, here is...
+
+## My Introduction to You
+
+I hold *honesty*, *freedom* and *family* dear to me. These core principles inform the decisions I make.
+
+- Honesty: *The pursuit and belief of absolute truth within oneself.*
+- Freedom: *A state in which one is unbounded by the assumptions created internally, or externally*
+- Family: *Relationships in which the unrequited kindness received produce profound changes to the state of one's life*
+
+With this in mind, I believe that it's difficult to learn about someone without understanding more of their story, and the actions they've taken to be here in this moment. 
+Instead of taking the words written as an absolute reflection of who I am, I hope that the knowledge I share and the topics I explore pave the way for your own interpretation.
+
+All that you see below is a direct result of the innate attribute -- **Curiosity**. Instead of just writing about who I am, let me show you.
+
+<WelcomeTimeline client:load />
+
+## Snippet of the Week
+
+With the rapid development and integration of LLMs, I believe it's important to understand the foundations that brought us here — the people, the discoveries, and how those changes shaped where we are today.
+
+To learn more about the people, take a look here:
+
+- <PreviewLink client:load href="https://en.wikipedia.org/wiki/History_of_trigonometry">History of Trigonometry</PreviewLink>
+
+To learn more about the math, take a look here:
+
+- <PreviewLink client:load href="https://en.wikipedia.org/wiki/Dot_product">Dot Product</PreviewLink>
+- <PreviewLink client:load href="https://en.wikipedia.org/wiki/Cosine_similarity">Cosine Similarity</PreviewLink>
+
+### The Math
+
+**Dot Product** — The sum of element-wise products of two vectors:
+
+$$
+\vec{a} \cdot \vec{b} = \sum_{i=1}^{n} a_i \cdot b_i
+$$
+
+**Norm (Euclidean)** — The "length" or magnitude of a vector:
+
+$$
+\lVert\vec{v}\rVert = \sqrt{\sum_{i=1}^{n} v_i^2}
+$$
+
+**Cosine Similarity** — Measures directional similarity between two vectors (ranges from -1 to 1):
+
+$$
+\text{sim}(\vec{a}, \vec{b}) = \frac{\vec{a} \cdot \vec{b}}{\lVert\vec{a}\rVert \cdot \lVert\vec{b}\rVert}
+$$
+
+
+
+### The Code
+
+```python
+from typing import TypeAlias
+from math import sqrt
+
+# A Vector is an N-dimensional point in space.
+Vector: TypeAlias = list[float]
+
+# An Embedding is a Vector that encodes semantic meaning.
+Embedding: TypeAlias = Vector
+
+# Dot product: sum of element-wise products of two vectors.
+def dot_product(a_vec: Vector, b_vec: Vector) -> float:
+    return sum(a*b for a,b in zip(a_vec, b_vec))
+
+# Euclidean norm: the magnitude (length) of a vector.
+def norm(vec: Vector) -> float:
+    return sqrt(sum(a**2 for a in vec))
+
+# Cosine similarity: measures directional alignment between two vectors (-1 to 1).
+def cosine_similarity(a: Embedding, b: Embedding) -> float:
+    return dot_product(a, b) / (norm(a) * norm(b))
+```
+
+### The Connection to LLMs
+
+Modern LLMs like ChatGPT, Claude, Gemini and others convert text into high-dimensional vectors called **embeddings** — numerical representations that capture semantic meaning. Words, sentences, or entire documents that are similar in meaning end up as vectors pointing in similar directions.
+
+When you search for something using an AI-powered tool, or when a chatbot retrieves relevant context from a knowledge base, **cosine similarity** is often the mechanism comparing your query's embedding against stored embeddings. This is the foundation of:
+
+- **Semantic search**: Finding documents by meaning, not just keyword matches
+- **Retrieval-Augmented Generation (RAG)**: Giving LLMs relevant context before answering
+- **Recommendation systems**: Suggesting similar content based on vector proximity
+
+The math above — developed centuries ago by mathematicians studying triangles and angles — now powers the similarity calculations running billions of times daily across AI systems worldwide.
+
+## Recommended Books
+
+- <PreviewLink client:load href="https://www.amazon.com/Meditations-Penguin-Classics-Marcus-Aurelius/dp/0140449337">Meditations: Marcus Aurelius</PreviewLink>
+- <PreviewLink client:load href="https://www.amazon.com/Four-Thousand-Weeks-Management-Mortals/dp/0374159122">Time Management for Mortals: Oliver Burkeman</PreviewLink>
