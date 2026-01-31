@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { socialLinks } from "@/data/socialLinks";
 ---
 
 <BaseLayout title="About - urmzd">
@@ -8,21 +9,18 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
     <div class="prose prose-neutral dark:prose-invert max-w-none">
       <p>
-        Hello! I'm Urmzd, a software engineer passionate about building great
-        software.
+        For a full introduction, check out my <a href="/blog/welcome">welcome post</a>.
       </p>
 
       <h2>Get in Touch</h2>
       <ul>
-        <li>
-          <a href="https://github.com/urmzd">GitHub</a>
-        </li>
-        <li>
-          <a href="https://linkedin.com/in/urmzd">LinkedIn</a>
-        </li>
-        <li>
-          <a href="mailto:hello@urmzd.com">hello@urmzd.com</a>
-        </li>
+        {socialLinks.map((link) => (
+          <li>
+            <a href={link.href} target="_blank" rel="noopener noreferrer">
+              {link.title}
+            </a>
+          </li>
+        ))}
       </ul>
     </div>
   </main>

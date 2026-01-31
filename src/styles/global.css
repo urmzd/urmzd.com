@@ -123,6 +123,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -132,6 +133,7 @@
   from {
     background-position: 50% 50%, 50% 50%;
   }
+
   to {
     background-position: 350% 50%, 350% 50%;
   }
@@ -141,9 +143,11 @@
   0% {
     transform: translate3d(0, 0, 0) scale(1);
   }
+
   50% {
     transform: translate3d(2%, -2%, 0) scale(1.04);
   }
+
   100% {
     transform: translate3d(0, 0, 0) scale(1);
   }
@@ -153,9 +157,11 @@
   0% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-8px);
   }
+
   100% {
     transform: translateY(0);
   }
@@ -166,6 +172,7 @@
     opacity: 0;
     transform: translateY(8px) scale(0.98);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -177,6 +184,7 @@
     opacity: 0;
     filter: blur(12px) brightness(0.6);
   }
+
   100% {
     opacity: 0.85;
     filter: blur(0) brightness(1);
@@ -188,9 +196,11 @@
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.6);
   }
+
   20% {
     opacity: 1;
   }
+
   100% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(1.4);
@@ -209,9 +219,11 @@
     opacity: 0.7;
     transform: scale(1);
   }
+
   70% {
     opacity: 0.35;
   }
+
   100% {
     offset-distance: 100%;
     opacity: 0;
@@ -223,19 +235,23 @@
   0% {
     offset-distance: 0%;
   }
+
   100% {
     offset-distance: 100%;
   }
 }
 
 @keyframes pulse-focus {
+
   0%,
   80% {
     box-shadow: 0 0 0 0 oklch(0.88 0.08 80 / 0%);
   }
+
   90% {
     box-shadow: 0 0 0 12px oklch(0.88 0.08 80 / 15%);
   }
+
   100% {
     box-shadow: 0 0 0 0 oklch(0.88 0.08 80 / 0%);
   }
@@ -245,6 +261,7 @@
   0% {
     transform: translateZ(0) rotateX(12deg) rotateZ(0deg);
   }
+
   100% {
     transform: translateZ(0) rotateX(12deg) rotateZ(360deg);
   }
@@ -254,6 +271,7 @@
   0% {
     transform: rotateY(var(--angle)) translateZ(150px);
   }
+
   100% {
     transform: rotateY(calc(var(--angle) + 360deg)) translateZ(150px);
   }
@@ -281,11 +299,9 @@
     width: 70vmax;
     height: 70vmax;
     border-radius: 999px;
-    background: radial-gradient(
-      circle,
-      oklch(0.9 0.08 85 / 65%),
-      transparent 62%
-    );
+    background: radial-gradient(circle,
+        oklch(0.9 0.08 85 / 65%),
+        transparent 62%);
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.6);
     pointer-events: none;
@@ -297,28 +313,22 @@
 
   .splash-texture {
     @apply absolute inset-0;
-    background-image: radial-gradient(
-        circle at 20% 20%,
+    background-image: radial-gradient(circle at 20% 20%,
         oklch(0.85 0.08 80 / 45%),
-        transparent 55%
-      ),
-      radial-gradient(
-        circle at 80% 40%,
+        transparent 55%),
+      radial-gradient(circle at 80% 40%,
         oklch(0.88 0.05 200 / 35%),
-        transparent 60%
-      ),
-      radial-gradient(
-        circle at 40% 80%,
+        transparent 60%),
+      radial-gradient(circle at 40% 80%,
         oklch(0.92 0.06 40 / 40%),
-        transparent 65%
-      );
+        transparent 65%);
     filter: blur(20px);
     animation: aurora 40s linear infinite;
   }
 
   .splash-tile {
     @apply h-24 w-full rounded-xl bg-cover bg-center opacity-60;
-    animation: drift 18s ease-in-out infinite;
+    animation: drift 18s ease-out infinite;
     filter: grayscale(35%) contrast(95%);
   }
 
@@ -334,7 +344,7 @@
   }
 
   .name-float {
-    animation: float-slow 10s ease-in-out infinite;
+    animation: float-slow 10s ease-out infinite;
   }
 
   .splash-stage {
@@ -358,10 +368,9 @@
 
   .splash-node {
     fill: oklch(0.88 0.08 80 / 70%);
-    offset-path: path(
-      "M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600"
-    );
-    animation: node-travel 7.5s ease-in-out infinite;
+    offset-path: path("M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600"
+      );
+    animation: node-travel 7.5s ease-out infinite;
     will-change: offset-distance, transform, opacity;
   }
 
@@ -377,9 +386,8 @@
 
   .splash-tracer {
     fill: oklch(0.9 0.1 80 / 80%);
-    offset-path: path(
-      "M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600"
-    );
+    offset-path: path("M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600"
+      );
     animation: tracer-travel 7.5s linear infinite;
     filter: drop-shadow(0 0 12px oklch(0.9 0.1 80 / 40%));
     will-change: offset-distance, transform;
@@ -397,16 +405,14 @@
     filter: grayscale(18%) contrast(0.95);
     animation: splash-reveal 0.9s ease forwards;
     animation-delay: var(--delay, 0s);
-    transform: translateZ(var(--depth, 0px)) rotateX(var(--tilt, 0deg))
-      rotateZ(var(--spin, 0deg));
+    transform: translateZ(var(--depth, 0px)) rotateX(var(--tilt, 0deg)) rotateZ(var(--spin, 0deg));
     transform-style: preserve-3d;
     cursor: pointer;
     will-change: opacity;
   }
 
   .splash-graph-image:hover {
-    transform: translateZ(var(--depth, 0px)) rotateX(var(--tilt, 0deg))
-      rotateZ(var(--spin, 0deg)) scale(1.08);
+    transform: translateZ(var(--depth, 0px)) rotateX(var(--tilt, 0deg)) rotateZ(var(--spin, 0deg)) scale(1.08);
     opacity: 0.95;
     filter: grayscale(0%);
     z-index: 20;
@@ -434,25 +440,21 @@
 
   .splash-flow-label {
     @apply text-xs uppercase tracking-[0.3em] text-foreground/70 sm:text-sm;
-    animation: float-slow 8s ease-in-out infinite;
+    animation: float-slow 8s ease-out infinite;
   }
 
   .splash-textile {
     @apply absolute inset-0;
-    background-image: repeating-linear-gradient(
-        45deg,
+    background-image: repeating-linear-gradient(45deg,
         oklch(0.92 0.02 80 / 15%) 0,
         oklch(0.92 0.02 80 / 15%) 1px,
         transparent 1px,
-        transparent 6px
-      ),
-      repeating-linear-gradient(
-        -45deg,
+        transparent 6px),
+      repeating-linear-gradient(-45deg,
         oklch(0.9 0.03 200 / 12%) 0,
         oklch(0.9 0.03 200 / 12%) 1px,
         transparent 1px,
-        transparent 7px
-      );
+        transparent 7px);
     mix-blend-mode: multiply;
   }
 
@@ -498,27 +500,21 @@
 
   .hero-texture {
     @apply absolute inset-0 opacity-40;
-    background-image: radial-gradient(
-        circle at 20% 20%,
+    background-image: radial-gradient(circle at 20% 20%,
         oklch(0.87 0.07 90 / 55%),
-        transparent 55%
-      ),
-      radial-gradient(
-        circle at 80% 30%,
+        transparent 55%),
+      radial-gradient(circle at 80% 30%,
         oklch(0.9 0.04 200 / 35%),
-        transparent 60%
-      ),
-      radial-gradient(
-        circle at 40% 80%,
+        transparent 60%),
+      radial-gradient(circle at 40% 80%,
         oklch(0.92 0.05 30 / 40%),
-        transparent 65%
-      );
+        transparent 65%);
     animation: aurora 50s linear infinite;
   }
 
   .hero-tile {
     @apply rounded-2xl bg-cover bg-center opacity-20 shadow-xl;
-    animation: float-slow 14s ease-in-out infinite;
+    animation: float-slow 14s ease-out infinite;
     filter: grayscale(40%);
   }
 
@@ -548,18 +544,14 @@
     opacity: 0;
     transition: opacity 1s ease;
     pointer-events: none;
-    -webkit-mask-image: radial-gradient(
-      circle at 50% 45%,
-      #000 0%,
-      #000 60%,
-      transparent 100%
-    );
-    mask-image: radial-gradient(
-      circle at 50% 45%,
-      #000 0%,
-      #000 60%,
-      transparent 100%
-    );
+    -webkit-mask-image: radial-gradient(circle at 50% 45%,
+        #000 0%,
+        #000 60%,
+        transparent 100%);
+    mask-image: radial-gradient(circle at 50% 45%,
+        #000 0%,
+        #000 60%,
+        transparent 100%);
   }
 
   .textile-visible {
@@ -581,16 +573,14 @@
 
   .textile-glow {
     @apply absolute inset-0;
-    background: radial-gradient(
-      circle at 50% 40%,
-      oklch(0.9 0.05 80 / 30%),
-      transparent 60%
-    );
+    background: radial-gradient(circle at 50% 40%,
+        oklch(0.9 0.05 80 / 30%),
+        transparent 60%);
     opacity: 0.6;
   }
 
   .landing-root {
-    @apply relative min-h-screen overflow-hidden bg-black;
+    @apply relative min-h-screen overflow-hidden bg-background;
   }
 
   .landing-skip {
@@ -599,6 +589,130 @@
 
   .landing-skip:hover {
     color: var(--foreground);
+  }
+
+  /* Film Roll Animation Styles */
+  .film-loading {
+    @apply absolute inset-0 flex flex-col items-center justify-center gap-4;
+  }
+
+  .film-loading-text {
+    @apply text-sm text-white/60;
+    font-family: "IBM Plex Mono", monospace;
+    letter-spacing: 0.1em;
+  }
+
+  .film-loading-bar {
+    @apply h-1 w-48 overflow-hidden rounded-full bg-white/10;
+  }
+
+  .film-loading-progress {
+    @apply h-full bg-white/40 transition-all duration-300;
+  }
+
+  .film-container {
+    @apply relative flex h-screen w-full items-center justify-center overflow-hidden;
+  }
+
+  .film-mask {
+    @apply relative overflow-hidden;
+    width: min(85vw, 600px);
+    height: min(70vh, 500px);
+    border-radius: 8px;
+    box-shadow:
+      0 0 0 4px #1a1a1a,
+      0 0 0 6px #2a2a2a,
+      0 20px 60px rgba(0, 0, 0, 0.8);
+  }
+
+  .film-strip {
+    @apply absolute left-0 top-0 w-full;
+    will-change: transform;
+  }
+
+  .film-frame {
+    @apply relative w-full;
+    background-size: cover;
+    background-position: center;
+    border-bottom: 3px solid #1a1a1a;
+  }
+
+  .film-frame-overlay {
+    @apply absolute inset-0 flex items-end;
+    background: linear-gradient(to top,
+        rgba(0, 0, 0, 0.85) 0%,
+        rgba(0, 0, 0, 0.4) 40%,
+        transparent 100%);
+    padding: 1rem;
+  }
+
+  .film-frame-meta {
+    @apply flex flex-col gap-1;
+  }
+
+  .film-frame-label {
+    @apply text-xs font-medium uppercase tracking-widest text-white/80;
+  }
+
+  .film-frame-desc {
+    @apply text-sm text-white/60;
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  .film-sprocket {
+    @apply absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-sm bg-black;
+    box-shadow:
+      0 -20px 0 #000,
+      0 20px 0 #000,
+      0 -40px 0 #000,
+      0 40px 0 #000,
+      0 -60px 0 #000,
+      0 60px 0 #000;
+  }
+
+  .film-sprocket-left {
+    left: 6px;
+  }
+
+  .film-sprocket-right {
+    right: 6px;
+  }
+
+  .film-grain {
+    @apply pointer-events-none absolute inset-0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.08;
+    mix-blend-mode: overlay;
+  }
+
+  .film-vignette {
+    @apply pointer-events-none absolute inset-0;
+    background: radial-gradient(ellipse at center,
+        transparent 40%,
+        rgba(0, 0, 0, 0.7) 100%);
+  }
+
+  .final-card-container {
+    @apply absolute inset-0 flex items-center justify-center;
+  }
+
+  .final-card-contact {
+    @apply mt-6 flex flex-col items-center gap-1;
+  }
+
+  .final-card-contact-label {
+    @apply text-xs uppercase tracking-widest text-muted-foreground/70;
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  .final-card-email {
+    @apply text-sm text-foreground/80 transition-colors hover:text-foreground;
+    font-family: "IBM Plex Mono", monospace;
+    text-decoration: none;
+  }
+
+  .final-card-email:hover {
+    text-shadow: 0 0 12px color-mix(in oklch, var(--foreground) 30%, transparent);
   }
 
   .rolodex {
@@ -611,7 +725,7 @@
     min-height: 180px;
     max-width: 840px;
     padding: 1.5rem;
-    transition: opacity 0.12s ease;
+    transition: opacity 0.45s ease-in-out;
     overflow: visible;
     position: relative;
     transform-origin: 50% 15%;
@@ -630,18 +744,7 @@
     pointer-events: none;
   }
 
-  .rolodex-card-flip {
-    animation: rolodex-flip-vertical 0.18s ease;
-  }
-
-  @keyframes rolodex-flip-vertical {
-    0% {
-      transform: rotateX(-6deg) translateZ(0);
-    }
-    100% {
-      transform: rotateX(0deg) translateZ(0);
-    }
-  }
+  /* Flip animation removed to prevent flickering - using opacity crossfade instead */
 
   .rolodex-face {
     @apply relative flex flex-row items-center gap-5;
@@ -678,7 +781,8 @@
   }
 
   .rolodex-card-final {
-    border-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: #080808;
   }
 
   .rolodex-bg {
@@ -690,27 +794,12 @@
     z-index: 0;
   }
 
-  .rolodex-bg-final {
-    opacity: 0.28;
-  }
-
-  .rolodex-grunge {
-    position: absolute;
-    inset: 0;
-    background-image: var(--card-grunge);
-    background-size: cover;
-    background-position: center;
-    opacity: 0.22;
-    mix-blend-mode: screen;
-    z-index: 1;
-  }
-
   .rolodex-final-face {
     justify-content: center;
   }
 
   .final-card {
-    @apply flex flex-col items-center gap-3 text-center text-white/90;
+    @apply flex flex-col items-center gap-3 text-center text-foreground;
     width: 100%;
   }
 
@@ -722,33 +811,59 @@
   }
 
   .final-card-subtitle {
-    @apply text-xs uppercase tracking-[0.25em] text-white/70;
+    @apply text-xs uppercase tracking-[0.25em] text-muted-foreground;
     font-family: "IBM Plex Mono", monospace;
     line-height: 1.2;
   }
 
   .final-card-phonetic {
-    @apply text-xs text-white/70;
+    @apply text-xs text-muted-foreground/70;
     font-family: "IBM Plex Mono", monospace;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     line-height: 1.2;
+    margin-top: 0.5rem;
+  }
+
+  .final-card-pronunciation {
+    @apply text-xs text-muted-foreground/60;
+    font-family: "IBM Plex Mono", monospace;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    font-style: italic;
   }
 
   .final-card-intro {
-    @apply text-sm text-white/80;
+    @apply text-sm text-foreground/80;
     font-family: "IBM Plex Mono", monospace;
     line-height: 1.4;
     max-width: 30rem;
   }
 
   .final-card-link {
-    @apply text-xs uppercase tracking-[0.25em] text-white/60;
+    @apply text-xs uppercase tracking-[0.25em] text-muted-foreground;
     font-family: "IBM Plex Mono", monospace;
     transition: color 0.2s ease;
   }
 
   .final-card-link:hover {
-    color: #fff;
+    @apply text-foreground;
+  }
+
+  .final-card-name-link {
+    color: inherit;
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+    text-decoration: none;
+  }
+
+  .final-card-name-link:hover {
+    color: inherit;
+    text-shadow: 0 0 20px oklch(1 0 0 / 30%);
+  }
+
+  .final-card-bracket {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    font-size: 1em;
+    opacity: 0.7;
   }
 
   .timeline-label {
@@ -773,9 +888,53 @@
     font-size: 0.7rem;
     line-height: 1.2;
   }
+
+  /* Scroll snap utilities for timeline */
+  .scroll-snap-y-proximity {
+    scroll-snap-type: y proximity;
+  }
+
+  .scroll-snap-start {
+    scroll-snap-align: start;
+  }
+
+  .blog-search {
+    @apply flex flex-col gap-6;
+  }
+
+  .blog-search-input {
+    @apply mb-2;
+  }
+
+  .blog-search-count {
+    @apply text-sm text-muted-foreground;
+  }
+
+  /* Code block copy button */
+  .code-block-wrapper {
+    @apply relative;
+  }
+
+  .copy-button {
+    @apply absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background/80 text-muted-foreground opacity-0 transition-all;
+    backdrop-filter: blur(4px);
+  }
+
+  .code-block-wrapper:hover .copy-button {
+    @apply opacity-100;
+  }
+
+  .copy-button:hover {
+    @apply border-primary bg-background text-foreground;
+  }
+
+  .copy-button.copied {
+    @apply border-green-500 text-green-500;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .splash-graph-image,
   .splash-burst,
   .splash-path,
