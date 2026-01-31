@@ -1,11 +1,11 @@
-"use client";
-import * as HoverCardPrimitive from "@radix-ui/react-hover-card";
+'use client';
+import * as HoverCardPrimitive from '@radix-ui/react-hover-card';
 
-import { encode } from "qss";
-import React from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { encode } from 'qss';
+import React from 'react';
+import { AnimatePresence, motion } from 'motion/react';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 type LinkPreviewProps = {
   children: React.ReactNode;
@@ -16,10 +16,7 @@ type LinkPreviewProps = {
   quality?: number;
   layout?: string;
   triggerAsChild?: boolean;
-} & (
-    | { isStatic: true; imageSrc: string }
-    | { isStatic?: false; imageSrc?: never }
-  );
+} & ({ isStatic: true; imageSrc: string } | { isStatic?: false; imageSrc?: never });
 
 export const LinkPreview = ({
   children,
@@ -27,11 +24,11 @@ export const LinkPreview = ({
   className,
   width = 200,
   height = 125,
-  quality = 50,
-  layout = "fixed",
+  quality: _quality = 50,
+  layout: _layout = 'fixed',
   triggerAsChild = false,
   isStatic = false,
-  imageSrc = "",
+  imageSrc = '',
 }: LinkPreviewProps) => {
   let src;
   if (!isStatic) {
@@ -39,12 +36,12 @@ export const LinkPreview = ({
       url,
       screenshot: true,
       meta: false,
-      embed: "screenshot.url",
-      colorScheme: "dark",
-      "viewport.isMobile": true,
-      "viewport.deviceScaleFactor": 1,
-      "viewport.width": width * 3,
-      "viewport.height": height * 3,
+      embed: 'screenshot.url',
+      colorScheme: 'dark',
+      'viewport.isMobile': true,
+      'viewport.deviceScaleFactor': 1,
+      'viewport.width': width * 3,
+      'viewport.height': height * 3,
     });
     src = `https://api.microlink.io/?${params}`;
   } else {
@@ -63,12 +60,7 @@ export const LinkPreview = ({
     <>
       {isMounted ? (
         <div className="hidden">
-          <img
-            src={src}
-            width={width}
-            height={height}
-            alt="hidden image"
-          />
+          <img src={src} width={width} height={height} alt="hidden image" />
         </div>
       ) : null}
 
@@ -79,11 +71,7 @@ export const LinkPreview = ({
           setOpen(open);
         }}
       >
-        <HoverCardPrimitive.Trigger
-          className={cn(className)}
-          asChild={triggerAsChild}
-          href={url}
-        >
+        <HoverCardPrimitive.Trigger className={cn(className)} asChild={triggerAsChild} href={url}>
           {children}
         </HoverCardPrimitive.Trigger>
 
@@ -102,7 +90,7 @@ export const LinkPreview = ({
                   y: 0,
                   scale: 1,
                   transition: {
-                    type: "spring",
+                    type: 'spring',
                     stiffness: 260,
                     damping: 20,
                   },
