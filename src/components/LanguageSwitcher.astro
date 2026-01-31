@@ -1,0 +1,46 @@
+---
+/**
+ * Language Switcher Component
+ *
+ * Currently disabled since only English is supported.
+ * To enable when adding more languages:
+ * 1. Add new locales to astro.config.mjs and src/lib/i18n.ts
+ * 2. Remove the early return below
+ * 3. Create locale-specific pages (e.g., src/pages/ar/about.astro)
+ */
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { locales, type Locale } from '@/lib/i18n';
+
+const currentLocale = (Astro.currentLocale ?? 'en') as Locale;
+const currentPath = Astro.url.pathname;
+
+// Hide when only one locale is available
+const showSwitcher = locales.length > 1;
+
+const localeLabels: Record<Locale, string> = {
+  en: 'English',
+};
+---
+
+{
+  showSwitcher && (
+    <nav aria-label="Language switcher" class="language-switcher">
+      <ul class="flex gap-2">
+        {locales.map((locale) => (
+          <li>
+            <a
+              href={getRelativeLocaleUrl(locale, currentPath)}
+              class:list={[
+                'px-2 py-1 text-sm rounded transition-colors',
+                locale === currentLocale ? 'bg-primary text-primary-foreground' : 'hover:bg-muted',
+              ]}
+              aria-current={locale === currentLocale ? 'page' : undefined}
+            >
+              {localeLabels[locale]}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
