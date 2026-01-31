@@ -4,6 +4,7 @@ import satori from 'satori';
 import sharp from 'sharp';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { calculateReadTime } from '../../lib/readTime';
 
 // Load fonts at module level for reuse
 const interRegular = readFileSync(join(process.cwd(), 'public/fonts/Inter-Regular.ttf'));
@@ -18,6 +19,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
     props: {
       title: post.data.title,
       description: post.data.description,
+      pubDate: post.data.pubDate,
+      readTime: calculateReadTime(post.body || '').text,
     },
   }));
 
@@ -36,9 +39,20 @@ export const getStaticPaths: GetStaticPaths = async () => {
 interface OGImageProps {
   title: string;
   description: string;
+  pubDate?: Date;
+  readTime?: string;
 }
 
-function OGImage({ title, description }: OGImageProps) {
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+function OGImage({ title, description, pubDate, readTime }: OGImageProps) {
+  const metadataText = pubDate && readTime ? `${formatDate(pubDate)} · ${readTime}` : undefined;
   return {
     type: 'div',
     props: {
@@ -95,10 +109,29 @@ function OGImage({ title, description }: OGImageProps) {
           props: {
             style: {
               display: 'flex',
-              justifyContent: 'flex-end',
+              justifyContent: 'space-between',
               alignItems: 'center',
             },
             children: [
+              metadataText
+                ? {
+                    type: 'div',
+                    props: {
+                      style: {
+                        fontSize: '24px',
+                        color: '#71717a',
+                        fontWeight: 400,
+                      },
+                      children: metadataText,
+                    },
+                  }
+                : {
+                    type: 'div',
+                    props: {
+                      style: { display: 'flex' },
+                      children: [],
+                    },
+                  },
               {
                 type: 'div',
                 props: {
@@ -119,10 +152,10 @@ function OGImage({ title, description }: OGImageProps) {
 }
 
 export const GET: APIRoute = async ({ props }) => {
-  const { title, description } = props as { title: string; description: string };
+  const { title, description, pubDate, readTime } = props as OGImageProps;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const svg = await satori(OGImage({ title, description }) as any, {
+  const svg = await satori(OGImage({ title, description, pubDate, readTime }) as any, {
     width: 1200,
     height: 630,
     fonts: [
