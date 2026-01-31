@@ -71,7 +71,7 @@ const TimelineSegment = ({
         }),
       }}
       className={`absolute z-0 overflow-hidden w-[2px] bg-neutral-200/50 dark:bg-neutral-700/50 pointer-events-none ${
-        isMobile ? 'md:hidden left-8' : 'hidden md:block left-1/2 -translate-x-1/2'
+        isMobile ? 'md:hidden left-[84px]' : 'hidden md:block left-1/2 -translate-x-1/2'
       }`}
     >
       <motion.div
@@ -254,14 +254,22 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
               ref={(el) => setEntryRef(el, index)}
               className={`${item.compact ? 'pt-6 md:pt-16' : 'pt-10 md:pt-40'} scroll-snap-start`}
             >
-              {/* Mobile layout - vertical stack */}
+              {/* Mobile layout - date on left, dot center, content right */}
               <div className="flex md:hidden">
-                <div className="sticky flex flex-col z-40 items-center top-40 self-start">
+                {/* Date column - left side */}
+                <div className="w-16 flex-shrink-0 text-right pr-2">
+                  <h3 className="text-lg font-bold text-neutral-500 dark:text-neutral-500">
+                    {item.title}
+                  </h3>
+                </div>
+
+                {/* Dot column - center */}
+                <div className="flex flex-col z-40 items-center self-start">
                   <div
                     ref={(el) => {
                       if (el && el.offsetWidth > 0) setDotRef(el, index);
                     }}
-                    className="h-10 absolute left-3 w-10 rounded-full bg-background flex items-center justify-center"
+                    className="h-10 w-10 rounded-full bg-background flex items-center justify-center"
                   >
                     {(() => {
                       const dotStyles = getDotStyles(glowIntensities[index] || 0);
@@ -269,12 +277,9 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
                     })()}
                   </div>
                 </div>
-                <div className="relative pl-20 pr-4 w-full z-10">
-                  <h3 className="block text-2xl mb-4 text-left font-bold text-neutral-500 dark:text-neutral-500">
-                    {item.title}
-                  </h3>
-                  {renderContent()}
-                </div>
+
+                {/* Content column - right side */}
+                <div className="relative pl-4 pr-4 flex-1 z-10">{renderContent()}</div>
               </div>
 
               {/* Desktop layout - alternating left/right */}
@@ -291,9 +296,9 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
                     </div>
                   </div>
 
-                  {/* Center line with year badge */}
+                  {/* Center line with dot only */}
                   <div className="relative flex flex-col items-center w-16 flex-shrink-0 z-10">
-                    <div className="sticky top-40 z-40 flex flex-col items-center">
+                    <div className="sticky top-40 z-40 flex items-center justify-center">
                       <div
                         ref={(el) => {
                           if (el && el.offsetWidth > 0) setDotRef(el, index);
@@ -305,14 +310,19 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
                           return <div className={dotStyles.className} />;
                         })()}
                       </div>
-                      <h3 className="text-xl md:text-3xl font-bold text-neutral-500 dark:text-neutral-500 mt-2 whitespace-nowrap">
+                    </div>
+                  </div>
+
+                  {/* Date side - opposite of content */}
+                  <div className={`w-[calc(50%-2rem)] ${isEven ? 'pl-8' : 'pr-8'} relative z-10`}>
+                    <div
+                      className={`sticky top-40 flex items-center h-10 ${isEven ? 'justify-start' : 'justify-end'}`}
+                    >
+                      <h3 className="text-xl md:text-3xl font-bold text-neutral-500 dark:text-neutral-500 whitespace-nowrap">
                         {item.title}
                       </h3>
                     </div>
                   </div>
-
-                  {/* Spacer side */}
-                  <div className="w-[calc(50%-2rem)]" />
                 </div>
               ) : (
                 <div
@@ -325,9 +335,9 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
                     <div className={`${isEven ? 'ml-auto' : 'mr-auto'}`}>{renderContent()}</div>
                   </div>
 
-                  {/* Center line with year badge */}
+                  {/* Center line with dot only */}
                   <div className="relative flex flex-col items-center w-16 flex-shrink-0 z-10">
-                    <div className="sticky top-40 z-40 flex flex-col items-center">
+                    <div className="sticky top-40 z-40 flex items-center justify-center">
                       <div
                         ref={(el) => {
                           if (el && el.offsetWidth > 0) setDotRef(el, index);
@@ -339,14 +349,19 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
                           return <div className={dotStyles.className} />;
                         })()}
                       </div>
-                      <h3 className="text-xl md:text-3xl font-bold text-neutral-500 dark:text-neutral-500 mt-2 whitespace-nowrap">
+                    </div>
+                  </div>
+
+                  {/* Date side - opposite of content */}
+                  <div className={`w-[calc(50%-2rem)] ${isEven ? 'pl-8' : 'pr-8'} relative z-10`}>
+                    <div
+                      className={`sticky top-40 flex items-center h-10 ${isEven ? 'justify-start' : 'justify-end'}`}
+                    >
+                      <h3 className="text-xl md:text-3xl font-bold text-neutral-500 dark:text-neutral-500 whitespace-nowrap">
                         {item.title}
                       </h3>
                     </div>
                   </div>
-
-                  {/* Spacer side */}
-                  <div className="w-[calc(50%-2rem)]" />
                 </div>
               )}
             </div>
