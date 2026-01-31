@@ -9,6 +9,7 @@ import PreviewLink from '../components/PreviewLink';
 import WelcomeTimeline from '../components/WelcomeTimeline';
 import ScriptInline from '../components/ScriptInline';
 import Phonetic from '../components/Phonetic';
+import ExploreCard from '../components/ExploreCard';
 
 Hey! I'm Urmzd Mukhammadnaim (<Phonetic client:load ipa="ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm" />), and welcome to **urmzd.com**!
 
@@ -44,8 +45,7 @@ That's the path so far. Now, as promised, here's something to spark curiosity in
 
 With the rapid development and integration of LLMs, I believe it's important to understand the foundations that brought us here — the people, the discoveries, and how those changes shaped where we are today.
 
-<details>
-<summary>**Explore: Cosine Similarity — The Math Behind AI Search**</summary>
+<ExploreCard client:load title="Cosine Similarity — The Math Behind AI Search">
 
 ### The Foundation
 
@@ -109,8 +109,6 @@ def cosine_similarity(a: Embedding, b: Embedding) -> float:
     return dot_product(a, b) / (norm(a) * norm(b))
 ```
 
-</details>
-
 ### The Connection
 
 Modern LLMs like GPT, Claude, Gemini, and others convert text into high-dimensional vectors called **embeddings** — numerical representations that capture semantic meaning. Words, sentences, or entire documents that are similar in meaning end up as vectors pointing in similar directions.
@@ -122,6 +120,8 @@ When you search for something using an AI-powered tool, or when a chatbot retrie
 - **Recommendation systems**: Suggesting similar content based on vector proximity
 
 The math above — developed centuries ago by mathematicians studying triangles and angles — now powers the similarity calculations running billions of times daily across AI systems worldwide.
+
+</ExploreCard>
 
 ## Recommended Books
 
