@@ -10,6 +10,13 @@ import rehypeSlug from 'rehype-slug';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://urmzd.com',
+  i18n: {
+    locales: ['en'],
+    defaultLocale: 'en',
+    routing: {
+      prefixDefaultLocale: false
+    }
+  },
   integrations: [react(), mdx()],
   markdown: {
     remarkPlugins: [remarkMath],
