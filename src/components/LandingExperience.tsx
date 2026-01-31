@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { motion } from "motion/react";
-import PreviewLink from "@/components/PreviewLink";
-import { BackgroundBeams } from "@/components/ui/background-beams";
+import { motion } from 'motion/react';
+import PreviewLink from '@/components/PreviewLink';
+import { BackgroundBeams } from '@/components/ui/background-beams';
 
 export default function LandingExperience() {
   return (
@@ -28,13 +28,9 @@ export default function LandingExperience() {
             </PreviewLink>
           </h1>
 
-          <p className="final-card-phonetic">
-            /ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/
-          </p>
+          <p className="final-card-phonetic">/ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/</p>
 
-          <p className="final-card-pronunciation">
-            oor-moozd, moo-ha-mid-nie,eem
-          </p>
+          <p className="final-card-pronunciation">oor-moozd, moo-ha-mid-nie,eem</p>
 
           <div className="final-card-contact">
             <span className="final-card-contact-label">Contact me:</span>

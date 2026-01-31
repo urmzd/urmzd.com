@@ -1,10 +1,4 @@
-export default function YouTubeEmbed({
-  id,
-  title,
-}: {
-  id: string;
-  title: string;
-}) {
+export default function YouTubeEmbed({ id, title }: { id: string; title: string }) {
   return (
     <div className="relative w-full aspect-video my-4 rounded-lg overflow-hidden">
       <iframe

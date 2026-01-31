@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { FloatingDock } from "@/components/ui/floating-dock";
-import { socialLinks, type SocialLink } from "@/data/socialLinks";
-import { SiArxiv, SiBehance, SiGithub } from "@icons-pack/react-simple-icons";
-import { IconBrandLinkedin, IconMail } from "@tabler/icons-react";
+import { FloatingDock } from '@/components/ui/floating-dock';
+import { socialLinks, type SocialLink } from '@/data/socialLinks';
+import { SiArxiv, SiBehance, SiGithub } from '@icons-pack/react-simple-icons';
+import { IconBrandLinkedin, IconMail } from '@tabler/icons-react';
 
-const iconMap: Record<SocialLink["icon"], React.ReactNode> = {
+const iconMap: Record<SocialLink['icon'], React.ReactNode> = {
   github: <SiGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
   linkedin: <IconBrandLinkedin className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
   email: <IconMail className="h-full w-full text-neutral-500 dark:text-neutral-300" />,

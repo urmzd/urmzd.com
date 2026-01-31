@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from 'motion/react';
 
 interface TimelineImageProps {
   src: string;
@@ -15,11 +15,7 @@ export default function TimelineImage({ src, alt, caption }: TimelineImageProps)
       role="img"
       aria-label={caption || alt}
     >
-      <img
-        src={src}
-        alt={alt}
-        className="w-full h-auto rounded-lg object-cover max-h-64"
-      />
+      <img src={src} alt={alt} className="w-full h-auto rounded-lg object-cover max-h-64" />
       {caption && (
         <figcaption className="absolute bottom-0 left-0 right-0 bg-black/60 dark:bg-black/80 text-white p-2 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           {caption}

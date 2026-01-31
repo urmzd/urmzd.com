@@ -1,18 +1,14 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import {
-  HoveredLink,
-  Menu,
-  MenuItem,
-} from "@/components/ui/navbar-menu";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
+import { HoveredLink, Menu, MenuItem } from '@/components/ui/navbar-menu';
+import { cn } from '@/lib/utils';
 
 export default function NavbarMenuEnhanced({ className }: { className?: string }) {
   const [active, setActive] = useState<string | null>(null);
 
   return (
-    <div className={cn("relative z-50", className)}>
+    <div className={cn('relative z-50', className)}>
       <Menu setActive={setActive}>
         <HoveredLink href="/">Home</HoveredLink>
         <MenuItem setActive={setActive} active={active} item="Blog">
