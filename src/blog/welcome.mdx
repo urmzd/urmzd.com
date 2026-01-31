@@ -47,7 +47,7 @@ With the rapid development and integration of LLMs, I believe it's important to 
 
 <ExploreCard client:load title="Cosine Similarity — The Math Behind AI Search">
 
-### The Foundation
+#### The Foundation
 
 To learn more about the people, take a look here:
 
@@ -58,7 +58,7 @@ To learn more about the math, take a look here:
 - <PreviewLink client:load href="https://en.wikipedia.org/wiki/Dot_product">Dot Product</PreviewLink>
 - <PreviewLink client:load href="https://en.wikipedia.org/wiki/Cosine_similarity">Cosine Similarity</PreviewLink>
 
-### The Math
+#### The Math
 
 **Vector** — An ordered list of numbers representing a point or direction in n-dimensional space:
 
@@ -84,7 +84,7 @@ $$
 \text{sim}(\vec{a}, \vec{b}) = \frac{\vec{a} \cdot \vec{b}}{\lVert\vec{a}\rVert \cdot \lVert\vec{b}\rVert}
 $$
 
-### The Code
+#### The Code
 
 ```python
 from typing import TypeAlias
@@ -109,7 +109,7 @@ def cosine_similarity(a: Embedding, b: Embedding) -> float:
     return dot_product(a, b) / (norm(a) * norm(b))
 ```
 
-### The Connection
+#### The Connection
 
 Modern LLMs like GPT, Claude, Gemini, and others convert text into high-dimensional vectors called **embeddings** — numerical representations that capture semantic meaning. Words, sentences, or entire documents that are similar in meaning end up as vectors pointing in similar directions.
 
