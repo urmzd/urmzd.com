@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { socialLinks } from '@/data/socialLinks';
+import SocialLinksGrid from '@/components/SocialLinksGrid';
 ---
 
 <BaseLayout title="About - urmzd">
@@ -13,17 +13,7 @@ import { socialLinks } from '@/data/socialLinks';
       </p>
 
       <h2>Get in Touch</h2>
-      <ul>
-        {
-          socialLinks.map((link) => (
-            <li>
-              <a href={link.href} target="_blank" rel="noopener noreferrer">
-                {link.title}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
+      <SocialLinksGrid client:load />
     </div>
   </main>
 </BaseLayout>
