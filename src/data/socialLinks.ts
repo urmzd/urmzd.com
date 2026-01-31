@@ -1,7 +1,7 @@
 export interface SocialLink {
   title: string;
   href: string;
-  icon: 'github' | 'linkedin' | 'email' | 'behance' | 'arxiv';
+  icon: 'github' | 'linkedin' | 'email' | 'behance' | 'arxiv' | 'rss';
 }
 
 export const socialLinks: SocialLink[] = [
@@ -14,4 +14,5 @@ export const socialLinks: SocialLink[] = [
     href: 'https://arxiv.org/search/cs?searchtype=author&query=Mukhammadnaim,+U',
     icon: 'arxiv',
   },
+  { title: 'RSS', href: '/rss.xml', icon: 'rss' },
 ];
