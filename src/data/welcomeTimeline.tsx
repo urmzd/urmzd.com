@@ -1,6 +1,6 @@
-import PreviewLink from "@/components/PreviewLink";
-import TimelineImage from "@/components/TimelineImage";
-import YouTubeEmbed from "@/components/YouTubeEmbed";
+import PreviewLink from '@/components/PreviewLink';
+import TimelineImage from '@/components/TimelineImage';
+import YouTubeEmbed from '@/components/YouTubeEmbed';
 
 interface Subsection {
   label: string;
@@ -15,10 +15,10 @@ interface TimelineEntryData {
 
 export const welcomeTimelineData: TimelineEntryData[] = [
   {
-    title: "2000",
+    title: '2000',
     subsections: [
       {
-        label: "Origin",
+        label: 'Origin',
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
@@ -35,10 +35,10 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     ],
   },
   {
-    title: "2006",
+    title: '2006',
     subsections: [
       {
-        label: "Relocation",
+        label: 'Relocation',
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
@@ -55,10 +55,10 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     ],
   },
   {
-    title: "2008",
+    title: '2008',
     subsections: [
       {
-        label: "Relocation",
+        label: 'Relocation',
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
@@ -75,15 +75,15 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     ],
   },
   {
-    title: "2010",
+    title: '2010',
     subsections: [
       {
-        label: "Creative",
+        label: 'Creative',
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
-              Created a YouTube channel and started my short stint as a Graphics
-              Designer and Video Effects Editor.
+              Created a YouTube channel and started my short stint as a Graphics Designer and Video
+              Effects Editor.
             </p>
             <YouTubeEmbed id="dTXesih2y7A" title="Graphics design work" />
             <div className="flex flex-wrap gap-x-4 gap-y-2 mt-4">
@@ -103,27 +103,25 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     ],
   },
   {
-    title: "2014",
+    title: '2014',
     compact: true,
     subsections: [
       {
-        label: "Martial Arts",
+        label: 'Martial Arts',
         content: (
           <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400">
-            Started{" "}
-            <PreviewLink href="https://en.wikipedia.org/wiki/Muay_Thai">
-              Muay Thai ↗
-            </PreviewLink>
+            Started{' '}
+            <PreviewLink href="https://en.wikipedia.org/wiki/Muay_Thai">Muay Thai ↗</PreviewLink>
           </p>
         ),
       },
     ],
   },
   {
-    title: "2015",
+    title: '2015',
     subsections: [
       {
-        label: "Competition",
+        label: 'Competition',
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
@@ -136,10 +134,10 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     ],
   },
   {
-    title: "2018",
+    title: '2018',
     subsections: [
       {
-        label: "Competition",
+        label: 'Competition',
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
@@ -150,12 +148,12 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         ),
       },
       {
-        label: "Education",
+        label: 'Education',
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
-              Went to Dalhousie University out in Halifax, Nova Scotia to pursue
-              Computer Science & Mathematics.
+              Went to Dalhousie University out in Halifax, Nova Scotia to pursue Computer Science &
+              Mathematics.
             </p>
             <TimelineImage
               src="/images/welcome/026_dalhousie.webp"
@@ -168,14 +166,14 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     ],
   },
   {
-    title: "2021",
+    title: '2021',
     compact: true,
     subsections: [
       {
-        label: "Martial Arts",
+        label: 'Martial Arts',
         content: (
           <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400">
-            Started{" "}
+            Started{' '}
             <PreviewLink href="https://en.wikipedia.org/wiki/Brazilian_jiu-jitsu">
               Brazilian Jiu-Jitsu ↗
             </PreviewLink>
@@ -185,10 +183,10 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     ],
   },
   {
-    title: "2022",
+    title: '2022',
     subsections: [
       {
-        label: "Competition",
+        label: 'Competition',
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
@@ -201,29 +199,27 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     ],
   },
   {
-    title: "2023",
+    title: '2023',
     subsections: [
       {
-        label: "Education",
+        label: 'Education',
         content: (
           <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
-            Graduated from Dalhousie University in May with a Bachelor of
-            Computer Science (Hons), a minor in Mathematics, and a certificate
-            in Artificial Intelligence & Intelligent Systems. During my time at
-            Dalhousie I connected and worked with amazing people through
+            Graduated from Dalhousie University in May with a Bachelor of Computer Science (Hons), a
+            minor in Mathematics, and a certificate in Artificial Intelligence & Intelligent
+            Systems. During my time at Dalhousie I connected and worked with amazing people through
             internships, contracts, and projects.
           </p>
         ),
       },
       {
-        label: "Competition",
+        label: 'Competition',
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
-              By the end of the year, I had dominated at the BJJ tournaments and
-              earned my blue belt. This is one of the first tournaments where I
-              was able to get 4 straight submissions — receiving my first gold
-              medal.
+              By the end of the year, I had dominated at the BJJ tournaments and earned my blue
+              belt. This is one of the first tournaments where I was able to get 4 straight
+              submissions — receiving my first gold medal.
             </p>
             <YouTubeEmbed id="Pk-F9U032Nc" title="BJJ tournament - first win" />
           </>
@@ -232,16 +228,15 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     ],
   },
   {
-    title: "2024",
+    title: '2024',
     subsections: [
       {
-        label: "Travel",
+        label: 'Travel',
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
-              Started travelling. I've been to 9 different countries since
-              February and hope to learn about more cultures and study many more
-              languages.
+              Started travelling. I&apos;ve been to 9 different countries since February and hope to
+              learn about more cultures and study many more languages.
             </p>
             <TimelineImage
               src="/images/welcome/014_mountain.webp"
@@ -252,7 +247,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         ),
       },
       {
-        label: "Relocation",
+        label: 'Relocation',
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
@@ -269,10 +264,10 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     ],
   },
   {
-    title: "Now",
+    title: 'Now',
     subsections: [
       {
-        label: "Present",
+        label: 'Present',
         content: (
           <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
             Building things and writing about it :)
