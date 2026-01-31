@@ -141,7 +141,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
-              Had my last Muay Thai fight.
+              Had my last amateur Muay Thai fight.
             </p>
             <YouTubeEmbed id="3tH2AivVQDQ" title="Last Muay Thai fight" />
           </>
