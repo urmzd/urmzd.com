@@ -206,10 +206,10 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         content: (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
-              Graduated from Dalhousie University in May with a Bachelor of Computer Science (Hons),
-              a minor in Mathematics, and a certificate in Artificial Intelligence & Intelligent
-              Systems. During my time at Dalhousie I connected and worked with amazing people
-              through internships, contracts, and projects.
+              Graduated from Dalhousie University in May with a Bachelor of Computer Science with
+              Honours, a minor in Mathematics, and a certificate in Artificial Intelligence &
+              Intelligent Systems. During my time at Dalhousie I connected and worked with amazing
+              people through internships, contracts, and projects.
             </p>
             <PreviewLink href="https://www.arxiv.org/abs/2601.09736">Honors Thesis</PreviewLink>
           </>
