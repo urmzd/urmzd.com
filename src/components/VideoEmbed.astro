@@ -1,0 +1,61 @@
+---
+interface Props {
+  url?: string;
+  id?: string;
+  platform?: 'youtube' | 'vimeo';
+  title?: string;
+}
+
+function parseVideoUrl(url: string): { platform: 'youtube' | 'vimeo'; id: string } | null {
+  // YouTube patterns
+  const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  if (ytMatch) return { platform: 'youtube', id: ytMatch[1] };
+
+  // Vimeo patterns
+  const vimeoMatch = url.match(/(?:vimeo\.com\/|player\.vimeo\.com\/video\/)(\d+)/);
+  if (vimeoMatch) return { platform: 'vimeo', id: vimeoMatch[1] };
+
+  return null;
+}
+
+function getEmbedUrl(platform: string, id: string): string {
+  switch (platform) {
+    case 'youtube':
+      return `https://www.youtube.com/embed/${id}`;
+    case 'vimeo':
+      return `https://player.vimeo.com/video/${id}`;
+    default:
+      throw new Error(`Unsupported platform: ${platform}`);
+  }
+}
+
+const { url, id, platform, title = 'Video player' } = Astro.props;
+
+let resolvedPlatform: 'youtube' | 'vimeo' | undefined = platform;
+let resolvedId: string | undefined = id;
+
+if (url) {
+  const parsed = parseVideoUrl(url);
+  if (parsed) {
+    resolvedPlatform = parsed.platform;
+    resolvedId = parsed.id;
+  }
+}
+
+if (!resolvedPlatform || !resolvedId) {
+  throw new Error('VideoEmbed requires either a valid url or both id and platform props');
+}
+
+const embedUrl = getEmbedUrl(resolvedPlatform, resolvedId);
+---
+
+<div class="relative w-full aspect-video rounded-lg overflow-hidden border border-[var(--color-border)]">
+  <iframe
+    src={embedUrl}
+    title={title}
+    class="absolute inset-0 w-full h-full"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+  ></iframe>
+</div>
