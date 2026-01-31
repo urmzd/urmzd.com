@@ -1,6 +1,6 @@
-"use client";
-import { cn } from "@/lib/utils";
-import type { ReactNode } from "react";
+'use client';
+import { cn } from '@/lib/utils';
+import type { ReactNode } from 'react';
 
 interface AuroraBackgroundProps extends React.HTMLProps<HTMLDivElement> {
   children: ReactNode;
@@ -16,7 +16,7 @@ export const AuroraBackground = ({
   return (
     <div
       className={cn(
-        "relative flex min-h-screen flex-col items-center justify-center bg-zinc-50 text-slate-950 transition-colors dark:bg-zinc-900",
+        'relative flex min-h-screen flex-col items-center justify-center bg-zinc-50 text-slate-950 transition-colors dark:bg-zinc-900',
         className
       )}
       {...props}
@@ -25,13 +25,13 @@ export const AuroraBackground = ({
         className="absolute inset-0 overflow-hidden"
         style={
           {
-            "--aurora":
-              "repeating-linear-gradient(100deg,#3b82f6_10%,#a5b4fc_15%,#93c5fd_20%,#ddd6fe_25%,#60a5fa_30%)",
-            "--dark-gradient":
-              "repeating-linear-gradient(100deg,#000_0%,#000_7%,transparent_10%,transparent_12%,#000_16%)",
-            "--white-gradient":
-              "repeating-linear-gradient(100deg,#fff_0%,#fff_7%,transparent_10%,transparent_12%,#fff_16%)",
-            "--transparent": "transparent",
+            '--aurora':
+              'repeating-linear-gradient(100deg,#3b82f6_10%,#a5b4fc_15%,#93c5fd_20%,#ddd6fe_25%,#60a5fa_30%)',
+            '--dark-gradient':
+              'repeating-linear-gradient(100deg,#000_0%,#000_7%,transparent_10%,transparent_12%,#000_16%)',
+            '--white-gradient':
+              'repeating-linear-gradient(100deg,#fff_0%,#fff_7%,transparent_10%,transparent_12%,#fff_16%)',
+            '--transparent': 'transparent',
           } as React.CSSProperties
         }
       >
