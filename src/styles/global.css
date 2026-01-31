@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -127,15 +127,29 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /* Scroll margin for anchor navigation */
+  h1[id],
+  h2[id],
+  h3[id],
+  h4[id],
+  h5[id],
+  h6[id] {
+    scroll-margin-top: 6rem;
+  }
 }
 
 @keyframes aurora {
   from {
-    background-position: 50% 50%, 50% 50%;
+    background-position:
+      50% 50%,
+      50% 50%;
   }
 
   to {
-    background-position: 350% 50%, 350% 50%;
+    background-position:
+      350% 50%,
+      350% 50%;
   }
 }
 
@@ -242,7 +256,6 @@
 }
 
 @keyframes pulse-focus {
-
   0%,
   80% {
     box-shadow: 0 0 0 0 oklch(0.88 0.08 80 / 0%);
@@ -299,9 +312,7 @@
     width: 70vmax;
     height: 70vmax;
     border-radius: 999px;
-    background: radial-gradient(circle,
-        oklch(0.9 0.08 85 / 65%),
-        transparent 62%);
+    background: radial-gradient(circle, oklch(0.9 0.08 85 / 65%), transparent 62%);
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.6);
     pointer-events: none;
@@ -313,15 +324,10 @@
 
   .splash-texture {
     @apply absolute inset-0;
-    background-image: radial-gradient(circle at 20% 20%,
-        oklch(0.85 0.08 80 / 45%),
-        transparent 55%),
-      radial-gradient(circle at 80% 40%,
-        oklch(0.88 0.05 200 / 35%),
-        transparent 60%),
-      radial-gradient(circle at 40% 80%,
-        oklch(0.92 0.06 40 / 40%),
-        transparent 65%);
+    background-image:
+      radial-gradient(circle at 20% 20%, oklch(0.85 0.08 80 / 45%), transparent 55%),
+      radial-gradient(circle at 80% 40%, oklch(0.88 0.05 200 / 35%), transparent 60%),
+      radial-gradient(circle at 40% 80%, oklch(0.92 0.06 40 / 40%), transparent 65%);
     filter: blur(20px);
     animation: aurora 40s linear infinite;
   }
@@ -339,7 +345,7 @@
   }
 
   .name-script {
-    font-family: "Great Vibes", cursive;
+    font-family: 'Great Vibes', cursive;
     letter-spacing: 0.05em;
   }
 
@@ -368,8 +374,9 @@
 
   .splash-node {
     fill: oklch(0.88 0.08 80 / 70%);
-    offset-path: path("M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600"
-      );
+    offset-path: path(
+      'M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600'
+    );
     animation: node-travel 7.5s ease-out infinite;
     will-change: offset-distance, transform, opacity;
   }
@@ -386,8 +393,9 @@
 
   .splash-tracer {
     fill: oklch(0.9 0.1 80 / 80%);
-    offset-path: path("M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600"
-      );
+    offset-path: path(
+      'M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600'
+    );
     animation: tracer-travel 7.5s linear infinite;
     filter: drop-shadow(0 0 12px oklch(0.9 0.1 80 / 40%));
     will-change: offset-distance, transform;
@@ -412,7 +420,8 @@
   }
 
   .splash-graph-image:hover {
-    transform: translateZ(var(--depth, 0px)) rotateX(var(--tilt, 0deg)) rotateZ(var(--spin, 0deg)) scale(1.08);
+    transform: translateZ(var(--depth, 0px)) rotateX(var(--tilt, 0deg)) rotateZ(var(--spin, 0deg))
+      scale(1.08);
     opacity: 0.95;
     filter: grayscale(0%);
     z-index: 20;
@@ -445,16 +454,21 @@
 
   .splash-textile {
     @apply absolute inset-0;
-    background-image: repeating-linear-gradient(45deg,
+    background-image:
+      repeating-linear-gradient(
+        45deg,
         oklch(0.92 0.02 80 / 15%) 0,
         oklch(0.92 0.02 80 / 15%) 1px,
         transparent 1px,
-        transparent 6px),
-      repeating-linear-gradient(-45deg,
+        transparent 6px
+      ),
+      repeating-linear-gradient(
+        -45deg,
         oklch(0.9 0.03 200 / 12%) 0,
         oklch(0.9 0.03 200 / 12%) 1px,
         transparent 1px,
-        transparent 7px);
+        transparent 7px
+      );
     mix-blend-mode: multiply;
   }
 
@@ -464,7 +478,7 @@
   }
 
   .name-chip::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: -12px;
     border-radius: 999px;
@@ -500,15 +514,10 @@
 
   .hero-texture {
     @apply absolute inset-0 opacity-40;
-    background-image: radial-gradient(circle at 20% 20%,
-        oklch(0.87 0.07 90 / 55%),
-        transparent 55%),
-      radial-gradient(circle at 80% 30%,
-        oklch(0.9 0.04 200 / 35%),
-        transparent 60%),
-      radial-gradient(circle at 40% 80%,
-        oklch(0.92 0.05 30 / 40%),
-        transparent 65%);
+    background-image:
+      radial-gradient(circle at 20% 20%, oklch(0.87 0.07 90 / 55%), transparent 55%),
+      radial-gradient(circle at 80% 30%, oklch(0.9 0.04 200 / 35%), transparent 60%),
+      radial-gradient(circle at 40% 80%, oklch(0.92 0.05 30 / 40%), transparent 65%);
     animation: aurora 50s linear infinite;
   }
 
@@ -524,7 +533,9 @@
 
   .landing-content {
     @apply flex max-w-2xl flex-col items-center gap-6 text-center;
-    transition: opacity 0.8s ease, transform 0.8s ease;
+    transition:
+      opacity 0.8s ease,
+      transform 0.8s ease;
   }
 
   .landing-hidden {
@@ -544,14 +555,8 @@
     opacity: 0;
     transition: opacity 1s ease;
     pointer-events: none;
-    -webkit-mask-image: radial-gradient(circle at 50% 45%,
-        #000 0%,
-        #000 60%,
-        transparent 100%);
-    mask-image: radial-gradient(circle at 50% 45%,
-        #000 0%,
-        #000 60%,
-        transparent 100%);
+    -webkit-mask-image: radial-gradient(circle at 50% 45%, #000 0%, #000 60%, transparent 100%);
+    mask-image: radial-gradient(circle at 50% 45%, #000 0%, #000 60%, transparent 100%);
   }
 
   .textile-visible {
@@ -573,9 +578,7 @@
 
   .textile-glow {
     @apply absolute inset-0;
-    background: radial-gradient(circle at 50% 40%,
-        oklch(0.9 0.05 80 / 30%),
-        transparent 60%);
+    background: radial-gradient(circle at 50% 40%, oklch(0.9 0.05 80 / 30%), transparent 60%);
     opacity: 0.6;
   }
 
@@ -598,7 +601,7 @@
 
   .film-loading-text {
     @apply text-sm text-white/60;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: 'IBM Plex Mono', monospace;
     letter-spacing: 0.1em;
   }
 
@@ -639,10 +642,12 @@
 
   .film-frame-overlay {
     @apply absolute inset-0 flex items-end;
-    background: linear-gradient(to top,
-        rgba(0, 0, 0, 0.85) 0%,
-        rgba(0, 0, 0, 0.4) 40%,
-        transparent 100%);
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.85) 0%,
+      rgba(0, 0, 0, 0.4) 40%,
+      transparent 100%
+    );
     padding: 1rem;
   }
 
@@ -656,7 +661,7 @@
 
   .film-frame-desc {
     @apply text-sm text-white/60;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: 'IBM Plex Mono', monospace;
   }
 
   .film-sprocket {
@@ -687,9 +692,7 @@
 
   .film-vignette {
     @apply pointer-events-none absolute inset-0;
-    background: radial-gradient(ellipse at center,
-        transparent 40%,
-        rgba(0, 0, 0, 0.7) 100%);
+    background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
   }
 
   .final-card-container {
@@ -702,12 +705,12 @@
 
   .final-card-contact-label {
     @apply text-xs uppercase tracking-widest text-muted-foreground/70;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: 'IBM Plex Mono', monospace;
   }
 
   .final-card-email {
     @apply text-sm text-foreground/80 transition-colors hover:text-foreground;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: 'IBM Plex Mono', monospace;
     text-decoration: none;
   }
 
@@ -732,7 +735,7 @@
   }
 
   .rolodex-card-image::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(90deg, oklch(0 0 0 / 80%), transparent 60%);
@@ -805,20 +808,20 @@
 
   .final-card-title {
     @apply text-2xl font-bold sm:text-4xl;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: 'IBM Plex Mono', monospace;
     letter-spacing: 0.04em;
     line-height: 1.1;
   }
 
   .final-card-subtitle {
     @apply text-xs uppercase tracking-[0.25em] text-muted-foreground;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: 'IBM Plex Mono', monospace;
     line-height: 1.2;
   }
 
   .final-card-phonetic {
     @apply text-xs text-muted-foreground/70;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: 'IBM Plex Mono', monospace;
     letter-spacing: 0.06em;
     line-height: 1.2;
     margin-top: 0.5rem;
@@ -826,7 +829,7 @@
 
   .final-card-pronunciation {
     @apply text-xs text-muted-foreground/60;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: 'IBM Plex Mono', monospace;
     letter-spacing: 0.04em;
     line-height: 1.2;
     font-style: italic;
@@ -834,14 +837,14 @@
 
   .final-card-intro {
     @apply text-sm text-foreground/80;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: 'IBM Plex Mono', monospace;
     line-height: 1.4;
     max-width: 30rem;
   }
 
   .final-card-link {
     @apply text-xs uppercase tracking-[0.25em] text-muted-foreground;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: 'IBM Plex Mono', monospace;
     transition: color 0.2s ease;
   }
 
@@ -851,7 +854,9 @@
 
   .final-card-name-link {
     color: inherit;
-    transition: color 0.2s ease, text-shadow 0.2s ease;
+    transition:
+      color 0.2s ease,
+      text-shadow 0.2s ease;
     text-decoration: none;
   }
 
@@ -875,7 +880,9 @@
     max-width: 140px;
     text-align: center;
     backdrop-filter: blur(8px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition:
+      opacity 0.4s ease,
+      transform 0.4s ease;
   }
 
   .timeline-label-inner strong {
@@ -934,7 +941,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .splash-graph-image,
   .splash-burst,
   .splash-path,
