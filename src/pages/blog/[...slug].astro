@@ -1,12 +1,14 @@
 ---
-import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getCollection, render } from "astro:content";
-import { calculateReadTime } from "@/lib/readTime";
-import CodeBlockEnhancer from "@/components/CodeBlockEnhancer";
-import ShareButton from "@/components/ShareButton";
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { calculateReadTime } from '@/lib/readTime';
+import CodeBlockEnhancer from '@/components/CodeBlockEnhancer';
+import ShareButton from '@/components/ShareButton';
+import TableOfContents from '@/components/TableOfContents';
+import MobileTOC from '@/components/MobileTOC';
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog");
+  const posts = await getCollection('blog');
   return posts.map((post) => ({
     params: { slug: post.id },
     props: { post },
@@ -14,11 +16,15 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
-const readTime = calculateReadTime(post.body || "");
+const { Content, headings } = await render(post);
+const readTime = calculateReadTime(post.body || '');
 
-const siteUrl = Astro.site?.toString().replace(/\/$/, "") || "https://urmzd.com";
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://urmzd.com';
 const postUrl = `${siteUrl}/blog/${post.id}`;
+
+// Filter headings to h2 and h3 only
+const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+const showTOC = tocHeadings.length >= 3;
 ---
 
 <BaseLayout
@@ -42,10 +48,11 @@ const postUrl = `${siteUrl}/blog/${post.id}`;
       <div class="mt-4 flex items-center gap-2 text-muted-foreground">
         <time>
           {
-            post.data.pubDate.toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
+            post.data.pubDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              timeZone: 'UTC',
             })
           }
         </time>
@@ -53,8 +60,27 @@ const postUrl = `${siteUrl}/blog/${post.id}`;
         <span>{readTime.text}</span>
       </div>
     </header>
-    <div class="prose prose-neutral dark:prose-invert max-w-none">
-      <Content />
+
+    {
+      showTOC && (
+        <div class="lg:hidden">
+          <MobileTOC client:load headings={tocHeadings} />
+        </div>
+      )
+    }
+
+    <div class={showTOC ? 'lg:grid lg:grid-cols-[1fr_250px] lg:gap-8' : ''}>
+      <div class="prose prose-neutral dark:prose-invert max-w-none">
+        <Content />
+      </div>
+
+      {
+        showTOC && (
+          <aside class="hidden lg:block">
+            <TableOfContents client:load headings={tocHeadings} />
+          </aside>
+        )
+      }
     </div>
   </article>
   <CodeBlockEnhancer client:idle />
