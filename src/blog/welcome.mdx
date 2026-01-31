@@ -7,26 +7,24 @@ tags: ["introduction", "personal"]
 
 import PreviewLink from '../components/PreviewLink';
 import WelcomeTimeline from '../components/WelcomeTimeline';
+import ScriptInline from '../components/ScriptInline';
+import Phonetic from '../components/Phonetic';
 
-Hey! I'm Urmzd Mukhammadnaim (pronounced *oor-moost moo-ha-mid-ni-eem*), and welcome to **urmzd.com**! I'm a man in love with knowledge and writing.
+Hey! I'm Urmzd Mukhammadnaim (<Phonetic client:load ipa="ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm" />), and welcome to **urmzd.com**!
 
-As is often the case, the responsibilities of adulthood pushed my love affairs onto an ever-growing backlog. As a Software Engineer, this effectively meant that
-I'd likely never get back to it.
+My father — a history enthusiast from <PreviewLink client:load href="https://en.wikipedia.org/wiki/Badakhshan_Province">Badakhshan</PreviewLink>, Afghanistan, believed to be the homeland of the prophet <PreviewLink client:load href="https://en.wikipedia.org/wiki/Zoroaster">Zoroaster</PreviewLink> — gave me a name steeped in ancient meaning. *Urmzd* derives from "Ahura Mazda" (<ScriptInline client:load letters="AHURAMAZDA" targetScript="arabic" />), the supreme deity of <PreviewLink client:load href="https://en.wikipedia.org/wiki/Zoroastrianism">Zoroastrianism</PreviewLink>, humanity's oldest monotheistic faith. The name combines the <PreviewLink client:load href="https://en.wikipedia.org/wiki/Proto-Indo-Iranian_language">Proto-Indo-Iranian</PreviewLink> words *Ahura* ("Lord") and *Mazda* ("Wisdom") — together meaning "Lord of Wisdom." The deeper etymology reveals even more: *Ahura* traces to Proto-Indo-European roots meaning "to engender, beget," while *Mazda* comes from "placing one's mind" — to give rise to one's mind, or as I hold it, to shape and share knowledge.
 
-However, I couldn't accept that. As a means of paying homage to my heritage, staying true to my principles, and honouring the <PreviewLink client:load href="https://en.wikipedia.org/wiki/Ahura_Mazda">name</PreviewLink> my father gave me, I present my creation. I plan to explore history, martial arts, technology, art, music, science, math, and philosophy,
-and all the amazing creations and discoveries of humanity. From technical deep-dives to opinions, research, and even the odd essay,
-I plan on publishing a little bit of everything here. 
+This name holds great meaning to me, and this site is my attempt to stay true to it.
 
 This is meant to be a living document — posts may be refined, opinions may evolve, and ideas may deepen as I grow. Since I value transparency and honesty, all changes are tracked on <PreviewLink client:load href="https://github.com/urmzd/urmzd.com">github.com/urmzd/urmzd.com</PreviewLink>, where you can see exactly what evolved and when. There, you can explore, analyze, and critique it to your heart's desire.
 You can open up issues if you want to request a specific topic be covered. Alternatively, if you aren't in tech like the vast majority of people,
 just shoot an email to [hello@urmzd.com](mailto:hello@urmzd.com). I commit to responding as reasonably soon as I can. For now, I plan on publishing one written piece a week, but more often if time allows for it!
 
-A small note before we continue, all blog posts will consist of small snippets at the end of them, and they differ from the topic being covered. I hope that by sharing small snippets
-from different domains, it'll encourage people to explore topics beyond what they know or believe they know.
+A small note before we continue: each post will close with a brief snippet from a different domain. I hope that by sharing these, it'll encourage people to explore topics beyond what they know or believe they know.
 
-So without further ado, here is...
+What does staying true to that name look like in practice? It starts with three principles that guide everything I do.
 
-## My Introduction to You
+## Core Principles
 
 I hold *honesty*, *freedom*, and *family* dear to me. These core principles inform the decisions I make.
 
@@ -34,20 +32,20 @@ I hold *honesty*, *freedom*, and *family* dear to me. These core principles info
 - Freedom: *A state in which one is unbounded by the assumptions created internally or externally*
 - Family: *Relationships in which the kindness received produces profound changes to the state of one's life*
 
-With this in mind, I believe that it's difficult to learn about someone without understanding more of their story, and the actions they've taken to be here in this moment. 
-Instead of taking the words written as an absolute reflection of who I am, I hope that the knowledge I share and the topics I explore pave the way for your own interpretation.
-
-All that you see below is a direct result of the innate attribute — **Curiosity**. Instead of just writing about who I am, let me show you.
+With this in mind, I believe it's difficult to learn about someone without understanding their story. Instead of just describing who I am, let me show you through the milestones that shaped me.
 
 ## The Timeline
 
 <WelcomeTimeline client:load />
 
-If you're still here, thank you for taking the time to read this far! I hope that you'll find something of value in the posts to come.
+That's the path so far. Now, as promised, here's something to spark curiosity in a completely different direction.
 
 ## Snippet of the Week
 
 With the rapid development and integration of LLMs, I believe it's important to understand the foundations that brought us here — the people, the discoveries, and how those changes shaped where we are today.
+
+<details>
+<summary>**Explore: Cosine Similarity — The Math Behind AI Search**</summary>
 
 ### The Foundation
 
@@ -86,8 +84,6 @@ $$
 \text{sim}(\vec{a}, \vec{b}) = \frac{\vec{a} \cdot \vec{b}}{\lVert\vec{a}\rVert \cdot \lVert\vec{b}\rVert}
 $$
 
-
-
 ### The Code
 
 ```python
@@ -113,6 +109,8 @@ def cosine_similarity(a: Embedding, b: Embedding) -> float:
     return dot_product(a, b) / (norm(a) * norm(b))
 ```
 
+</details>
+
 ### The Connection
 
 Modern LLMs like GPT, Claude, Gemini, and others convert text into high-dimensional vectors called **embeddings** — numerical representations that capture semantic meaning. Words, sentences, or entire documents that are similar in meaning end up as vectors pointing in similar directions.
@@ -126,6 +124,8 @@ When you search for something using an AI-powered tool, or when a chatbot retrie
 The math above — developed centuries ago by mathematicians studying triangles and angles — now powers the similarity calculations running billions of times daily across AI systems worldwide.
 
 ## Recommended Books
+
+Two books that have shaped my thinking:
 
 - <PreviewLink client:load href="https://www.amazon.com/Meditations-Penguin-Classics-Marcus-Aurelius/dp/0140449337">Meditations: Marcus Aurelius</PreviewLink>
 - <PreviewLink client:load href="https://www.amazon.com/Four-Thousand-Weeks-Management-Mortals/dp/0374159122">Four Thousand Weeks: Oliver Burkeman</PreviewLink>
