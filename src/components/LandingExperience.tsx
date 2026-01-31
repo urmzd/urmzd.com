@@ -2,19 +2,19 @@
 
 import { motion } from 'motion/react';
 import PreviewLink from '@/components/PreviewLink';
-import { BackgroundBeams } from '@/components/ui/background-beams';
+import { PlexusBackground } from '@/components/ui/plexus-background';
 
 export default function LandingExperience() {
   return (
     <div className="landing-root">
-      <BackgroundBeams />
+      <PlexusBackground className="pointer-events-auto" />
       <motion.div
-        className="final-card-container"
+        className="final-card-container pointer-events-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.4 }}
       >
-        <div className="final-card">
+        <div className="final-card pointer-events-auto">
           <h1 className="final-card-title">
             <PreviewLink
               href="https://en.wikipedia.org/wiki/Ahura_Mazda"
@@ -29,8 +29,6 @@ export default function LandingExperience() {
           </h1>
 
           <p className="final-card-phonetic">/ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/</p>
-
-          <p className="final-card-pronunciation">oor-moozd, moo-ha-mid-nie,eem</p>
 
           <div className="final-card-contact">
             <span className="final-card-contact-label">Contact me:</span>

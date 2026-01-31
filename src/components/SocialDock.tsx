@@ -3,7 +3,7 @@
 import { FloatingDock } from '@/components/ui/floating-dock';
 import { socialLinks, type SocialLink } from '@/data/socialLinks';
 import { SiArxiv, SiBehance, SiGithub } from '@icons-pack/react-simple-icons';
-import { IconBrandLinkedin, IconMail } from '@tabler/icons-react';
+import { IconBrandLinkedin, IconMail, IconRss } from '@tabler/icons-react';
 
 const iconMap: Record<SocialLink['icon'], React.ReactNode> = {
   github: <SiGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
@@ -11,6 +11,7 @@ const iconMap: Record<SocialLink['icon'], React.ReactNode> = {
   email: <IconMail className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
   behance: <SiBehance className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
   arxiv: <SiArxiv className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+  rss: <IconRss className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
 };
 
 const dockItems = socialLinks.map((link) => ({
