@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { IconList, IconChevronDown } from '@tabler/icons-react';
