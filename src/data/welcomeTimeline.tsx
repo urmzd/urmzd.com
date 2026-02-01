@@ -4,7 +4,7 @@ import YouTubeEmbed from '@/components/YouTubeEmbed';
 
 interface Subsection {
   label: string;
-  content: React.ReactNode;
+  content: () => React.ReactNode;
 }
 
 interface TimelineEntryData {
