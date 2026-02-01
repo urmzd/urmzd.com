@@ -1,3 +1,4 @@
+'use client';
 import PreviewLink from '@/components/PreviewLink';
 import TimelineImage from '@/components/TimelineImage';
 import YouTubeEmbed from '@/components/YouTubeEmbed';
@@ -19,7 +20,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Origin',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
               Born in Dushanbe, Tajikistan.
@@ -39,7 +40,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Relocation',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
               Moved to Halifax, Nova Scotia.
@@ -59,7 +60,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Relocation',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
               Moved to Toronto, Ontario.
@@ -79,7 +80,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Creative',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
               Created a YouTube channel and started my short stint as a Graphics Designer and Video
@@ -108,7 +109,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Martial Arts',
-        content: (
+        content: () => (
           <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400">
             Started{' '}
             <PreviewLink href="https://en.wikipedia.org/wiki/Muay_Thai">Muay Thai</PreviewLink>
@@ -122,7 +123,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Competition',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
               Competed for the first time in Muay Thai.
@@ -138,7 +139,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Competition',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
               Had my last amateur Muay Thai fight.
@@ -149,7 +150,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
       },
       {
         label: 'Education',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
               Went to Dalhousie University out in Halifax, Nova Scotia to pursue Computer Science &
@@ -171,7 +172,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Martial Arts',
-        content: (
+        content: () => (
           <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400">
             Started{' '}
             <PreviewLink href="https://en.wikipedia.org/wiki/Brazilian_jiu-jitsu">
@@ -187,7 +188,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Competition',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
               Competed for the first time in Brazilian Jiu-Jitsu.
@@ -203,7 +204,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Education',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
               Graduated from Dalhousie University in May with a Bachelor of Computer Science with
@@ -217,7 +218,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
       },
       {
         label: 'Competition',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
               By the end of the year, I had dominated at the BJJ tournaments and earned my blue
@@ -235,7 +236,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Travel',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
               Started travelling. I&apos;ve been to 9 different countries since February and hope to
@@ -251,7 +252,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
       },
       {
         label: 'Relocation',
-        content: (
+        content: () => (
           <>
             <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
               Moved to Austin, Texas.
@@ -271,7 +272,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
     subsections: [
       {
         label: 'Present',
-        content: (
+        content: () => (
           <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
             Building things and writing about it :)
           </p>
