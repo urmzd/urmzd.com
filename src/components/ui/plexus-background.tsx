@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 interface Particle {
   x: number;
@@ -30,19 +30,21 @@ export function PlexusBackground({
   const isAttractingRef = useRef(false);
   const animationFrameRef = useRef<number>(0);
   const resizeTimeoutRef = useRef<number>(0);
+  const particleColorRef = useRef('rgba(255, 255, 255, 0.5)');
+  const lineColorRef = useRef('rgba(255, 255, 255,');
 
-  const [isDarkMode, setIsDarkMode] = useState(true);
-
-  // Detect theme and listen for changes
+  // Detect theme and listen for changes - update refs instead of state
   useEffect(() => {
-    const checkDarkMode = () => {
-      return document.documentElement.classList.contains('dark');
+    const updateColors = (dark: boolean) => {
+      particleColorRef.current = dark ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)';
+      lineColorRef.current = dark ? 'rgba(255, 255, 255,' : 'rgba(0, 0, 0,';
     };
 
-    setIsDarkMode(checkDarkMode());
+    const checkDarkMode = () => document.documentElement.classList.contains('dark');
+    updateColors(checkDarkMode());
 
     const observer = new MutationObserver(() => {
-      setIsDarkMode(checkDarkMode());
+      updateColors(checkDarkMode());
     });
 
     observer.observe(document.documentElement, {
@@ -52,10 +54,6 @@ export function PlexusBackground({
 
     return () => observer.disconnect();
   }, []);
-
-  // Compute colors based on theme
-  const particleColor = isDarkMode ? 'rgba(255, 255, 255, 0.5)' : 'rgba(0, 0, 0, 0.5)';
-  const lineColor = isDarkMode ? 'rgba(255, 255, 255,' : 'rgba(0, 0, 0,';
 
   const initParticles = useCallback(
     (width: number, height: number) => {
@@ -81,10 +79,10 @@ export function PlexusBackground({
     (ctx: CanvasRenderingContext2D, particle: Particle) => {
       ctx.beginPath();
       ctx.arc(particle.x, particle.y, 2, 0, Math.PI * 2);
-      ctx.fillStyle = particleColor;
+      ctx.fillStyle = particleColorRef.current;
       ctx.fill();
     },
-    [particleColor]
+    [] // No dependencies - reads from ref
   );
 
   const drawLine = useCallback(
@@ -93,11 +91,11 @@ export function PlexusBackground({
       ctx.beginPath();
       ctx.moveTo(p1.x, p1.y);
       ctx.lineTo(p2.x, p2.y);
-      ctx.strokeStyle = `${lineColor} ${opacity * 0.3})`;
+      ctx.strokeStyle = `${lineColorRef.current} ${opacity * 0.3})`;
       ctx.lineWidth = 1;
       ctx.stroke();
     },
-    [connectionDistance, lineColor]
+    [connectionDistance] // Only connectionDistance, not lineColor
   );
 
   const updateParticle = useCallback(
