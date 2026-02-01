@@ -4,12 +4,12 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 interface Subsection {
   label: string;
-  content: React.ReactNode;
+  content: () => React.ReactNode;
 }
 
 interface TimelineEntryData {
   title: string;
-  content?: React.ReactNode;
+  content?: () => React.ReactNode;
   subsections?: Subsection[];
   compact?: boolean;
 }
@@ -44,7 +44,7 @@ const TimelineSegment = ({
   const segmentHeight = endY - startY;
   const heightTransform = useTransform(scrollYProgress, [segmentStart, segmentEnd], ['0%', '100%']);
 
-  if (segmentHeight <= 0) return null;
+  if (segmentHeight <= 0) return <></>;
 
   // Create mask gradient for fade effect at edges
   const getMaskStyle = () => {
@@ -195,7 +195,7 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
 
   return (
     <div
-      className="w-full bg-background font-sans md:px-10 scroll-snap-y-proximity"
+      className="relative w-full bg-background font-sans md:px-10 scroll-snap-y-proximity"
       ref={containerRef}
     >
       {(title || description) && (
@@ -215,7 +215,7 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
 
           const renderContent = () => (
             <>
-              {item.content}
+              {item.content?.()}
               {item.subsections?.map((sub, i) => (
                 <div
                   key={i}
@@ -226,7 +226,7 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
                   <span className="text-xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400 font-medium">
                     {sub.label}
                   </span>
-                  <div className="mt-2">{sub.content}</div>
+                  <div className="mt-2">{sub.content()}</div>
                 </div>
               ))}
             </>
@@ -234,7 +234,7 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
 
           const renderCompactContent = () => (
             <>
-              {item.content}
+              {item.content?.()}
               {item.subsections?.map((sub, i) => (
                 <div
                   key={i}
@@ -242,7 +242,7 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
                     i > 0 ? 'mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-800' : ''
                   }
                 >
-                  {sub.content}
+                  {sub.content()}
                 </div>
               ))}
             </>
