@@ -25,6 +25,12 @@ export default defineConfig({
   vite: {
     plugins: [
       tailwindcss()
-    ]
+    ],
+    optimizeDeps: {
+      include: ['motion', 'motion/react']
+    },
+    ssr: {
+      noExternal: ['motion']
+    }
   }
 });
