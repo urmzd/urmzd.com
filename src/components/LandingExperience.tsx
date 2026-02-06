@@ -17,12 +17,12 @@ export default function LandingExperience() {
         <div className="final-card pointer-events-auto">
           <h1 className="final-card-title">
             <PreviewLink
-              href="https://en.wikipedia.org/wiki/Ahura_Mazda"
+              href="https://linkedin.com/in/urmzd"
               className="final-card-name-link"
               width={220}
               height={140}
             >
-              <span aria-label="Urmzd Mukhammadnaim, linked to Ahura Mazda page">
+              <span aria-label="Urmzd Mukhammadnaim, linked to LinkedIn profile">
                 Urmzd Mukhammadnaim
               </span>
             </PreviewLink>
