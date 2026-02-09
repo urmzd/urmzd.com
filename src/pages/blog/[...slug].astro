@@ -5,6 +5,7 @@ import { calculateReadTime } from '@/lib/readTime';
 import CodeBlockEnhancer from '@/components/CodeBlockEnhancer';
 import HeadingLinkEnhancer from '@/components/HeadingLinkEnhancer';
 import ShareButton from '@/components/ShareButton';
+import CopyMarkdownButton from '@/components/CopyMarkdownButton';
 import TableOfContents from '@/components/TableOfContents';
 import MobileTOC from '@/components/MobileTOC';
 
@@ -39,12 +40,37 @@ const showTOC = tocHeadings.length >= 3;
     <header class="mb-8">
       <div class="flex items-start justify-between gap-4">
         <h1 class="text-4xl font-bold">{post.data.title}</h1>
-        <ShareButton
-          client:load
-          url={postUrl}
-          title={post.data.title}
-          description={post.data.description}
-        />
+        <div class="flex items-center gap-2">
+          <CopyMarkdownButton
+            client:load
+            postBody={post.body}
+            postFrontmatter={{
+              title: post.data.title,
+              description: post.data.description,
+              pubDate: post.data.pubDate.toISOString().split('T')[0],
+              updatedDate: post.data.updatedDate?.toISOString().split('T')[0],
+              heroImage: post.data.heroImage,
+              tags: post.data.tags,
+            }}
+            slug={post.id}
+          />
+          <ShareButton
+            client:load
+            url={postUrl}
+            title={post.data.title}
+            description={post.data.description}
+            postBody={post.body}
+            postFrontmatter={{
+              title: post.data.title,
+              description: post.data.description,
+              pubDate: post.data.pubDate.toISOString().split('T')[0],
+              updatedDate: post.data.updatedDate?.toISOString().split('T')[0],
+              heroImage: post.data.heroImage,
+              tags: post.data.tags,
+            }}
+            slug={post.id}
+          />
+        </div>
       </div>
       <div class="mt-4 flex items-center gap-2 text-muted-foreground">
         <time>

@@ -8,13 +8,18 @@ import {
   IconBrandFacebook,
   IconLink,
   IconCheck,
+  IconDownload,
 } from '@tabler/icons-react';
+import { mdxToMarkdown, type PostFrontmatter } from '../lib/mdxToMarkdown';
 
 interface ShareButtonProps {
   url: string;
   title: string;
   description?: string;
   variant?: 'icon' | 'button';
+  postBody?: string;
+  postFrontmatter?: PostFrontmatter;
+  slug?: string;
 }
 
 interface ShareOption {
@@ -28,6 +33,9 @@ export default function ShareButton({
   title,
   description = '',
   variant = 'button',
+  postBody,
+  postFrontmatter,
+  slug,
 }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -84,6 +92,21 @@ export default function ShareButton({
     }
   };
 
+  const handleDownload = () => {
+    if (!postBody || !postFrontmatter) return;
+    const markdown = mdxToMarkdown(postBody, postFrontmatter);
+    const blob = new Blob([markdown], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${slug || 'post'}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setIsOpen(false);
+  };
+
   const shareOptions: ShareOption[] = [
     {
       name: 'X',
@@ -121,6 +144,15 @@ export default function ShareButton({
         setIsOpen(false);
       },
     },
+    ...(postBody && postFrontmatter
+      ? [
+          {
+            name: 'Download',
+            icon: <IconDownload size={18} />,
+            action: handleDownload,
+          },
+        ]
+      : []),
     {
       name: copied ? 'Copied!' : 'Copy Link',
       icon: copied ? <IconCheck size={18} /> : <IconLink size={18} />,
