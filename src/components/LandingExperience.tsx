@@ -12,7 +12,7 @@ export default function LandingExperience() {
         className="final-card-container pointer-events-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
       >
         <div className="final-card pointer-events-auto">
           <h1 className="final-card-title">
