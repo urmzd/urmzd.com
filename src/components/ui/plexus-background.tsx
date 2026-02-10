@@ -17,7 +17,33 @@ interface Particle {
   id: number;
 }
 
-type GalaxyState = 'drifting' | 'collapsing' | 'collapsed' | 'expanding';
+interface WaveEmitter {
+  baseFracX: number;
+  baseFracY: number;
+  x: number;
+  y: number;
+  wavelength: number;
+  period: number;
+  phase: number;
+  radialAmplitude: number;
+  tangentialAmplitude: number;
+  decayAlpha: number;
+  flarePeriod: number;
+  flarePhase: number;
+  flareBaseLevel: number;
+  flarePeakLevel: number;
+  orbitRadius: number;
+  orbitSpeed: number;
+  orbitPhase: number;
+}
+
+interface Point3D {
+  x: number;
+  y: number;
+  z: number;
+}
+
+type GalaxyState = 'drifting' | 'collapsing' | 'shape_forming' | 'expanding';
 
 // =============================================================================
 // Spatial Grid Partitioning
@@ -65,8 +91,292 @@ const getOpacityBand = (opacity: number): number =>
 const COLLAPSE_DURATION = 1500;
 const EXPAND_DURATION = 1200;
 
+const SHAPE_NAMES = ['sphere', 'cube', 'pyramid', 'torus'] as const;
+type ShapeName = (typeof SHAPE_NAMES)[number];
+const SHAPE_CYCLE_DURATION = 8000;
+const SHAPE_TRANSITION_DURATION = 2000;
+const SHAPE_SPRING_STIFFNESS = 0.02;
+const SHAPE_SPRING_DAMPING = 0.9;
+const SHAPE_ROTATION_SPEED_Y = 0.3;
+const SHAPE_ROTATION_SPEED_X = 0.15;
+
+const EMITTER_CONFIGS = [
+  {
+    fracX: 0.5,
+    fracY: 0.5,
+    period: 8,
+    wavelengthFrac: 0.25,
+    flarePeriod: 12,
+    radialAmp: 0.043,
+    tangentialAmp: 0.023,
+    decayAlpha: 1.5,
+    flareBase: 0.3,
+    flarePeak: 0.7,
+    orbitRadiusFrac: 0.04,
+    orbitSpeed: 0.15,
+    phase: 0,
+    flarePhase: 0,
+    orbitPhase: 0,
+  },
+  {
+    fracX: 0.25,
+    fracY: 0.3,
+    period: 11,
+    wavelengthFrac: 0.2,
+    flarePeriod: 17,
+    radialAmp: 0.034,
+    tangentialAmp: 0.029,
+    decayAlpha: 1.8,
+    flareBase: 0.25,
+    flarePeak: 0.75,
+    orbitRadiusFrac: 0.035,
+    orbitSpeed: 0.12,
+    phase: Math.PI * 0.7,
+    flarePhase: Math.PI * 0.5,
+    orbitPhase: Math.PI * 0.3,
+  },
+  {
+    fracX: 0.75,
+    fracY: 0.7,
+    period: 15,
+    wavelengthFrac: 0.33,
+    flarePeriod: 21,
+    radialAmp: 0.029,
+    tangentialAmp: 0.017,
+    decayAlpha: 1.2,
+    flareBase: 0.35,
+    flarePeak: 0.65,
+    orbitRadiusFrac: 0.045,
+    orbitSpeed: 0.1,
+    phase: Math.PI * 1.3,
+    flarePhase: Math.PI * 1.1,
+    orbitPhase: Math.PI * 0.8,
+  },
+  {
+    fracX: 0.8,
+    fracY: 0.2,
+    period: 7,
+    wavelengthFrac: 0.15,
+    flarePeriod: 10,
+    radialAmp: 0.051,
+    tangentialAmp: 0.034,
+    decayAlpha: 2.0,
+    flareBase: 0.2,
+    flarePeak: 0.8,
+    orbitRadiusFrac: 0.03,
+    orbitSpeed: 0.18,
+    phase: Math.PI * 0.4,
+    flarePhase: Math.PI * 1.7,
+    orbitPhase: Math.PI * 1.5,
+  },
+];
+
 function easeInOutCubic(t: number): number {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function computeWaveForce(
+  emitter: WaveEmitter,
+  px: number,
+  py: number,
+  timeSec: number,
+  maxDist: number
+): { fx: number; fy: number } {
+  const dx = px - emitter.x;
+  const dy = py - emitter.y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  if (dist < 1) return { fx: 0, fy: 0 };
+
+  const invDist = 1 / dist;
+  const radialX = dx * invDist;
+  const radialY = dy * invDist;
+  const tangentialX = -dy * invDist;
+  const tangentialY = dx * invDist;
+
+  const k = (2 * Math.PI) / emitter.wavelength;
+  const omega = (2 * Math.PI) / emitter.period;
+  const theta = k * dist - omega * timeSec + emitter.phase;
+  const decay = Math.exp((-emitter.decayAlpha * dist) / maxDist);
+
+  const omegaFlare = (2 * Math.PI) / emitter.flarePeriod;
+  const halfSin = 0.5 + 0.5 * Math.sin(omegaFlare * timeSec + emitter.flarePhase);
+  const envelope = emitter.flareBaseLevel + emitter.flarePeakLevel * halfSin * halfSin;
+
+  const sinTheta = Math.sin(theta);
+  const cosTheta = Math.cos(theta);
+
+  const fr = emitter.radialAmplitude * envelope * sinTheta * decay;
+  const ft = emitter.tangentialAmplitude * envelope * cosTheta * decay;
+
+  return {
+    fx: fr * radialX + ft * tangentialX,
+    fy: fr * radialY + ft * tangentialY,
+  };
+}
+
+// =============================================================================
+// 3D Shape Generators
+// =============================================================================
+
+function generateSpherePoints(n: number, radius: number): Point3D[] {
+  const points: Point3D[] = [];
+  const goldenRatio = (1 + Math.sqrt(5)) / 2;
+  for (let i = 0; i < n; i++) {
+    const theta = Math.acos(1 - (2 * (i + 0.5)) / n);
+    const phi = (2 * Math.PI * i) / goldenRatio;
+    points.push({
+      x: radius * Math.sin(theta) * Math.cos(phi),
+      y: radius * Math.sin(theta) * Math.sin(phi),
+      z: radius * Math.cos(theta),
+    });
+  }
+  return points;
+}
+
+function generateCubePoints(n: number, halfSize: number): Point3D[] {
+  const points: Point3D[] = [];
+  const perFace = Math.ceil(n / 6);
+  const faces: Array<(u: number, v: number) => Point3D> = [
+    (u, v) => ({ x: halfSize, y: u, z: v }),
+    (u, v) => ({ x: -halfSize, y: u, z: v }),
+    (u, v) => ({ x: u, y: halfSize, z: v }),
+    (u, v) => ({ x: u, y: -halfSize, z: v }),
+    (u, v) => ({ x: u, y: v, z: halfSize }),
+    (u, v) => ({ x: u, y: v, z: -halfSize }),
+  ];
+  for (const face of faces) {
+    for (let i = 0; i < perFace && points.length < n; i++) {
+      const u = (Math.random() * 2 - 1) * halfSize;
+      const v = (Math.random() * 2 - 1) * halfSize;
+      points.push(face(u, v));
+    }
+  }
+  return points;
+}
+
+function generatePyramidPoints(n: number, radius: number): Point3D[] {
+  const points: Point3D[] = [];
+  const height = radius * 1.5;
+  const apex: Point3D = { x: 0, y: -height / 2, z: 0 };
+  const baseY = height / 2;
+  const baseCorners: Point3D[] = [
+    { x: -radius, y: baseY, z: -radius },
+    { x: radius, y: baseY, z: -radius },
+    { x: radius, y: baseY, z: radius },
+    { x: -radius, y: baseY, z: radius },
+  ];
+
+  // Base points
+  const baseCount = Math.floor(n * 0.3);
+  for (let i = 0; i < baseCount; i++) {
+    const u = Math.random();
+    const v = Math.random();
+    points.push({
+      x: -radius + u * 2 * radius,
+      y: baseY,
+      z: -radius + v * 2 * radius,
+    });
+  }
+
+  // Triangular face points
+  const faceCount = n - baseCount;
+  const perFace = Math.ceil(faceCount / 4);
+  for (let f = 0; f < 4; f++) {
+    const c1 = baseCorners[f];
+    const c2 = baseCorners[(f + 1) % 4];
+    for (let i = 0; i < perFace && points.length < n; i++) {
+      let u = Math.random();
+      let v = Math.random();
+      if (u + v > 1) {
+        u = 1 - u;
+        v = 1 - v;
+      }
+      const w = 1 - u - v;
+      points.push({
+        x: apex.x * w + c1.x * u + c2.x * v,
+        y: apex.y * w + c1.y * u + c2.y * v,
+        z: apex.z * w + c1.z * u + c2.z * v,
+      });
+    }
+  }
+  return points;
+}
+
+function generateTorusPoints(n: number, majorRadius: number): Point3D[] {
+  const points: Point3D[] = [];
+  const minorRadius = majorRadius * 0.35;
+  const goldenRatio = (1 + Math.sqrt(5)) / 2;
+  for (let i = 0; i < n; i++) {
+    const theta = (2 * Math.PI * i) / n;
+    const phi = (2 * Math.PI * i) / goldenRatio;
+    const x = (majorRadius + minorRadius * Math.cos(phi)) * Math.cos(theta);
+    const y = minorRadius * Math.sin(phi);
+    const z = (majorRadius + minorRadius * Math.cos(phi)) * Math.sin(theta);
+    points.push({ x, y, z });
+  }
+  return points;
+}
+
+function generateShapePoints(shape: ShapeName, n: number, baseSize: number): Point3D[] {
+  switch (shape) {
+    case 'sphere':
+      return generateSpherePoints(n, baseSize);
+    case 'cube':
+      return generateCubePoints(n, baseSize);
+    case 'pyramid':
+      return generatePyramidPoints(n, baseSize);
+    case 'torus':
+      return generateTorusPoints(n, baseSize);
+  }
+}
+
+function lerpPoint3D(a: Point3D, b: Point3D, t: number): Point3D {
+  return {
+    x: a.x + (b.x - a.x) * t,
+    y: a.y + (b.y - a.y) * t,
+    z: a.z + (b.z - a.z) * t,
+  };
+}
+
+function rotatePoint(p: Point3D, rotY: number, rotX: number): Point3D {
+  // Y-axis rotation
+  const cosY = Math.cos(rotY);
+  const sinY = Math.sin(rotY);
+  const x1 = p.x * cosY + p.z * sinY;
+  const z1 = -p.x * sinY + p.z * cosY;
+  // X-axis rotation
+  const cosX = Math.cos(rotX);
+  const sinX = Math.sin(rotX);
+  const y1 = p.y * cosX - z1 * sinX;
+  const z2 = p.y * sinX + z1 * cosX;
+  return { x: x1, y: y1, z: z2 };
+}
+
+function projectTo2D(
+  p: Point3D,
+  centerX: number,
+  centerY: number,
+  focalLength: number
+): { x: number; y: number } {
+  const scale = focalLength / (focalLength + p.z);
+  return {
+    x: centerX + p.x * scale,
+    y: centerY + p.y * scale,
+  };
+}
+
+function computeShapeTargets(
+  shape3D: Point3D[],
+  rotY: number,
+  rotX: number,
+  cx: number,
+  cy: number,
+  focalLen: number
+): Array<{ x: number; y: number }> {
+  return shape3D.map((p) => {
+    const rotated = rotatePoint(p, rotY, rotX);
+    return projectTo2D(rotated, cx, cy, focalLen);
+  });
 }
 
 // =============================================================================
@@ -150,9 +460,20 @@ export function PlexusBackground({
   const channelRef = useRef('255, 255, 255');
   const lineColorRef = useRef('rgba(255, 255, 255,');
 
+  const emittersRef = useRef<WaveEmitter[]>([]);
+
   const stateRef = useRef<GalaxyState>('drifting');
   const stateStartTimeRef = useRef<number>(Date.now());
   const lastFrameTimeRef = useRef(0);
+
+  // Shape formation refs
+  const shapeIndexRef = useRef(0);
+  const shapePoints3DRef = useRef<Point3D[]>([]);
+  const shapeTimerRef = useRef(0);
+  const rotationRef = useRef({ y: 0, x: 0 });
+  const shapeTargets2DRef = useRef<Array<{ x: number; y: number }>>([]);
+  const prevShapePoints3DRef = useRef<Point3D[]>([]);
+  const shapeTransitionStartRef = useRef(0);
 
   // Theme detection
   useEffect(() => {
@@ -175,8 +496,8 @@ export function PlexusBackground({
         particles.push({
           x: Math.random() * width,
           y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
+          vx: (Math.random() - 0.5) * 0.08,
+          vy: (Math.random() - 0.5) * 0.08,
           baseX: 0,
           baseY: 0,
           twinkleSpeed: 0.5 + Math.random() * 2.5,
@@ -190,6 +511,40 @@ export function PlexusBackground({
       return particles;
     },
     [particleCount]
+  );
+
+  const initEmitters = useCallback((width: number, height: number): WaveEmitter[] => {
+    const diag = Math.sqrt(width * width + height * height);
+    return EMITTER_CONFIGS.map((cfg) => ({
+      baseFracX: cfg.fracX,
+      baseFracY: cfg.fracY,
+      x: cfg.fracX * width,
+      y: cfg.fracY * height,
+      wavelength: cfg.wavelengthFrac * diag,
+      period: cfg.period,
+      phase: cfg.phase,
+      radialAmplitude: cfg.radialAmp,
+      tangentialAmplitude: cfg.tangentialAmp,
+      decayAlpha: cfg.decayAlpha,
+      flarePeriod: cfg.flarePeriod,
+      flarePhase: cfg.flarePhase,
+      flareBaseLevel: cfg.flareBase,
+      flarePeakLevel: cfg.flarePeak,
+      orbitRadius: cfg.orbitRadiusFrac * diag,
+      orbitSpeed: cfg.orbitSpeed,
+      orbitPhase: cfg.orbitPhase,
+    }));
+  }, []);
+
+  const updateEmitterPositions = useCallback(
+    (emitters: WaveEmitter[], width: number, height: number, timeSec: number) => {
+      for (const e of emitters) {
+        e.x = e.baseFracX * width + e.orbitRadius * Math.cos(e.orbitSpeed * timeSec + e.orbitPhase);
+        e.y =
+          e.baseFracY * height + e.orbitRadius * Math.sin(e.orbitSpeed * timeSec + e.orbitPhase);
+      }
+    },
+    []
   );
 
   const drawParticle = useCallback((ctx: CanvasRenderingContext2D, p: Particle, now: number) => {
@@ -223,8 +578,19 @@ export function PlexusBackground({
           particle.vx += (dx / dist) * force;
           particle.vy += (dy / dist) * force;
         }
-        particle.vx *= 0.999;
-        particle.vy *= 0.999;
+
+        // Wave interference forces from all emitters
+        const emitters = emittersRef.current;
+        const maxDist = Math.sqrt(width * width + height * height);
+        const timeSec = now * 0.001;
+        for (let e = 0; e < emitters.length; e++) {
+          const wf = computeWaveForce(emitters[e], particle.x, particle.y, timeSec, maxDist);
+          particle.vx += wf.fx;
+          particle.vy += wf.fy;
+        }
+
+        particle.vx *= 0.985;
+        particle.vy *= 0.985;
       } else if (state === 'collapsing') {
         const t = Math.min(elapsed / COLLAPSE_DURATION, 1);
         const ease = easeInOutCubic(t);
@@ -239,24 +605,28 @@ export function PlexusBackground({
           particle.vx += (-dy / dist) * 0.08 * ease;
           particle.vy += (dx / dist) * 0.08 * ease;
         }
+        // Wave perturbations — ramp in with collapse progress
+        const emitters = emittersRef.current;
+        const maxDist = Math.sqrt(width * width + height * height);
+        const timeSec = now * 0.001;
+        for (let e = 0; e < emitters.length; e++) {
+          const wf = computeWaveForce(emitters[e], particle.x, particle.y, timeSec, maxDist);
+          particle.vx += wf.fx * 0.5 * ease;
+          particle.vy += wf.fy * 0.5 * ease;
+        }
         particle.vx *= 0.98;
         particle.vy *= 0.98;
-      } else if (state === 'collapsed') {
-        const dx = centerX - particle.x;
-        const dy = centerY - particle.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        // Orbit radius scales with viewport — covers the content card area
-        const orbitRadius = Math.min(width, height) * 0.25;
-        if (dist > 0) {
-          const springForce = Math.max(0, dist - orbitRadius) * 0.01;
-          particle.vx += (dx / dist) * springForce;
-          particle.vy += (dy / dist) * springForce;
-          // Gentle tangential rotation
-          particle.vx += (-dy / dist) * 0.03;
-          particle.vy += (dx / dist) * 0.03;
+      } else if (state === 'shape_forming') {
+        const targets = shapeTargets2DRef.current;
+        if (targets.length > 0) {
+          const target = targets[particle.id % targets.length];
+          const dx = target.x - particle.x;
+          const dy = target.y - particle.y;
+          particle.vx += dx * SHAPE_SPRING_STIFFNESS;
+          particle.vy += dy * SHAPE_SPRING_STIFFNESS;
+          particle.vx *= SHAPE_SPRING_DAMPING;
+          particle.vy *= SHAPE_SPRING_DAMPING;
         }
-        particle.vx *= 0.97;
-        particle.vy *= 0.97;
       } else if (state === 'expanding') {
         const t = Math.min(elapsed / EXPAND_DURATION, 1);
         const damping = 0.97 + 0.02 * t; // 0.97 → 0.99
@@ -303,6 +673,30 @@ export function PlexusBackground({
 
     let { width, height } = setupCanvas();
     particlesRef.current = initParticles(width, height);
+    emittersRef.current = initEmitters(width, height);
+
+    const initShapeForming = (w: number, h: number) => {
+      shapeIndexRef.current = 0;
+      rotationRef.current = { y: 0, x: 0 };
+      prevShapePoints3DRef.current = [];
+      shapeTransitionStartRef.current = 0;
+      const baseSize = Math.min(w, h) * 0.2;
+      shapePoints3DRef.current = generateShapePoints(
+        SHAPE_NAMES[0],
+        particlesRef.current.length,
+        baseSize
+      );
+      shapeTimerRef.current = Date.now();
+      const focalLen = Math.min(w, h) * 2;
+      shapeTargets2DRef.current = computeShapeTargets(
+        shapePoints3DRef.current,
+        rotationRef.current.y,
+        rotationRef.current.x,
+        w / 2,
+        h / 2,
+        focalLen
+      );
+    };
 
     const handleResize = () => {
       clearTimeout(resizeTimeoutRef.current);
@@ -316,6 +710,31 @@ export function PlexusBackground({
         for (const p of particlesRef.current) {
           p.x = (p.x / oldWidth) * width;
           p.y = (p.y / oldHeight) * height;
+        }
+        // Scale emitter properties by diagonal ratio
+        const oldDiag = Math.sqrt(oldWidth * oldWidth + oldHeight * oldHeight);
+        const newDiag = Math.sqrt(width * width + height * height);
+        const diagRatio = newDiag / oldDiag;
+        for (const e of emittersRef.current) {
+          e.wavelength *= diagRatio;
+          e.orbitRadius *= diagRatio;
+        }
+        // Regenerate shape points on resize during shape_forming
+        if (stateRef.current === 'shape_forming') {
+          const baseSize = Math.min(width, height) * 0.2;
+          shapePoints3DRef.current = generateShapePoints(
+            SHAPE_NAMES[shapeIndexRef.current],
+            particlesRef.current.length,
+            baseSize
+          );
+          if (prevShapePoints3DRef.current.length > 0) {
+            const prevIndex = (shapeIndexRef.current - 1 + SHAPE_NAMES.length) % SHAPE_NAMES.length;
+            prevShapePoints3DRef.current = generateShapePoints(
+              SHAPE_NAMES[prevIndex],
+              particlesRef.current.length,
+              baseSize
+            );
+          }
         }
       }, 100);
     };
@@ -334,7 +753,7 @@ export function PlexusBackground({
       if (state === 'drifting') {
         stateRef.current = 'collapsing';
         stateStartTimeRef.current = Date.now();
-      } else if (state === 'collapsed') {
+      } else if (state === 'shape_forming') {
         // Set burst velocities: radial outward from center
         const cx = width / 2;
         const cy = height / 2;
@@ -378,6 +797,7 @@ export function PlexusBackground({
 
     const animate = () => {
       const now = Date.now();
+      const dtSec = Math.min((now - lastFrameTimeRef.current) / 1000, 0.1);
       lastFrameTimeRef.current = now;
       ctx.clearRect(0, 0, width, height);
 
@@ -387,17 +807,72 @@ export function PlexusBackground({
 
       // State transitions
       if (stateRef.current === 'collapsing' && elapsed >= COLLAPSE_DURATION) {
-        stateRef.current = 'collapsed';
+        stateRef.current = 'shape_forming';
         stateStartTimeRef.current = now;
+        initShapeForming(width, height);
       } else if (stateRef.current === 'expanding' && elapsed >= EXPAND_DURATION) {
         stateRef.current = 'drifting';
         stateStartTimeRef.current = now;
       }
 
+      // Shape cycling and rotation
+      if (stateRef.current === 'shape_forming') {
+        const shapeElapsed = now - shapeTimerRef.current;
+        if (shapeElapsed >= SHAPE_CYCLE_DURATION) {
+          prevShapePoints3DRef.current = shapePoints3DRef.current;
+          shapeIndexRef.current = (shapeIndexRef.current + 1) % SHAPE_NAMES.length;
+          const baseSize = Math.min(width, height) * 0.2;
+          shapePoints3DRef.current = generateShapePoints(
+            SHAPE_NAMES[shapeIndexRef.current],
+            particlesRef.current.length,
+            baseSize
+          );
+          shapeTransitionStartRef.current = now;
+          shapeTimerRef.current = now;
+        }
+
+        rotationRef.current.y += SHAPE_ROTATION_SPEED_Y * dtSec;
+        rotationRef.current.x += SHAPE_ROTATION_SPEED_X * dtSec;
+
+        // Compute blended 3D points during transition
+        let activePoints3D: Point3D[];
+        if (shapeTransitionStartRef.current > 0) {
+          const rawT = (now - shapeTransitionStartRef.current) / SHAPE_TRANSITION_DURATION;
+          const easedT = easeInOutCubic(Math.min(rawT, 1));
+          if (rawT >= 1) {
+            prevShapePoints3DRef.current = [];
+            shapeTransitionStartRef.current = 0;
+            activePoints3D = shapePoints3DRef.current;
+          } else {
+            const prev = prevShapePoints3DRef.current;
+            const next = shapePoints3DRef.current;
+            activePoints3D = new Array(next.length);
+            for (let i = 0; i < next.length; i++) {
+              activePoints3D[i] = lerpPoint3D(prev[i % prev.length], next[i], easedT);
+            }
+          }
+        } else {
+          activePoints3D = shapePoints3DRef.current;
+        }
+
+        const focalLen = Math.min(width, height) * 2;
+        shapeTargets2DRef.current = computeShapeTargets(
+          activePoints3D,
+          rotationRef.current.y,
+          rotationRef.current.x,
+          centerX,
+          centerY,
+          focalLen
+        );
+      }
+
+      // Update emitter positions (orbital drift) every frame
+      updateEmitterPositions(emittersRef.current, width, height, now * 0.001);
+
       const particles = particlesRef.current;
       const state = stateRef.current;
       const connDist =
-        state === 'collapsing' || state === 'collapsed'
+        state === 'collapsing' || state === 'shape_forming'
           ? connectionDistance * 0.6
           : connectionDistance;
 
@@ -429,7 +904,14 @@ export function PlexusBackground({
       cancelAnimationFrame(animationFrameRef.current);
       clearTimeout(resizeTimeoutRef.current);
     };
-  }, [initParticles, drawParticle, updateParticle, connectionDistance]);
+  }, [
+    initParticles,
+    initEmitters,
+    updateEmitterPositions,
+    drawParticle,
+    updateParticle,
+    connectionDistance,
+  ]);
 
   return (
     <canvas
