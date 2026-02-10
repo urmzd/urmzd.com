@@ -1,5 +1,9 @@
 export function calculateReadTime(content: string, wordsPerMinute = 225) {
   const plainText = content
+    .replace(/^import\s+.*$/gm, '') // Remove MDX import statements
+    .replace(/^export\s+.*$/gm, '') // Remove MDX export statements
+    .replace(/\$\$[\s\S]*?\$\$/g, '') // Remove LaTeX display math
+    .replace(/\$[^$\n]*\$/g, '') // Remove LaTeX inline math
     .replace(/```[\s\S]*?```/g, '') // Remove code blocks
     .replace(/`[^`]*`/g, '') // Remove inline code
     .replace(/!\[.*?\]\(.*?\)/g, '') // Remove images
@@ -11,6 +15,8 @@ export function calculateReadTime(content: string, wordsPerMinute = 225) {
     .trim()
     .split(/\s+/)
     .filter((w) => w.length > 0);
-  const minutes = Math.ceil(words.length / wordsPerMinute);
-  return { minutes, text: minutes === 1 ? '1 min read' : `${minutes} min read` };
+  const min = Math.floor(words.length / wordsPerMinute) || 1;
+  const max = Math.ceil(words.length / wordsPerMinute) || 1;
+  const text = min === max ? `${min} min read` : `${min}-${max} min read`;
+  return { minutes: max, text };
 }
