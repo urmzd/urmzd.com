@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 
+// =============================================================================
+// Interfaces
+// =============================================================================
+
 interface Particle {
   x: number;
   y: number;
@@ -15,6 +19,20 @@ interface Particle {
   twinkleMax: number;
   radius: number;
   id: number;
+  layer: 'distant' | 'medium' | 'foreground';
+  depth: number;
+  colorTint: { r: number; g: number; b: number };
+}
+
+interface ShootingStar {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
+  trailLength: number;
+  brightness: number;
 }
 
 interface WaveEmitter {
@@ -100,6 +118,10 @@ const SHAPE_SPRING_DAMPING = 0.9;
 const SHAPE_ROTATION_SPEED_Y = 0.3;
 const SHAPE_ROTATION_SPEED_X = 0.15;
 
+const HINT_DELAY_MS = 12000;
+const HINT_PULSE_DURATION_MS = 400;
+const HINT_PULSE_STRENGTH = 0.015;
+
 const EMITTER_CONFIGS = [
   {
     fracX: 0.5,
@@ -171,8 +193,20 @@ const EMITTER_CONFIGS = [
   },
 ];
 
+// =============================================================================
+// Helpers
+// =============================================================================
+
 function easeInOutCubic(t: number): number {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function assignStarColorTint(isDark: boolean): { r: number; g: number; b: number } {
+  if (!isDark) return { r: 0, g: 0, b: 0 };
+  const roll = Math.random();
+  if (roll < 0.85) return { r: 255, g: 255, b: 255 };
+  if (roll < 0.95) return { r: 200, g: 220, b: 255 };
+  return { r: 255, g: 220, b: 180 };
 }
 
 function computeWaveForce(
@@ -212,6 +246,205 @@ function computeWaveForce(
     fx: fr * radialX + ft * tangentialX,
     fy: fr * radialY + ft * tangentialY,
   };
+}
+
+// =============================================================================
+// Nebula Buffer
+// =============================================================================
+
+function createNebulaBuffer(width: number, height: number, isDark: boolean): HTMLCanvasElement {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return canvas;
+
+  const blobs = isDark
+    ? [
+        { x: 0.25, y: 0.3, r: 0.35, color: [100, 50, 150], opacity: 0.03 },
+        { x: 0.75, y: 0.25, r: 0.3, color: [50, 80, 150], opacity: 0.025 },
+        { x: 0.5, y: 0.75, r: 0.4, color: [150, 100, 50], opacity: 0.02 },
+        { x: 0.8, y: 0.6, r: 0.25, color: [50, 150, 180], opacity: 0.025 },
+      ]
+    : [
+        { x: 0.25, y: 0.3, r: 0.35, color: [180, 150, 220], opacity: 0.02 },
+        { x: 0.75, y: 0.25, r: 0.3, color: [150, 180, 220], opacity: 0.015 },
+        { x: 0.5, y: 0.75, r: 0.4, color: [220, 200, 150], opacity: 0.02 },
+        { x: 0.8, y: 0.6, r: 0.25, color: [150, 200, 220], opacity: 0.015 },
+      ];
+
+  const maxDim = Math.max(width, height);
+
+  for (const blob of blobs) {
+    const cx = blob.x * width;
+    const cy = blob.y * height;
+    const radius = blob.r * maxDim;
+    const [cr, cg, cb] = blob.color;
+    const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+    grad.addColorStop(0, `rgba(${cr}, ${cg}, ${cb}, ${blob.opacity})`);
+    grad.addColorStop(1, `rgba(${cr}, ${cg}, ${cb}, 0)`);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  return canvas;
+}
+
+// =============================================================================
+// Shooting Stars
+// =============================================================================
+
+function spawnShootingStar(width: number, height: number): ShootingStar {
+  const angle = Math.PI / 4 + (Math.random() - 0.5) * Math.PI * 0.4;
+  const speed = 3 + Math.random() * 5;
+  const edge = Math.random();
+  let x: number, y: number;
+  if (edge < 0.5) {
+    x = Math.random() * width * 0.7;
+    y = -10;
+  } else {
+    x = -10;
+    y = Math.random() * height * 0.5;
+  }
+  return {
+    x,
+    y,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
+    life: 0,
+    maxLife: 60 + Math.random() * 60,
+    trailLength: 30 + Math.random() * 50,
+    brightness: 0.4 + Math.random() * 0.6,
+  };
+}
+
+function updateAndDrawShootingStars(
+  ctx: CanvasRenderingContext2D,
+  stars: ShootingStar[],
+  width: number,
+  height: number,
+  isDark: boolean
+): ShootingStar[] {
+  const surviving: ShootingStar[] = [];
+  for (const star of stars) {
+    star.x += star.vx;
+    star.y += star.vy;
+    star.life++;
+
+    if (star.life >= star.maxLife) continue;
+    if (star.x < -50 || star.x > width + 50 || star.y < -50 || star.y > height + 50) continue;
+
+    const lifeRatio = star.life / star.maxLife;
+    let alpha: number;
+    if (lifeRatio < 0.1) {
+      alpha = lifeRatio / 0.1;
+    } else if (lifeRatio > 0.7) {
+      alpha = (1 - lifeRatio) / 0.3;
+    } else {
+      alpha = 1;
+    }
+    alpha *= star.brightness;
+
+    const speed = Math.sqrt(star.vx * star.vx + star.vy * star.vy);
+    const nx = star.vx / speed;
+    const ny = star.vy / speed;
+    const tailX = star.x - nx * star.trailLength;
+    const tailY = star.y - ny * star.trailLength;
+
+    const grad = ctx.createLinearGradient(tailX, tailY, star.x, star.y);
+    const c = isDark ? '255,255,255' : '0,0,0';
+    grad.addColorStop(0, `rgba(${c}, 0)`);
+    grad.addColorStop(1, `rgba(${c}, ${alpha})`);
+
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(tailX, tailY);
+    ctx.lineTo(star.x, star.y);
+    ctx.stroke();
+
+    surviving.push(star);
+  }
+  return surviving;
+}
+
+// =============================================================================
+// Bioluminescent Ripples (light mode)
+// =============================================================================
+
+interface Ripple {
+  x: number;
+  y: number;
+  radius: number;
+  maxRadius: number;
+  life: number;
+  maxLife: number;
+  hue: number;
+  brightness: number;
+}
+
+function spawnRipple(particles: Particle[]): Ripple {
+  const p = particles[Math.floor(Math.random() * particles.length)];
+  return {
+    x: p.x,
+    y: p.y,
+    radius: 0,
+    maxRadius: 60 + Math.random() * 80,
+    life: 0,
+    maxLife: 80 + Math.random() * 60,
+    hue: 160 + Math.random() * 60,
+    brightness: 0.3 + Math.random() * 0.4,
+  };
+}
+
+function updateAndDrawRipples(ctx: CanvasRenderingContext2D, ripples: Ripple[]): Ripple[] {
+  const surviving: Ripple[] = [];
+  for (const ripple of ripples) {
+    ripple.life++;
+    if (ripple.life >= ripple.maxLife) continue;
+
+    const lifeRatio = ripple.life / ripple.maxLife;
+    ripple.radius = ripple.maxRadius * lifeRatio;
+
+    // Fade in then out
+    let alpha: number;
+    if (lifeRatio < 0.15) {
+      alpha = lifeRatio / 0.15;
+    } else {
+      alpha = 1 - (lifeRatio - 0.15) / 0.85;
+    }
+    alpha *= ripple.brightness;
+
+    // Expanding ring that thins as it grows
+    const lineWidth = Math.max(0.5, 3 * (1 - lifeRatio));
+    ctx.strokeStyle = `hsla(${ripple.hue}, 80%, 60%, ${alpha * 0.6})`;
+    ctx.lineWidth = lineWidth;
+    ctx.beginPath();
+    ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Inner glow during early life (< 30%)
+    if (lifeRatio < 0.3) {
+      const glowAlpha = alpha * 0.15 * (1 - lifeRatio / 0.3);
+      const grad = ctx.createRadialGradient(
+        ripple.x,
+        ripple.y,
+        0,
+        ripple.x,
+        ripple.y,
+        ripple.radius
+      );
+      grad.addColorStop(0, `hsla(${ripple.hue}, 80%, 70%, ${glowAlpha})`);
+      grad.addColorStop(1, `hsla(${ripple.hue}, 80%, 60%, 0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    surviving.push(ripple);
+  }
+  return surviving;
 }
 
 // =============================================================================
@@ -266,7 +499,6 @@ function generatePyramidPoints(n: number, radius: number): Point3D[] {
     { x: -radius, y: baseY, z: radius },
   ];
 
-  // Base points
   const baseCount = Math.floor(n * 0.3);
   for (let i = 0; i < baseCount; i++) {
     const u = Math.random();
@@ -278,7 +510,6 @@ function generatePyramidPoints(n: number, radius: number): Point3D[] {
     });
   }
 
-  // Triangular face points
   const faceCount = n - baseCount;
   const perFace = Math.ceil(faceCount / 4);
   for (let f = 0; f < 4; f++) {
@@ -339,12 +570,10 @@ function lerpPoint3D(a: Point3D, b: Point3D, t: number): Point3D {
 }
 
 function rotatePoint(p: Point3D, rotY: number, rotX: number): Point3D {
-  // Y-axis rotation
   const cosY = Math.cos(rotY);
   const sinY = Math.sin(rotY);
   const x1 = p.x * cosY + p.z * sinY;
   const z1 = -p.x * sinY + p.z * cosY;
-  // X-axis rotation
   const cosX = Math.cos(rotX);
   const sinX = Math.sin(rotX);
   const y1 = p.y * cosX - z1 * sinX;
@@ -448,7 +677,7 @@ interface PlexusBackgroundProps {
 
 export function PlexusBackground({
   className = '',
-  particleCount = 150,
+  particleCount = 300,
   connectionDistance = 120,
   gravityStrength = 800,
 }: PlexusBackgroundProps) {
@@ -459,6 +688,7 @@ export function PlexusBackground({
   const resizeTimeoutRef = useRef<number>(0);
   const channelRef = useRef('255, 255, 255');
   const lineColorRef = useRef('rgba(255, 255, 255,');
+  const isDarkRef = useRef(true);
 
   const emittersRef = useRef<WaveEmitter[]>([]);
 
@@ -475,43 +705,130 @@ export function PlexusBackground({
   const prevShapePoints3DRef = useRef<Point3D[]>([]);
   const shapeTransitionStartRef = useRef(0);
 
-  // Theme detection
+  // Layer buckets (pre-sorted at init, avoids per-frame filtering)
+  const distantRef = useRef<Particle[]>([]);
+  const mediumRef = useRef<Particle[]>([]);
+  const foregroundRef = useRef<Particle[]>([]);
+  const connectableRef = useRef<Particle[]>([]);
+
+  // Nebula
+  const nebulaRef = useRef<HTMLCanvasElement | null>(null);
+  const dimensionsRef = useRef({ width: 0, height: 0 });
+
+  // Shooting stars
+  const shootingStarsRef = useRef<ShootingStar[]>([]);
+
+  // Bioluminescent ripples (light mode)
+  const ripplesRef = useRef<Ripple[]>([]);
+
+  // Gravitational pulse hint
+  const hintFiredRef = useRef(false);
+  const hintActiveRef = useRef<{ startTime: number } | null>(null);
+  const hintTimerRef = useRef<number>(0);
+
+  // Theme detection + nebula/colorTint updates
   useEffect(() => {
-    const updateColors = (dark: boolean) => {
+    const checkDarkMode = () => document.documentElement.classList.contains('dark');
+    const updateTheme = (dark: boolean) => {
+      isDarkRef.current = dark;
       channelRef.current = dark ? '255, 255, 255' : '0, 0, 0';
       lineColorRef.current = dark ? 'rgba(255, 255, 255,' : 'rgba(0, 0, 0,';
+      // Update particle color tints
+      for (const p of particlesRef.current) {
+        p.colorTint = assignStarColorTint(dark);
+      }
+      // Clear theme-specific ambient effects
+      shootingStarsRef.current = [];
+      ripplesRef.current = [];
+      // Regenerate nebula if canvas is set up
+      const { width, height } = dimensionsRef.current;
+      if (width > 0 && height > 0) {
+        nebulaRef.current = createNebulaBuffer(width, height, dark);
+      }
     };
-    const checkDarkMode = () => document.documentElement.classList.contains('dark');
-    updateColors(checkDarkMode());
+    updateTheme(checkDarkMode());
 
-    const observer = new MutationObserver(() => updateColors(checkDarkMode()));
+    const observer = new MutationObserver(() => updateTheme(checkDarkMode()));
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();
   }, []);
 
   const initParticles = useCallback(
     (width: number, height: number): Particle[] => {
+      const isDark = isDarkRef.current;
       const particles: Particle[] = [];
       for (let i = 0; i < particleCount; i++) {
+        const roll = i / particleCount;
+        let layer: Particle['layer'];
+        let depth: number;
+        let radius: number;
+        let twinkleMin: number;
+        let twinkleMax: number;
+        let velScale: number;
+
+        if (roll < 0.4) {
+          // Distant (40%) — tiny, dim, barely drifting
+          layer = 'distant';
+          depth = 0.8 + Math.random() * 0.2;
+          radius = 0.3 + Math.random() * 0.5;
+          twinkleMin = 0.05 + Math.random() * 0.1;
+          twinkleMax = 0.3 + Math.random() * 0.2;
+          velScale = 0.15;
+        } else if (roll < 0.75) {
+          // Medium (35%)
+          layer = 'medium';
+          depth = 0.4 + Math.random() * 0.2;
+          radius = 0.6 + Math.random() * 0.8;
+          twinkleMin = 0.1 + Math.random() * 0.1;
+          twinkleMax = 0.5 + Math.random() * 0.2;
+          velScale = 0.35;
+        } else {
+          // Foreground (25%) — larger, brighter, gentle drift
+          layer = 'foreground';
+          depth = Math.random() * 0.2;
+          radius = 1.0 + Math.random() * 1.5;
+          twinkleMin = 0.15 + Math.random() * 0.15;
+          twinkleMax = 0.7 + Math.random() * 0.3;
+          velScale = 0.5;
+        }
+
         particles.push({
           x: Math.random() * width,
           y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.08,
-          vy: (Math.random() - 0.5) * 0.08,
+          vx: (Math.random() - 0.5) * 0.04 * velScale,
+          vy: (Math.random() - 0.5) * 0.04 * velScale,
           baseX: 0,
           baseY: 0,
           twinkleSpeed: 0.5 + Math.random() * 2.5,
           twinklePhase: Math.random() * Math.PI * 2,
-          twinkleMin: 0.1 + Math.random() * 0.2,
-          twinkleMax: 0.6 + Math.random() * 0.4,
-          radius: 1.0 + Math.random() * 1.5,
+          twinkleMin,
+          twinkleMax,
+          radius,
           id: i,
+          layer,
+          depth,
+          colorTint: assignStarColorTint(isDark),
         });
       }
       return particles;
     },
     [particleCount]
   );
+
+  const bucketParticles = useCallback((particles: Particle[]) => {
+    const distant: Particle[] = [];
+    const medium: Particle[] = [];
+    const foreground: Particle[] = [];
+    for (const p of particles) {
+      if (p.layer === 'distant') distant.push(p);
+      else if (p.layer === 'medium') medium.push(p);
+      else foreground.push(p);
+    }
+    distantRef.current = distant;
+    mediumRef.current = medium;
+    foregroundRef.current = foreground;
+    connectableRef.current = [...medium, ...foreground];
+  }, []);
 
   const initEmitters = useCallback((width: number, height: number): WaveEmitter[] => {
     const diag = Math.sqrt(width * width + height * height);
@@ -550,9 +867,23 @@ export function PlexusBackground({
   const drawParticle = useCallback((ctx: CanvasRenderingContext2D, p: Particle, now: number) => {
     const t = Math.sin(now * 0.001 * p.twinkleSpeed + p.twinklePhase);
     const opacity = p.twinkleMin + (t * 0.5 + 0.5) * (p.twinkleMax - p.twinkleMin);
+    const { r, g, b } = p.colorTint;
+
+    // Foreground star glow
+    if (p.layer === 'foreground' && opacity > 0.5) {
+      const glowRadius = p.radius * 3;
+      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
+      grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 0.15})`);
+      grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
     ctx.beginPath();
     ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(${channelRef.current}, ${opacity})`;
+    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
     ctx.fill();
   }, []);
 
@@ -567,30 +898,72 @@ export function PlexusBackground({
     ) => {
       const state = stateRef.current;
       const elapsed = now - stateStartTimeRef.current;
+      const depthResponse = 1 - particle.depth;
 
       if (state === 'drifting') {
+        // Mouse interaction (scaled by depth)
         const mouse = mouseRef.current;
         const dx = mouse.x - particle.x;
         const dy = mouse.y - particle.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist > 0 && dist < 200) {
-          const force = (gravityStrength / 80000) * (1 - dist / 200);
-          particle.vx += (dx / dist) * force;
-          particle.vy += (dy / dist) * force;
+          if (isDarkRef.current) {
+            // Dark: uniform gravity attract
+            const force = (gravityStrength / 80000) * (1 - dist / 200) * depthResponse;
+            particle.vx += (dx / dist) * force;
+            particle.vy += (dy / dist) * force;
+          } else {
+            // Light: two-zone wake effect
+            if (dist < 80) {
+              // Inner zone: repel outward
+              const force = (gravityStrength / 40000) * (1 - dist / 80) * depthResponse;
+              particle.vx -= (dx / dist) * force;
+              particle.vy -= (dy / dist) * force;
+            } else {
+              // Outer zone (80-200px): weak attract inward
+              const force = (gravityStrength / 200000) * (1 - (dist - 80) / 120) * depthResponse;
+              particle.vx += (dx / dist) * force;
+              particle.vy += (dy / dist) * force;
+            }
+          }
         }
 
-        // Wave interference forces from all emitters
+        // Wave drift — light mode gets full strength (ocean currents), dark is subtle stardust
         const emitters = emittersRef.current;
         const maxDist = Math.sqrt(width * width + height * height);
         const timeSec = now * 0.001;
+        const waveMult = isDarkRef.current ? 0.3 : 1.0;
         for (let e = 0; e < emitters.length; e++) {
           const wf = computeWaveForce(emitters[e], particle.x, particle.y, timeSec, maxDist);
-          particle.vx += wf.fx;
-          particle.vy += wf.fy;
+          particle.vx += wf.fx * depthResponse * waveMult;
+          particle.vy += wf.fy * depthResponse * waveMult;
         }
 
-        particle.vx *= 0.985;
-        particle.vy *= 0.985;
+        // Gravitational pulse hint
+        const hint = hintActiveRef.current;
+        if (hint) {
+          const hintElapsed = now - hint.startTime;
+          if (hintElapsed < HINT_PULSE_DURATION_MS) {
+            const pulseT = hintElapsed / HINT_PULSE_DURATION_MS;
+            const pulseStrength = HINT_PULSE_STRENGTH * Math.sin(Math.PI * pulseT);
+            const hdx = centerX - particle.x;
+            const hdy = centerY - particle.y;
+            const hdist = Math.sqrt(hdx * hdx + hdy * hdy) || 1;
+            particle.vx += (hdx / hdist) * pulseStrength;
+            particle.vy += (hdy / hdist) * pulseStrength;
+          }
+        }
+
+        // Ocean: slow rightward current + gentle vertical bob
+        if (!isDarkRef.current) {
+          particle.vx += 0.002;
+          particle.vy += Math.sin(now * 0.0008 + particle.id * 0.5) * 0.0005;
+        }
+
+        // Damping — light mode has more drag (water resistance vs vacuum)
+        const damp = isDarkRef.current ? 0.997 : 0.994;
+        particle.vx *= damp;
+        particle.vy *= damp;
       } else if (state === 'collapsing') {
         const t = Math.min(elapsed / COLLAPSE_DURATION, 1);
         const ease = easeInOutCubic(t);
@@ -598,14 +971,19 @@ export function PlexusBackground({
         const dy = centerY - particle.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist > 0) {
-          const radialForce = 0.15 * ease;
+          // Enhanced gravitational feel: far particles accelerate faster, capped at 3x
+          const maxDim = Math.max(width, height);
+          const normalizedDist = dist / (maxDim * 0.5);
+          const distanceFactor = Math.min(1 + normalizedDist * 2, 3);
+          const radialForce = 0.15 * ease * distanceFactor;
           particle.vx += (dx / dist) * radialForce;
           particle.vy += (dy / dist) * radialForce;
-          // Tangential spin for spiral
-          particle.vx += (-dy / dist) * 0.08 * ease;
-          particle.vy += (dx / dist) * 0.08 * ease;
+          // Tangential spin — light mode: 2x for whirlpool effect
+          const tangentialMult = isDarkRef.current ? 0.08 : 0.16;
+          particle.vx += (-dy / dist) * tangentialMult * ease;
+          particle.vy += (dx / dist) * tangentialMult * ease;
         }
-        // Wave perturbations — ramp in with collapse progress
+        // Wave perturbations
         const emitters = emittersRef.current;
         const maxDist = Math.sqrt(width * width + height * height);
         const timeSec = now * 0.001;
@@ -629,7 +1007,7 @@ export function PlexusBackground({
         }
       } else if (state === 'expanding') {
         const t = Math.min(elapsed / EXPAND_DURATION, 1);
-        const damping = 0.97 + 0.02 * t; // 0.97 → 0.99
+        const damping = 0.97 + 0.02 * t;
         particle.vx *= damping;
         particle.vy *= damping;
       }
@@ -672,8 +1050,14 @@ export function PlexusBackground({
     };
 
     let { width, height } = setupCanvas();
+    dimensionsRef.current = { width, height };
+
     particlesRef.current = initParticles(width, height);
+    bucketParticles(particlesRef.current);
     emittersRef.current = initEmitters(width, height);
+    nebulaRef.current = createNebulaBuffer(width, height, isDarkRef.current);
+    shootingStarsRef.current = [];
+    ripplesRef.current = [];
 
     const initShapeForming = (w: number, h: number) => {
       shapeIndexRef.current = 0;
@@ -706,6 +1090,7 @@ export function PlexusBackground({
         const dims = setupCanvas();
         width = dims.width;
         height = dims.height;
+        dimensionsRef.current = { width, height };
         // Scale particle positions proportionally
         for (const p of particlesRef.current) {
           p.x = (p.x / oldWidth) * width;
@@ -719,6 +1104,8 @@ export function PlexusBackground({
           e.wavelength *= diagRatio;
           e.orbitRadius *= diagRatio;
         }
+        // Regenerate nebula buffer
+        nebulaRef.current = createNebulaBuffer(width, height, isDarkRef.current);
         // Regenerate shape points on resize during shape_forming
         if (stateRef.current === 'shape_forming') {
           const baseSize = Math.min(width, height) * 0.2;
@@ -749,12 +1136,15 @@ export function PlexusBackground({
     };
 
     const handleClick = () => {
+      // Cancel hint timer on any click
+      clearTimeout(hintTimerRef.current);
+      hintActiveRef.current = null;
+
       const state = stateRef.current;
       if (state === 'drifting') {
         stateRef.current = 'collapsing';
         stateStartTimeRef.current = Date.now();
       } else if (state === 'shape_forming') {
-        // Set burst velocities: radial outward from center
         const cx = width / 2;
         const cy = height / 2;
         for (const p of particlesRef.current) {
@@ -768,7 +1158,6 @@ export function PlexusBackground({
         stateRef.current = 'expanding';
         stateStartTimeRef.current = Date.now();
       }
-      // Ignore clicks during collapsing/expanding
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -785,13 +1174,27 @@ export function PlexusBackground({
       mouseRef.current = { x: -1000, y: -1000 };
     };
 
-    // Reduced motion: static starfield drawn once
+    // Hint timer: gravitational pulse after 12s of inactivity
+    if (!prefersReducedMotion) {
+      hintTimerRef.current = window.setTimeout(() => {
+        if (stateRef.current === 'drifting' && !hintFiredRef.current) {
+          hintActiveRef.current = { startTime: Date.now() };
+          hintFiredRef.current = true;
+        }
+      }, HINT_DELAY_MS);
+    }
+
+    // Reduced motion: static starfield with nebula, drawn once
     if (prefersReducedMotion) {
       ctx.clearRect(0, 0, width, height);
+      if (nebulaRef.current) {
+        ctx.drawImage(nebulaRef.current, 0, 0, width, height);
+      }
       const now = Date.now();
-      const particles = particlesRef.current;
-      for (const p of particles) drawParticle(ctx, p, now);
-      drawConnections(ctx, particles, connectionDistance, lineColorRef.current);
+      for (const p of distantRef.current) drawParticle(ctx, p, now);
+      for (const p of mediumRef.current) drawParticle(ctx, p, now);
+      drawConnections(ctx, connectableRef.current, connectionDistance, lineColorRef.current);
+      for (const p of foregroundRef.current) drawParticle(ctx, p, now);
       return;
     }
 
@@ -800,6 +1203,11 @@ export function PlexusBackground({
       const dtSec = Math.min((now - lastFrameTimeRef.current) / 1000, 0.1);
       lastFrameTimeRef.current = now;
       ctx.clearRect(0, 0, width, height);
+
+      // Draw nebula background
+      if (nebulaRef.current) {
+        ctx.drawImage(nebulaRef.current, 0, 0, width, height);
+      }
 
       const elapsed = now - stateStartTimeRef.current;
       const centerX = width / 2;
@@ -834,7 +1242,6 @@ export function PlexusBackground({
         rotationRef.current.y += SHAPE_ROTATION_SPEED_Y * dtSec;
         rotationRef.current.x += SHAPE_ROTATION_SPEED_X * dtSec;
 
-        // Compute blended 3D points during transition
         let activePoints3D: Point3D[];
         if (shapeTransitionStartRef.current > 0) {
           const rawT = (now - shapeTransitionStartRef.current) / SHAPE_TRANSITION_DURATION;
@@ -866,22 +1273,78 @@ export function PlexusBackground({
         );
       }
 
-      // Update emitter positions (orbital drift) every frame
+      // Update emitter positions
       updateEmitterPositions(emittersRef.current, width, height, now * 0.001);
 
       const particles = particlesRef.current;
       const state = stateRef.current;
-      const connDist =
-        state === 'collapsing' || state === 'shape_forming'
-          ? connectionDistance * 0.6
-          : connectionDistance;
 
+      // Update all particles
       for (let i = 0; i < particles.length; i++) {
         updateParticle(particles[i], width, height, now, centerX, centerY);
-        drawParticle(ctx, particles[i], now);
       }
 
-      drawConnections(ctx, particles, connDist, lineColorRef.current);
+      // Clear hint after pulse duration
+      if (
+        hintActiveRef.current &&
+        now - hintActiveRef.current.startTime >= HINT_PULSE_DURATION_MS
+      ) {
+        hintActiveRef.current = null;
+      }
+
+      // Cosmic shape glow (drawn before particles for background effect)
+      if (state === 'shape_forming') {
+        const glowRadius = Math.min(width, height) * 0.35;
+        const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, glowRadius);
+        if (isDarkRef.current) {
+          grad.addColorStop(0, 'rgba(80, 60, 180, 0.06)');
+          grad.addColorStop(1, 'rgba(80, 60, 180, 0)');
+        } else {
+          grad.addColorStop(0, 'rgba(100, 120, 160, 0.04)');
+          grad.addColorStop(1, 'rgba(100, 120, 160, 0)');
+        }
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, width, height);
+      }
+
+      // Draw layers back-to-front: distant → medium → connections → foreground
+      const distant = distantRef.current;
+      const medium = mediumRef.current;
+      const foreground = foregroundRef.current;
+
+      for (let i = 0; i < distant.length; i++) drawParticle(ctx, distant[i], now);
+      for (let i = 0; i < medium.length; i++) drawParticle(ctx, medium[i], now);
+
+      // Connections (medium + foreground only) — light mode: 20% longer range
+      const baseConnDist = isDarkRef.current ? connectionDistance : connectionDistance * 1.2;
+      const connDist =
+        state === 'collapsing' || state === 'shape_forming' ? baseConnDist * 0.6 : baseConnDist;
+      let lineColor = lineColorRef.current;
+      if (state === 'shape_forming' && isDarkRef.current) {
+        lineColor = 'rgba(150, 170, 255,';
+      }
+      drawConnections(ctx, connectableRef.current, connDist, lineColor);
+
+      for (let i = 0; i < foreground.length; i++) drawParticle(ctx, foreground[i], now);
+
+      // Ambient effects: dark = shooting stars, light = bioluminescent ripples
+      if (isDarkRef.current) {
+        if (state === 'drifting' && Math.random() < 0.002) {
+          shootingStarsRef.current.push(spawnShootingStar(width, height));
+        }
+        shootingStarsRef.current = updateAndDrawShootingStars(
+          ctx,
+          shootingStarsRef.current,
+          width,
+          height,
+          true
+        );
+      } else {
+        if (state === 'drifting' && Math.random() < 0.001) {
+          ripplesRef.current.push(spawnRipple(particlesRef.current));
+        }
+        ripplesRef.current = updateAndDrawRipples(ctx, ripplesRef.current);
+      }
 
       animationFrameRef.current = requestAnimationFrame(animate);
     };
@@ -903,9 +1366,11 @@ export function PlexusBackground({
       canvas.removeEventListener('touchend', handleTouchEnd);
       cancelAnimationFrame(animationFrameRef.current);
       clearTimeout(resizeTimeoutRef.current);
+      clearTimeout(hintTimerRef.current);
     };
   }, [
     initParticles,
+    bucketParticles,
     initEmitters,
     updateEmitterPositions,
     drawParticle,
