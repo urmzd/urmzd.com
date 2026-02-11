@@ -696,7 +696,7 @@
   }
 
   .final-card-container {
-    @apply absolute inset-0 flex items-center justify-center;
+    @apply absolute inset-0 flex flex-col items-center justify-center;
   }
 
   .final-card-contact {
@@ -820,7 +820,7 @@
   }
 
   .final-card-phonetic {
-    @apply text-xs text-muted-foreground/70;
+    @apply text-xs text-foreground;
     font-family: 'IBM Plex Mono', monospace;
     letter-spacing: 0.06em;
     line-height: 1.2;
@@ -963,6 +963,44 @@
   }
 }
 
+@keyframes bounce-hint {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@layer components {
+  .click-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    z-index: 20;
+  }
+
+  .click-hint-hand {
+    width: 28px;
+    height: 28px;
+    color: var(--foreground);
+    animation: bounce-hint 1.2s ease-in-out infinite;
+  }
+
+  .click-hint-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted-foreground);
+    opacity: 0.7;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .splash-graph-image,
   .splash-burst,
@@ -971,7 +1009,8 @@
   .splash-tracer,
   .splash-flow-label,
   .splash-focus,
-  .splash-focus-card {
+  .splash-focus-card,
+  .click-hint-hand {
     animation: none;
   }
 }
