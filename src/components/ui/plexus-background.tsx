@@ -22,6 +22,7 @@ interface Particle {
   layer: 'distant' | 'medium' | 'foreground';
   depth: number;
   colorTint: { r: number; g: number; b: number };
+  shape: ParticleShape;
 }
 
 interface ShootingStar {
@@ -62,6 +63,65 @@ interface Point3D {
 }
 
 type GalaxyState = 'drifting' | 'collapsing' | 'shape_forming' | 'expanding';
+
+// =============================================================================
+// Particle Shapes
+// =============================================================================
+
+type ParticleShape = 'circle' | 'diamond' | 'triangle' | 'square' | 'hexagon';
+
+type ShapeDrawFn = (ctx: CanvasRenderingContext2D, x: number, y: number, r: number) => void;
+
+const SHAPE_DRAW: Record<ParticleShape, ShapeDrawFn> = {
+  circle: (ctx, x, y, r) => {
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+  },
+  diamond: (ctx, x, y, r) => {
+    ctx.moveTo(x, y - r);
+    ctx.lineTo(x + r, y);
+    ctx.lineTo(x, y + r);
+    ctx.lineTo(x - r, y);
+    ctx.closePath();
+  },
+  triangle: (ctx, x, y, r) => {
+    ctx.moveTo(x, y - r);
+    ctx.lineTo(x + r * Math.cos(Math.PI / 6), y + r * Math.sin(Math.PI / 6));
+    ctx.lineTo(x - r * Math.cos(Math.PI / 6), y + r * Math.sin(Math.PI / 6));
+    ctx.closePath();
+  },
+  square: (ctx, x, y, r) => {
+    const s = r * 0.85;
+    ctx.rect(x - s, y - s, s * 2, s * 2);
+  },
+  hexagon: (ctx, x, y, r) => {
+    for (let i = 0; i < 6; i++) {
+      const angle = (Math.PI / 3) * i - Math.PI / 2;
+      const px = x + r * Math.cos(angle);
+      const py = y + r * Math.sin(angle);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  },
+};
+
+const SHAPE_WEIGHTS: { shape: ParticleShape; weight: number }[] = [
+  { shape: 'circle', weight: 50 },
+  { shape: 'diamond', weight: 15 },
+  { shape: 'triangle', weight: 12 },
+  { shape: 'square', weight: 12 },
+  { shape: 'hexagon', weight: 11 },
+];
+
+function pickRandomShape(): ParticleShape {
+  const total = SHAPE_WEIGHTS.reduce((s, w) => s + w.weight, 0);
+  let roll = Math.random() * total;
+  for (const { shape, weight } of SHAPE_WEIGHTS) {
+    roll -= weight;
+    if (roll <= 0) return shape;
+  }
+  return 'circle';
+}
 
 // =============================================================================
 // Spatial Grid Partitioning
@@ -756,9 +816,14 @@ export function PlexusBackground({
   const initParticles = useCallback(
     (width: number, height: number): Particle[] => {
       const isDark = isDarkRef.current;
+      // Scale particle count by viewport area relative to 1920×1080 reference
+      const refArea = 1920 * 1080;
+      const viewportArea = width * height;
+      const scale = Math.sqrt(viewportArea / refArea);
+      const count = Math.max(60, Math.round(particleCount * Math.min(scale, 1.6)));
       const particles: Particle[] = [];
-      for (let i = 0; i < particleCount; i++) {
-        const roll = i / particleCount;
+      for (let i = 0; i < count; i++) {
+        const roll = i / count;
         let layer: Particle['layer'];
         let depth: number;
         let radius: number;
@@ -808,6 +873,7 @@ export function PlexusBackground({
           layer,
           depth,
           colorTint: assignStarColorTint(isDark),
+          shape: pickRandomShape(),
         });
       }
       return particles;
@@ -882,7 +948,7 @@ export function PlexusBackground({
     }
 
     ctx.beginPath();
-    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+    SHAPE_DRAW[p.shape](ctx, p.x, p.y, p.radius);
     ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
     ctx.fill();
   }, []);
@@ -1052,6 +1118,14 @@ export function PlexusBackground({
     let { width, height } = setupCanvas();
     dimensionsRef.current = { width, height };
 
+    // Scale connection distance with viewport so density feels consistent
+    const refDiag = Math.sqrt(1920 * 1920 + 1080 * 1080);
+    const scaledConnDist = () => {
+      const diag = Math.sqrt(width * width + height * height);
+      return connectionDistance * Math.max(0.7, Math.min(diag / refDiag, 1.4));
+    };
+    let effectiveConnDist = scaledConnDist();
+
     particlesRef.current = initParticles(width, height);
     bucketParticles(particlesRef.current);
     emittersRef.current = initEmitters(width, height);
@@ -1064,7 +1138,8 @@ export function PlexusBackground({
       rotationRef.current = { y: 0, x: 0 };
       prevShapePoints3DRef.current = [];
       shapeTransitionStartRef.current = 0;
-      const baseSize = Math.min(w, h) * 0.2;
+      const minDim = Math.min(w, h);
+      const baseSize = minDim * (minDim < 500 ? 0.32 : 0.2);
       shapePoints3DRef.current = generateShapePoints(
         SHAPE_NAMES[0],
         particlesRef.current.length,
@@ -1104,11 +1179,14 @@ export function PlexusBackground({
           e.wavelength *= diagRatio;
           e.orbitRadius *= diagRatio;
         }
+        // Update connection distance for new viewport size
+        effectiveConnDist = scaledConnDist();
         // Regenerate nebula buffer
         nebulaRef.current = createNebulaBuffer(width, height, isDarkRef.current);
         // Regenerate shape points on resize during shape_forming
         if (stateRef.current === 'shape_forming') {
-          const baseSize = Math.min(width, height) * 0.2;
+          const minDim = Math.min(width, height);
+          const baseSize = minDim * (minDim < 500 ? 0.32 : 0.2);
           shapePoints3DRef.current = generateShapePoints(
             SHAPE_NAMES[shapeIndexRef.current],
             particlesRef.current.length,
@@ -1193,7 +1271,7 @@ export function PlexusBackground({
       const now = Date.now();
       for (const p of distantRef.current) drawParticle(ctx, p, now);
       for (const p of mediumRef.current) drawParticle(ctx, p, now);
-      drawConnections(ctx, connectableRef.current, connectionDistance, lineColorRef.current);
+      drawConnections(ctx, connectableRef.current, effectiveConnDist, lineColorRef.current);
       for (const p of foregroundRef.current) drawParticle(ctx, p, now);
       return;
     }
@@ -1229,7 +1307,8 @@ export function PlexusBackground({
         if (shapeElapsed >= SHAPE_CYCLE_DURATION) {
           prevShapePoints3DRef.current = shapePoints3DRef.current;
           shapeIndexRef.current = (shapeIndexRef.current + 1) % SHAPE_NAMES.length;
-          const baseSize = Math.min(width, height) * 0.2;
+          const minDim = Math.min(width, height);
+          const baseSize = minDim * (minDim < 500 ? 0.32 : 0.2);
           shapePoints3DRef.current = generateShapePoints(
             SHAPE_NAMES[shapeIndexRef.current],
             particlesRef.current.length,
@@ -1316,7 +1395,7 @@ export function PlexusBackground({
       for (let i = 0; i < medium.length; i++) drawParticle(ctx, medium[i], now);
 
       // Connections (medium + foreground only) — light mode: 20% longer range
-      const baseConnDist = isDarkRef.current ? connectionDistance : connectionDistance * 1.2;
+      const baseConnDist = isDarkRef.current ? effectiveConnDist : effectiveConnDist * 1.2;
       const connDist =
         state === 'collapsing' || state === 'shape_forming' ? baseConnDist * 0.6 : baseConnDist;
       let lineColor = lineColorRef.current;
