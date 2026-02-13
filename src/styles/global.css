@@ -836,7 +836,6 @@
   /* Landing Hero — immersive translucent name treatment */
   .landing-hero {
     @apply flex flex-col items-center gap-4 text-center;
-    animation: space-breathe 8s ease-in-out infinite;
   }
 
   .landing-hero-name {
@@ -844,7 +843,7 @@
     font-family: 'IBM Plex Mono', monospace;
     font-size: clamp(2rem, 6vw, 4.5rem);
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.06em;
     line-height: 1.15;
     text-transform: uppercase;
     color: var(--foreground);
@@ -877,9 +876,11 @@
   .landing-hero-sub {
     @apply text-xs;
     font-family: 'IBM Plex Mono', monospace;
-    letter-spacing: 0.08em;
-    line-height: 1.2;
+    letter-spacing: 0.04em;
+    line-height: 1.5;
     color: oklch(0.3 0.02 250 / 65%);
+    overflow-wrap: break-word;
+    min-height: 3.75rem;
   }
 
   .dark .landing-hero-sub {
@@ -1102,5 +1103,17 @@
   .landing-hero,
   .landing-hero-name {
     animation: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .landing-hero-name {
+    letter-spacing: 0.12em;
+  }
+
+  .landing-hero-sub {
+    letter-spacing: 0.08em;
+    line-height: 1.2;
+    min-height: auto;
   }
 }
