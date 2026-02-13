@@ -30,7 +30,7 @@ export default function LandingExperience() {
       <PlexusBackground className="pointer-events-auto" />
 
       <motion.div
-        className="final-card-container pointer-events-none"
+        className="final-card-container pointer-events-none opacity-0"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.5 }}
