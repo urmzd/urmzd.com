@@ -24,6 +24,8 @@ interface Particle {
   depth: number;
   colorTint: { r: number; g: number; b: number };
   shape: ParticleShape;
+  life: number;
+  maxLife: number;
 }
 
 interface ShootingStar {
@@ -170,7 +172,7 @@ const getOpacityBand = (opacity: number): number =>
 const COLLAPSE_DURATION = 1500;
 const EXPAND_DURATION = 1200;
 
-const SHAPE_NAMES = ['sphere', 'cube', 'pyramid', 'torus', 'helix'] as const;
+const SHAPE_NAMES = ['sphere', 'cube', 'pyramid', 'torus', 'helix', 'brain'] as const;
 type ShapeName = (typeof SHAPE_NAMES)[number];
 const SHAPE_CYCLE_DURATION = 8000;
 const SHAPE_TRANSITION_DURATION = 2000;
@@ -629,6 +631,63 @@ function generateHelixPoints(n: number, radius: number): Point3D[] {
   return points;
 }
 
+function generateBrainPoints(n: number, baseSize: number): Point3D[] {
+  const points: Point3D[] = [];
+  const scale = baseSize * 0.85;
+  const phi = (1 + Math.sqrt(5)) / 2;
+  const mainCount = Math.floor(n * 0.92);
+  const stemCount = n - mainCount;
+
+  for (let i = 0; i < mainCount; i++) {
+    const theta = (2 * Math.PI * i) / phi;
+    const cosLat = 1 - (2 * (i + 0.5)) / mainCount;
+    const sinLat = Math.sqrt(1 - cosLat * cosLat);
+
+    let x = sinLat * Math.cos(theta) * 1.25;
+    let y = cosLat * 0.95;
+    let z = sinLat * Math.sin(theta) * 1.05;
+
+    // Longitudinal fissure between hemispheres
+    const topness = Math.max(0, y);
+    const fissure = 0.18 * topness * topness;
+    x += x >= 0 ? fissure : -fissure;
+
+    // Cortex folds
+    const wrinkle =
+      0.06 * (Math.sin(8 * theta + 4 * y) * 0.6 + Math.sin(13 * y * Math.PI + 5 * theta) * 0.4);
+    const dist = Math.sqrt(x * x + y * y + z * z);
+    if (dist > 0) {
+      x += (x / dist) * wrinkle;
+      y += (y / dist) * wrinkle;
+      z += (z / dist) * wrinkle;
+    }
+
+    // Flatten bottom
+    if (y < -0.4) y = -0.4 + (y + 0.4) * 0.3;
+
+    // Cerebellum bulge at back-bottom
+    if (y < -0.1 && z < -0.3) {
+      z -= Math.max(0, -y - 0.1) * Math.max(0, -z - 0.3) * 0.8;
+    }
+
+    points.push({ x: x * scale, y: y * scale, z: z * scale });
+  }
+
+  // Brain stem
+  for (let i = 0; i < stemCount; i++) {
+    const t = i / (stemCount - 1);
+    const angle = 2 * Math.PI * t * 3;
+    const r = 0.12;
+    points.push({
+      x: r * Math.cos(angle) * scale,
+      y: (-0.5 - 0.5 * t) * scale,
+      z: (-0.3 + r * Math.sin(angle)) * scale,
+    });
+  }
+
+  return points;
+}
+
 function generateShapePoints(shape: ShapeName, n: number, baseSize: number): Point3D[] {
   switch (shape) {
     case 'sphere':
@@ -641,6 +700,8 @@ function generateShapePoints(shape: ShapeName, n: number, baseSize: number): Poi
       return generateTorusPoints(n, baseSize);
     case 'helix':
       return generateHelixPoints(n, baseSize);
+    case 'brain':
+      return generateBrainPoints(n, baseSize);
   }
 }
 
@@ -812,6 +873,9 @@ export function PlexusBackground({
   // Bioluminescent ripples (light mode)
   const ripplesRef = useRef<Ripple[]>([]);
 
+  // Repulsion grid (rebuilt each drifting frame)
+  const repulsionGridRef = useRef<SpatialGrid | null>(null);
+
   // Gravitational pulse hint
   const hintFiredRef = useRef(false);
   const hintActiveRef = useRef<{ startTime: number } | null>(null);
@@ -859,6 +923,11 @@ export function PlexusBackground({
       const viewportArea = width * height;
       const scale = Math.sqrt(viewportArea / refArea);
       const count = Math.max(60, Math.round(particleCount * Math.min(scale, 1.6)));
+      const cols = Math.max(1, Math.ceil(Math.sqrt(count * (width / height))));
+      const rows = Math.max(1, Math.ceil(count / cols));
+      const cellW = width / cols;
+      const cellH = height / rows;
+
       const particles: Particle[] = [];
       for (let i = 0; i < count; i++) {
         const roll = i / count;
@@ -896,8 +965,8 @@ export function PlexusBackground({
         }
 
         particles.push({
-          x: Math.random() * width,
-          y: Math.random() * height,
+          x: ((i % cols) + Math.random()) * cellW,
+          y: (Math.floor(i / cols) + Math.random()) * cellH,
           vx: (Math.random() - 0.5) * 0.04 * velScale,
           vy: (Math.random() - 0.5) * 0.04 * velScale,
           baseX: 0,
@@ -913,6 +982,8 @@ export function PlexusBackground({
           depth,
           colorTint: assignStarColorTint(isDark),
           shape: pickRandomShape(),
+          life: Math.random() * 20000,
+          maxLife: 15000 + Math.random() * 15000,
         });
       }
       return particles;
@@ -982,18 +1053,19 @@ export function PlexusBackground({
       const beat = beatIntensityRef?.current ?? 0;
       const t = Math.sin(now * 0.001 * p.twinkleSpeed + p.twinklePhase);
       const baseOpacity = p.twinkleMin + (t * 0.5 + 0.5) * (p.twinkleMax - p.twinkleMin);
-      const opacity = Math.min(baseOpacity * (1 + beat * 0.3), 1);
+      const lifeRatio = p.life / p.maxLife;
+      const lifeFade =
+        state === 'drifting' || state === 'expanding'
+          ? lifeRatio < 0.1
+            ? lifeRatio / 0.1
+            : lifeRatio > 0.85
+              ? (1 - lifeRatio) / 0.15
+              : 1
+          : 1;
+      const opacity = Math.min(baseOpacity * (1 + beat * 0.3), 1) * lifeFade;
       const { r, g, b } = p.colorTint;
 
-      // Dynamic radius scaling during drifting — stars grow from vanishing point
-      let drawRadius = p.radius;
-      if (state === 'drifting') {
-        const ddx = p.x - centerX;
-        const ddy = p.y - centerY;
-        const distFromCenter = Math.sqrt(ddx * ddx + ddy * ddy);
-        const growthFactor = Math.min(distFromCenter / (maxDim * 0.35), 1.0);
-        drawRadius = p.baseRadius * (0.15 + 0.85 * growthFactor);
-      }
+      const drawRadius = p.radius;
 
       // Warp streak rendering during collapsing/expanding
       if (state === 'collapsing' || state === 'expanding') {
@@ -1090,23 +1162,6 @@ export function PlexusBackground({
       if (state === 'drifting') {
         const beat = beatIntensityRef?.current ?? 0;
 
-        // Radial outflow from center — space travel effect
-        const rdx = particle.x - centerX;
-        const rdy = particle.y - centerY;
-        const dist = Math.sqrt(rdx * rdx + rdy * rdy);
-        const maxDim = Math.max(width, height);
-        if (dist > 1) {
-          const BASE_RADIAL_SPEED = 0.35;
-          const distRatio = dist / (maxDim * 0.5);
-          const beatBoost = 1 + beat * 0.6;
-          const targetRadialSpeed = BASE_RADIAL_SPEED * distRatio * depthResponse * beatBoost;
-          const currentRadialSpeed = (particle.vx * rdx + particle.vy * rdy) / dist;
-          const blendRate = 0.08;
-          const delta = (targetRadialSpeed - currentRadialSpeed) * blendRate;
-          particle.vx += (rdx / dist) * delta;
-          particle.vy += (rdy / dist) * delta;
-        }
-
         // Mouse interaction (scaled by depth)
         const mouse = mouseRef.current;
         const mdx = mouse.x - particle.x;
@@ -1139,6 +1194,29 @@ export function PlexusBackground({
           const wf = computeWaveForce(emitters[e], particle.x, particle.y, timeSec, maxDist);
           particle.vx += wf.fx * depthResponse * waveMult;
           particle.vy += wf.fy * depthResponse * waveMult;
+        }
+
+        // Repulsion — prevent clustering during drifting
+        const REPULSE_RADIUS = 60;
+        const REPULSE_STRENGTH = 0.002;
+        const repGrid = repulsionGridRef.current;
+        if (repGrid) {
+          const cellX = Math.floor(particle.x / REPULSE_RADIUS);
+          const cellY = Math.floor(particle.y / REPULSE_RADIUS);
+          const neighbors = getNeighborParticles(repGrid, cellX, cellY);
+          for (let n = 0; n < neighbors.length; n++) {
+            const other = neighbors[n];
+            if (other.id === particle.id) continue;
+            const dx = particle.x - other.x;
+            const dy = particle.y - other.y;
+            const distSq = dx * dx + dy * dy;
+            if (distSq < REPULSE_RADIUS * REPULSE_RADIUS && distSq > 1) {
+              const dist = Math.sqrt(distSq);
+              const force = REPULSE_STRENGTH * (1 - dist / REPULSE_RADIUS);
+              particle.vx += (dx / dist) * force;
+              particle.vy += (dy / dist) * force;
+            }
+          }
         }
 
         // Gravitational pulse hint
@@ -1211,7 +1289,21 @@ export function PlexusBackground({
       particle.x += particle.vx;
       particle.y += particle.vy;
 
-      // Drifting: center-respawn when particles exit viewport
+      // Lifecycle — age and respawn
+      if (state === 'drifting' || state === 'expanding') {
+        particle.life += 16;
+        if (particle.life >= particle.maxLife) {
+          particle.x = Math.random() * width;
+          particle.y = Math.random() * height;
+          particle.vx = 0;
+          particle.vy = 0;
+          particle.life = 0;
+          particle.maxLife = 15000 + Math.random() * 15000;
+          particle.twinklePhase = Math.random() * Math.PI * 2;
+        }
+      }
+
+      // Drifting: respawn when particles exit viewport
       if (state === 'drifting') {
         const margin = 50;
         if (
@@ -1220,10 +1312,8 @@ export function PlexusBackground({
           particle.y < -margin ||
           particle.y > height + margin
         ) {
-          const angle = Math.random() * Math.PI * 2;
-          const spawnDist = 30 + Math.random() * 40;
-          particle.x = centerX + Math.cos(angle) * spawnDist;
-          particle.y = centerY + Math.sin(angle) * spawnDist;
+          particle.x = Math.random() * width;
+          particle.y = Math.random() * height;
           particle.vx = 0;
           particle.vy = 0;
           particle.twinklePhase = Math.random() * Math.PI * 2;
@@ -1525,6 +1615,9 @@ export function PlexusBackground({
       const particles = particlesRef.current;
       const state = stateRef.current;
 
+      // Build repulsion grid for drifting state
+      repulsionGridRef.current = state === 'drifting' ? buildSpatialGrid(particles, 60) : null;
+
       // Update all particles
       for (let i = 0; i < particles.length; i++) {
         updateParticle(particles[i], width, height, now, centerX, centerY);
@@ -1598,7 +1691,9 @@ export function PlexusBackground({
       const baseConnDist =
         (isDarkRef.current ? effectiveConnDist : effectiveConnDist * 1.2) * (1 + beat * 0.3);
       const connDist =
-        state === 'collapsing' || state === 'shape_forming' ? baseConnDist * 0.6 : baseConnDist;
+        state === 'collapsing' || state === 'shape_forming'
+          ? baseConnDist * 0.6
+          : baseConnDist * 0.7;
       let lineColor = lineColorRef.current;
       if (state === 'shape_forming' && isDarkRef.current) {
         lineColor = 'rgba(150, 170, 255,';
