@@ -2,8 +2,8 @@
 
 import { motion } from 'motion/react';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
-import NavigationMenuDemo from './NavigationMenuDemo';
 import { ModeToggle } from './ModeToggle';
+import NavigationMenuDemo from './NavigationMenuDemo';
 
 export default function AutoHideHeader() {
   const { isVisible } = useScrollDirection();

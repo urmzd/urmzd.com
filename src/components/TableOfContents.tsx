@@ -26,7 +26,7 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
       {
         rootMargin: '-80px 0px -80% 0px',
         threshold: 0,
-      }
+      },
     );
 
     headings.forEach(({ slug }) => {

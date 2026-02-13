@@ -1,7 +1,7 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import { IconChevronDown, IconCompass } from '@tabler/icons-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 import { enhanceCodeBlocks } from '../lib/enhanceCodeBlocks';
 
 interface ExploreCardProps {

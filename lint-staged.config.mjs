@@ -1,4 +1,3 @@
 export default {
-  '*.{ts,tsx,astro}': ['eslint --fix'],
-  '*.{ts,tsx,astro,css,md,json}': ['prettier --write'],
+  '*.{ts,tsx,css,json}': ['biome check --write --no-errors-on-unmatched'],
 };

@@ -619,7 +619,7 @@ export function getScriptLetters(script: ScriptType): Letter[] | ArabicLetter[] 
 export function translateLetters(
   letters: string,
   targetScript: ScriptType,
-  sourceScript: ScriptType = 'latin'
+  sourceScript: ScriptType = 'latin',
 ): Array<{ source: Letter | ArabicLetter; target: Letter | ArabicLetter } | null> {
   return letters.split('').map((letter) => {
     const mapping = getLetterMapping(letter);

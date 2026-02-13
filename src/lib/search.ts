@@ -36,7 +36,7 @@ export function levenshteinDistance(a: string, b: string): number {
           Math.min(
             dp[i - 1][j], // deletion
             dp[i][j - 1], // insertion
-            dp[i - 1][j - 1] // substitution
+            dp[i - 1][j - 1], // substitution
           );
       }
     }
@@ -99,7 +99,7 @@ export function fuzzySearch<T>(
   query: string,
   items: T[],
   getSearchableText: (item: T) => string[],
-  threshold = 0.5
+  threshold = 0.5,
 ): T[] {
   if (!query.trim()) return items;
 

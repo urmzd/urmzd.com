@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 // =============================================================================
 // Interfaces
@@ -259,7 +259,7 @@ const EMITTER_CONFIGS = [
 // =============================================================================
 
 function easeInOutCubic(t: number): number {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
 }
 
 function assignStarColorTint(isDark: boolean): { r: number; g: number; b: number } {
@@ -275,7 +275,7 @@ function computeWaveForce(
   px: number,
   py: number,
   timeSec: number,
-  maxDist: number
+  maxDist: number,
 ): { fx: number; fy: number } {
   const dx = px - emitter.x;
   const dy = py - emitter.y;
@@ -384,7 +384,7 @@ function updateAndDrawShootingStars(
   stars: ShootingStar[],
   width: number,
   height: number,
-  isDark: boolean
+  isDark: boolean,
 ): ShootingStar[] {
   const surviving: ShootingStar[] = [];
   for (const star of stars) {
@@ -493,7 +493,7 @@ function updateAndDrawRipples(ctx: CanvasRenderingContext2D, ripples: Ripple[]):
         0,
         ripple.x,
         ripple.y,
-        ripple.radius
+        ripple.radius,
       );
       grad.addColorStop(0, `hsla(${ripple.hue}, 80%, 70%, ${glowAlpha})`);
       grad.addColorStop(1, `hsla(${ripple.hue}, 80%, 60%, 0)`);
@@ -668,7 +668,7 @@ function projectTo2D(
   p: Point3D,
   centerX: number,
   centerY: number,
-  focalLength: number
+  focalLength: number,
 ): { x: number; y: number } {
   const scale = focalLength / (focalLength + p.z);
   return {
@@ -683,7 +683,7 @@ function computeShapeTargets(
   rotX: number,
   cx: number,
   cy: number,
-  focalLen: number
+  focalLen: number,
 ): Array<{ x: number; y: number }> {
   return shape3D.map((p) => {
     const rotated = rotatePoint(p, rotY, rotX);
@@ -699,14 +699,14 @@ function drawConnections(
   ctx: CanvasRenderingContext2D,
   particles: Particle[],
   connDist: number,
-  lineColor: string
+  lineColor: string,
 ) {
   const connDistSq = connDist * connDist;
   const grid = buildSpatialGrid(particles, connDist);
 
   const batches: Array<Array<[Particle, Particle]>> = Array.from(
     { length: OPACITY_BANDS },
-    () => []
+    () => [],
   );
   const seen = new Set<string>();
 
@@ -917,7 +917,7 @@ export function PlexusBackground({
       }
       return particles;
     },
-    [particleCount]
+    [particleCount],
   );
 
   const bucketParticles = useCallback((particles: Particle[]) => {
@@ -966,7 +966,7 @@ export function PlexusBackground({
           e.baseFracY * height + e.orbitRadius * Math.sin(e.orbitSpeed * timeSec + e.orbitPhase);
       }
     },
-    []
+    [],
   );
 
   const drawParticle = useCallback(
@@ -977,7 +977,7 @@ export function PlexusBackground({
       state: GalaxyState,
       centerX: number,
       centerY: number,
-      maxDim: number
+      maxDim: number,
     ) => {
       const beat = beatIntensityRef?.current ?? 0;
       const t = Math.sin(now * 0.001 * p.twinkleSpeed + p.twinklePhase);
@@ -1071,7 +1071,7 @@ export function PlexusBackground({
       ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
       ctx.fill();
     },
-    [beatIntensityRef]
+    [beatIntensityRef],
   );
 
   const updateParticle = useCallback(
@@ -1081,7 +1081,7 @@ export function PlexusBackground({
       height: number,
       now: number,
       centerX: number,
-      centerY: number
+      centerY: number,
     ) => {
       const state = stateRef.current;
       const elapsed = now - stateStartTimeRef.current;
@@ -1236,7 +1236,7 @@ export function PlexusBackground({
         if (particle.y > height) particle.y = 0;
       }
     },
-    [gravityStrength]
+    [gravityStrength],
   );
 
   useEffect(() => {
@@ -1290,7 +1290,7 @@ export function PlexusBackground({
       shapePoints3DRef.current = generateShapePoints(
         SHAPE_NAMES[0],
         particlesRef.current.length,
-        baseSize
+        baseSize,
       );
       shapeTimerRef.current = Date.now();
       const focalLen = Math.min(w, h) * 2;
@@ -1300,7 +1300,7 @@ export function PlexusBackground({
         rotationRef.current.x,
         w / 2,
         h / 2,
-        focalLen
+        focalLen,
       );
     };
 
@@ -1337,14 +1337,14 @@ export function PlexusBackground({
           shapePoints3DRef.current = generateShapePoints(
             SHAPE_NAMES[shapeIndexRef.current],
             particlesRef.current.length,
-            baseSize
+            baseSize,
           );
           if (prevShapePoints3DRef.current.length > 0) {
             const prevIndex = (shapeIndexRef.current - 1 + SHAPE_NAMES.length) % SHAPE_NAMES.length;
             prevShapePoints3DRef.current = generateShapePoints(
               SHAPE_NAMES[prevIndex],
               particlesRef.current.length,
-              baseSize
+              baseSize,
             );
           }
         }
@@ -1478,7 +1478,7 @@ export function PlexusBackground({
           shapePoints3DRef.current = generateShapePoints(
             SHAPE_NAMES[shapeIndexRef.current],
             particlesRef.current.length,
-            baseSize
+            baseSize,
           );
           shapeTransitionStartRef.current = now;
           shapeTimerRef.current = now;
@@ -1515,7 +1515,7 @@ export function PlexusBackground({
           rotationRef.current.x,
           centerX,
           centerY,
-          focalLen
+          focalLen,
         );
       }
 
@@ -1555,7 +1555,7 @@ export function PlexusBackground({
             maxDim * 0.15,
             centerX,
             centerY,
-            maxDim * 0.75
+            maxDim * 0.75,
           );
           grad.addColorStop(0, 'rgba(0, 0, 0, 0)');
           grad.addColorStop(1, `rgba(0, 0, 0, ${vignetteAlpha})`);
@@ -1618,7 +1618,7 @@ export function PlexusBackground({
           shootingStarsRef.current,
           width,
           height,
-          true
+          true,
         );
       } else {
         if (state === 'drifting' && Math.random() < 0.001) {

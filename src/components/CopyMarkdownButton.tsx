@@ -1,7 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { motion } from 'motion/react';
-import { IconCopy, IconCheck } from '@tabler/icons-react';
+import { useState } from 'react';
 import { mdxToMarkdown, type PostFrontmatter } from '../lib/mdxToMarkdown';
 
 interface CopyMarkdownButtonProps {

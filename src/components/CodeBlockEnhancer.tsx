@@ -10,5 +10,5 @@ export default function CodeBlockEnhancer() {
     enhanceCodeBlocks(proseContainer as HTMLElement);
   }, []);
 
-  return <></>;
+  return null;
 }

@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import * as Popover from '@radix-ui/react-popover';
-import { motion, AnimatePresence } from 'motion/react';
-import { cn } from '@/lib/utils';
+import { AnimatePresence, motion } from 'motion/react';
+import { useState } from 'react';
 import { type ScriptType, scriptConfigs, translateLetters } from '@/data/scriptMappings';
+import { cn } from '@/lib/utils';
 import ScriptTranslator from './ScriptTranslator';
 
 interface ScriptInlineProps {
@@ -36,7 +36,7 @@ export default function ScriptInline({
           className={cn(
             'inline cursor-pointer underline decoration-dotted underline-offset-2',
             'hover:decoration-solid focus:outline-none focus:ring-2 focus:ring-offset-2',
-            className
+            className,
           )}
           style={{ fontFamily: targetConfig.fontFamily }}
           dir={targetConfig.direction}
