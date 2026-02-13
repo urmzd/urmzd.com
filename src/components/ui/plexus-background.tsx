@@ -733,6 +733,9 @@ interface PlexusBackgroundProps {
   particleCount?: number;
   connectionDistance?: number;
   gravityStrength?: number;
+  autoCollapseDelay?: number;
+  onAutoCollapse?: () => void;
+  beatIntensityRef?: React.RefObject<number>;
 }
 
 export function PlexusBackground({
@@ -740,6 +743,9 @@ export function PlexusBackground({
   particleCount = 300,
   connectionDistance = 120,
   gravityStrength = 800,
+  autoCollapseDelay,
+  onAutoCollapse,
+  beatIntensityRef,
 }: PlexusBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
@@ -785,6 +791,9 @@ export function PlexusBackground({
   const hintFiredRef = useRef(false);
   const hintActiveRef = useRef<{ startTime: number } | null>(null);
   const hintTimerRef = useRef<number>(0);
+
+  // Auto-collapse timer
+  const autoCollapseTimerRef = useRef<number>(0);
 
   // Theme detection + nebula/colorTint updates
   useEffect(() => {
@@ -930,28 +939,33 @@ export function PlexusBackground({
     []
   );
 
-  const drawParticle = useCallback((ctx: CanvasRenderingContext2D, p: Particle, now: number) => {
-    const t = Math.sin(now * 0.001 * p.twinkleSpeed + p.twinklePhase);
-    const opacity = p.twinkleMin + (t * 0.5 + 0.5) * (p.twinkleMax - p.twinkleMin);
-    const { r, g, b } = p.colorTint;
+  const drawParticle = useCallback(
+    (ctx: CanvasRenderingContext2D, p: Particle, now: number) => {
+      const beat = beatIntensityRef?.current ?? 0;
+      const t = Math.sin(now * 0.001 * p.twinkleSpeed + p.twinklePhase);
+      const baseOpacity = p.twinkleMin + (t * 0.5 + 0.5) * (p.twinkleMax - p.twinkleMin);
+      const opacity = Math.min(baseOpacity * (1 + beat * 0.3), 1);
+      const { r, g, b } = p.colorTint;
 
-    // Foreground star glow
-    if (p.layer === 'foreground' && opacity > 0.5) {
-      const glowRadius = p.radius * 3;
-      const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
-      grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 0.15})`);
-      grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
-      ctx.fillStyle = grad;
+      // Foreground star glow — beat expands radius
+      if (p.layer === 'foreground' && opacity > 0.5) {
+        const glowRadius = p.radius * (3 + beat * 2);
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
+        grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 0.15})`);
+        grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
       ctx.beginPath();
-      ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
+      SHAPE_DRAW[p.shape](ctx, p.x, p.y, p.radius);
+      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
       ctx.fill();
-    }
-
-    ctx.beginPath();
-    SHAPE_DRAW[p.shape](ctx, p.x, p.y, p.radius);
-    ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
-    ctx.fill();
-  }, []);
+    },
+    [beatIntensityRef]
+  );
 
   const updateParticle = useCallback(
     (
@@ -1214,8 +1228,9 @@ export function PlexusBackground({
     };
 
     const handleClick = () => {
-      // Cancel hint timer on any click
+      // Cancel timers on any click
       clearTimeout(hintTimerRef.current);
+      clearTimeout(autoCollapseTimerRef.current);
       hintActiveRef.current = null;
 
       const state = stateRef.current;
@@ -1260,6 +1275,17 @@ export function PlexusBackground({
           hintFiredRef.current = true;
         }
       }, HINT_DELAY_MS);
+    }
+
+    // Auto-collapse: trigger collapsing after delay
+    if (!prefersReducedMotion && autoCollapseDelay != null) {
+      autoCollapseTimerRef.current = window.setTimeout(() => {
+        if (stateRef.current === 'drifting') {
+          stateRef.current = 'collapsing';
+          stateStartTimeRef.current = Date.now();
+          onAutoCollapse?.();
+        }
+      }, autoCollapseDelay);
     }
 
     // Reduced motion: static starfield with nebula, drawn once
@@ -1373,13 +1399,16 @@ export function PlexusBackground({
 
       // Cosmic shape glow (drawn before particles for background effect)
       if (state === 'shape_forming') {
-        const glowRadius = Math.min(width, height) * 0.35;
+        const shapeBeat = beatIntensityRef?.current ?? 0;
+        const glowRadius = Math.min(width, height) * (0.35 + shapeBeat * 0.1);
         const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, glowRadius);
         if (isDarkRef.current) {
-          grad.addColorStop(0, 'rgba(80, 60, 180, 0.06)');
+          const alpha = 0.06 + shapeBeat * 0.04;
+          grad.addColorStop(0, `rgba(80, 60, 180, ${alpha})`);
           grad.addColorStop(1, 'rgba(80, 60, 180, 0)');
         } else {
-          grad.addColorStop(0, 'rgba(100, 120, 160, 0.04)');
+          const alpha = 0.04 + shapeBeat * 0.03;
+          grad.addColorStop(0, `rgba(100, 120, 160, ${alpha})`);
           grad.addColorStop(1, 'rgba(100, 120, 160, 0)');
         }
         ctx.fillStyle = grad;
@@ -1395,7 +1424,9 @@ export function PlexusBackground({
       for (let i = 0; i < medium.length; i++) drawParticle(ctx, medium[i], now);
 
       // Connections (medium + foreground only) — light mode: 20% longer range
-      const baseConnDist = isDarkRef.current ? effectiveConnDist : effectiveConnDist * 1.2;
+      const beat = beatIntensityRef?.current ?? 0;
+      const baseConnDist =
+        (isDarkRef.current ? effectiveConnDist : effectiveConnDist * 1.2) * (1 + beat * 0.3);
       const connDist =
         state === 'collapsing' || state === 'shape_forming' ? baseConnDist * 0.6 : baseConnDist;
       let lineColor = lineColorRef.current;
@@ -1446,6 +1477,7 @@ export function PlexusBackground({
       cancelAnimationFrame(animationFrameRef.current);
       clearTimeout(resizeTimeoutRef.current);
       clearTimeout(hintTimerRef.current);
+      clearTimeout(autoCollapseTimerRef.current);
     };
   }, [
     initParticles,
@@ -1455,6 +1487,9 @@ export function PlexusBackground({
     drawParticle,
     updateParticle,
     connectionDistance,
+    autoCollapseDelay,
+    onAutoCollapse,
+    beatIntensityRef,
   ]);
 
   return (
