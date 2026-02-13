@@ -1,15 +1,15 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
 import {
-  IconShare,
-  IconBrandX,
-  IconBrandLinkedin,
   IconBrandFacebook,
-  IconLink,
+  IconBrandLinkedin,
+  IconBrandX,
   IconCheck,
   IconDownload,
+  IconLink,
+  IconShare,
 } from '@tabler/icons-react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 import { mdxToMarkdown, type PostFrontmatter } from '../lib/mdxToMarkdown';
 
 interface ShareButtonProps {
@@ -115,7 +115,7 @@ export default function ShareButton({
         window.open(
           `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
           '_blank',
-          'noopener,noreferrer'
+          'noopener,noreferrer',
         );
         setIsOpen(false);
       },
@@ -127,7 +127,7 @@ export default function ShareButton({
         window.open(
           `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
           '_blank',
-          'noopener,noreferrer'
+          'noopener,noreferrer',
         );
         setIsOpen(false);
       },
@@ -139,7 +139,7 @@ export default function ShareButton({
         window.open(
           `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
           '_blank',
-          'noopener,noreferrer'
+          'noopener,noreferrer',
         );
         setIsOpen(false);
       },

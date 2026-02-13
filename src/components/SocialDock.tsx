@@ -1,9 +1,9 @@
 'use client';
 
-import { FloatingDock } from '@/components/ui/floating-dock';
-import { socialLinks, type SocialLink } from '@/data/socialLinks';
 import { SiArxiv, SiBehance, SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import { IconBrandLinkedin, IconMail, IconRss } from '@tabler/icons-react';
+import { FloatingDock } from '@/components/ui/floating-dock';
+import { type SocialLink, socialLinks } from '@/data/socialLinks';
 
 const iconMap: Record<SocialLink['icon'], React.ReactNode> = {
   github: <SiGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />,

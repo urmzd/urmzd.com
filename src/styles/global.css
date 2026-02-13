@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 @plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
@@ -345,7 +345,7 @@
   }
 
   .name-script {
-    font-family: 'Great Vibes', cursive;
+    font-family: "Great Vibes", cursive;
     letter-spacing: 0.05em;
   }
 
@@ -375,7 +375,7 @@
   .splash-node {
     fill: oklch(0.88 0.08 80 / 70%);
     offset-path: path(
-      'M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600'
+      "M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600"
     );
     animation: node-travel 7.5s ease-out infinite;
     will-change: offset-distance, transform, opacity;
@@ -394,7 +394,7 @@
   .splash-tracer {
     fill: oklch(0.9 0.1 80 / 80%);
     offset-path: path(
-      'M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600'
+      "M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600"
     );
     animation: tracer-travel 7.5s linear infinite;
     filter: drop-shadow(0 0 12px oklch(0.9 0.1 80 / 40%));
@@ -478,7 +478,7 @@
   }
 
   .name-chip::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: -12px;
     border-radius: 999px;
@@ -602,7 +602,7 @@
 
   .film-loading-text {
     @apply text-sm text-white/60;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
     letter-spacing: 0.1em;
   }
 
@@ -662,7 +662,7 @@
 
   .film-frame-desc {
     @apply text-sm text-white/60;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
   }
 
   .film-sprocket {
@@ -717,7 +717,7 @@
   }
 
   .rolodex-card-image::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     background: linear-gradient(90deg, oklch(0 0 0 / 80%), transparent 60%);
@@ -800,7 +800,7 @@
   }
 
   .final-card-tagline {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
     font-size: 0.85rem;
     letter-spacing: 0.08em;
     color: var(--muted-foreground);
@@ -814,20 +814,20 @@
 
   .final-card-title {
     @apply text-2xl font-bold sm:text-4xl;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
     letter-spacing: 0.04em;
     line-height: 1.1;
   }
 
   .final-card-subtitle {
     @apply text-xs uppercase tracking-[0.25em] text-muted-foreground;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
     line-height: 1.2;
   }
 
   .final-card-phonetic {
     @apply text-xs text-foreground;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
     letter-spacing: 0.06em;
     line-height: 1.2;
     margin-top: 0.5rem;
@@ -840,7 +840,7 @@
 
   .landing-hero-name {
     @apply flex flex-wrap justify-center;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
     font-size: clamp(2rem, 6vw, 4.5rem);
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -875,7 +875,7 @@
 
   .landing-hero-sub {
     @apply text-xs;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
     letter-spacing: 0.04em;
     line-height: 1.5;
     color: oklch(0.3 0.02 250 / 65%);
@@ -889,7 +889,7 @@
 
   .final-card-pronunciation {
     @apply text-xs text-muted-foreground/60;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
     letter-spacing: 0.04em;
     line-height: 1.2;
     font-style: italic;
@@ -897,14 +897,14 @@
 
   .final-card-intro {
     @apply text-sm text-foreground/80;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
     line-height: 1.4;
     max-width: 30rem;
   }
 
   .final-card-link {
     @apply text-xs uppercase tracking-[0.25em] text-muted-foreground;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
     transition: color 0.2s ease;
   }
 
@@ -1081,7 +1081,7 @@
   }
 
   .click-hint-text {
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: "IBM Plex Mono", monospace;
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;

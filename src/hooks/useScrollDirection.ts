@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 const SCROLL_THRESHOLD = 10;
 const HOVER_ZONE_PX = 30;

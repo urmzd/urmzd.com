@@ -56,5 +56,5 @@ export default function HeadingLinkEnhancer() {
     });
   }, []);
 
-  return <></>;
+  return null;
 }

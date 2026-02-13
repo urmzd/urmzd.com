@@ -1,8 +1,8 @@
 'use client';
 
+import { ArrowUpRight } from 'lucide-react';
 import { LinkPreview } from '@/components/ui/link-preview';
 import { cn } from '@/lib/utils';
-import { ArrowUpRight } from 'lucide-react';
 
 interface PreviewLinkProps {
   href: string;

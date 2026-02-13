@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { PlexusBackground } from '@/components/ui/plexus-background';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import SocialDock from '@/components/SocialDock';
-import { useTextScramble } from '@/hooks/useTextScramble';
+import { PlexusBackground } from '@/components/ui/plexus-background';
 import { useSimulatedPulse } from '@/hooks/useSimulatedPulse';
+import { useTextScramble } from '@/hooks/useTextScramble';
 
 const NAME_CHARS = 'URMZD MUKHAMMADNAIM'.split('');
 

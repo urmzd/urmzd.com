@@ -1,9 +1,9 @@
-import type { APIRoute, GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
-import satori from 'satori';
-import sharp from 'sharp';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import type { APIRoute, GetStaticPaths } from 'astro';
+import satori from 'satori';
+import sharp from 'sharp';
 import { calculateReadTime } from '../../lib/readTime';
 
 // Load fonts at module level for reuse
@@ -154,7 +154,7 @@ function OGImage({ title, description, pubDate, readTime }: OGImageProps) {
 export const GET: APIRoute = async ({ props }) => {
   const { title, description, pubDate, readTime } = props as OGImageProps;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: satori expects ReactNode but returns incompatible type
   const svg = await satori(OGImage({ title, description, pubDate, readTime }) as any, {
     width: 1200,
     height: 630,

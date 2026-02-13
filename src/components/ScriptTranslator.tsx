@@ -1,15 +1,15 @@
 'use client';
 
-import { motion } from 'motion/react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@/lib/utils';
+import { motion } from 'motion/react';
 import {
-  type ScriptType,
-  type Letter,
   type ArabicLetter,
-  scriptConfigs,
   getLetterMapping,
+  type Letter,
+  type ScriptType,
+  scriptConfigs,
 } from '@/data/scriptMappings';
+import { cn } from '@/lib/utils';
 
 const cardVariants = cva(
   'rounded-xl border bg-card text-card-foreground shadow-sm transition-colors',
@@ -24,7 +24,7 @@ const cardVariants = cva(
     defaultVariants: {
       variant: 'default',
     },
-  }
+  },
 );
 
 const gridVariants = cva('grid gap-4', {
@@ -88,7 +88,7 @@ function LetterCard({
       <div
         className={cn(
           'text-lg font-semibold text-foreground/70',
-          effectiveVariant === 'compact' && 'text-base'
+          effectiveVariant === 'compact' && 'text-base',
         )}
         style={{ fontFamily: sourceConfig.fontFamily }}
         dir={sourceConfig.direction}
@@ -104,7 +104,7 @@ function LetterCard({
         className={cn(
           'text-4xl font-bold text-foreground',
           effectiveVariant === 'compact' && 'text-3xl',
-          effectiveVariant === 'detailed' && 'text-5xl'
+          effectiveVariant === 'detailed' && 'text-5xl',
         )}
         style={{ fontFamily: targetConfig.fontFamily }}
         dir={targetConfig.direction}
@@ -116,7 +116,7 @@ function LetterCard({
       <div
         className={cn(
           'text-sm font-medium text-foreground mt-2',
-          effectiveVariant === 'compact' && 'text-xs'
+          effectiveVariant === 'compact' && 'text-xs',
         )}
       >
         {targetLetter.name}
@@ -126,7 +126,7 @@ function LetterCard({
       <div
         className={cn(
           'text-xs text-muted-foreground font-mono mt-1',
-          effectiveVariant === 'compact' && 'hidden'
+          effectiveVariant === 'compact' && 'hidden',
         )}
       >
         {targetLetter.ipa}

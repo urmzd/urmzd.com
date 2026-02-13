@@ -1,9 +1,8 @@
 'use client';
-import { cn } from '@/lib/utils';
-import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import type { MotionValue } from 'motion/react';
-
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { useRef, useState } from 'react';
+import { cn } from '@/lib/utils';
 
 export const FloatingDock = ({
   items,
@@ -33,7 +32,7 @@ const FloatingDockMobile = ({
     <div
       className={cn(
         'mx-auto flex flex-nowrap items-center justify-center gap-1.5 rounded-2xl px-2.5 py-2 md:hidden',
-        className
+        className,
       )}
     >
       {items.map((item) => (

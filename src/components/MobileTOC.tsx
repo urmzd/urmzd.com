@@ -1,7 +1,7 @@
 'use client';
+import { IconChevronDown, IconList } from '@tabler/icons-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { IconList, IconChevronDown } from '@tabler/icons-react';
 
 interface Heading {
   depth: number;

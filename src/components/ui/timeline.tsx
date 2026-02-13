@@ -1,6 +1,6 @@
 'use client';
-import { useScroll, useTransform, motion, type MotionValue } from 'motion/react';
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { type MotionValue, motion, useScroll, useTransform } from 'motion/react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 interface Subsection {
   label: string;
