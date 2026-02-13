@@ -10,7 +10,7 @@ export default function AutoHideHeader() {
 
   return (
     <motion.header
-      className="glass-panel fixed top-0 left-0 right-0 z-50 !rounded-none !p-0"
+      className="fixed top-0 left-0 right-0 z-50"
       initial={{ y: 0 }}
       animate={{ y: isVisible ? 0 : '-100%' }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
