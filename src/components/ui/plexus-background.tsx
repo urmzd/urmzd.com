@@ -18,6 +18,7 @@ interface Particle {
   twinkleMin: number;
   twinkleMax: number;
   radius: number;
+  baseRadius: number;
   id: number;
   layer: 'distant' | 'medium' | 'foreground';
   depth: number;
@@ -878,6 +879,7 @@ export function PlexusBackground({
           twinkleMin,
           twinkleMax,
           radius,
+          baseRadius: radius,
           id: i,
           layer,
           depth,
@@ -940,16 +942,93 @@ export function PlexusBackground({
   );
 
   const drawParticle = useCallback(
-    (ctx: CanvasRenderingContext2D, p: Particle, now: number) => {
+    (
+      ctx: CanvasRenderingContext2D,
+      p: Particle,
+      now: number,
+      state: GalaxyState,
+      centerX: number,
+      centerY: number,
+      maxDim: number
+    ) => {
       const beat = beatIntensityRef?.current ?? 0;
       const t = Math.sin(now * 0.001 * p.twinkleSpeed + p.twinklePhase);
       const baseOpacity = p.twinkleMin + (t * 0.5 + 0.5) * (p.twinkleMax - p.twinkleMin);
       const opacity = Math.min(baseOpacity * (1 + beat * 0.3), 1);
       const { r, g, b } = p.colorTint;
 
-      // Foreground star glow — beat expands radius
+      // Dynamic radius scaling during drifting — stars grow from vanishing point
+      let drawRadius = p.radius;
+      if (state === 'drifting') {
+        const ddx = p.x - centerX;
+        const ddy = p.y - centerY;
+        const distFromCenter = Math.sqrt(ddx * ddx + ddy * ddy);
+        const growthFactor = Math.min(distFromCenter / (maxDim * 0.35), 1.0);
+        drawRadius = p.baseRadius * (0.15 + 0.85 * growthFactor);
+      }
+
+      // Warp streak rendering during collapsing/expanding
+      if (state === 'collapsing' || state === 'expanding') {
+        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (speed > 0.1) {
+          const streakLen = Math.min(speed * 12, 40);
+          const nx = p.vx / speed;
+          const ny = p.vy / speed;
+          const tailX = p.x - nx * streakLen;
+          const tailY = p.y - ny * streakLen;
+
+          const grad = ctx.createLinearGradient(tailX, tailY, p.x, p.y);
+          grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
+          grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${opacity})`);
+
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = drawRadius;
+          ctx.beginPath();
+          ctx.moveTo(tailX, tailY);
+          ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+
+          if (p.layer === 'foreground' && opacity > 0.5) {
+            const glowRadius = drawRadius * (3 + beat * 2);
+            const grad2 = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
+            grad2.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 0.15})`);
+            grad2.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+            ctx.fillStyle = grad2;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          return;
+        }
+      }
+
+      // Drifting streaks for foreground particles
+      if (state === 'drifting' && p.layer === 'foreground') {
+        const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+        if (speed > 0.15) {
+          const streakLen = Math.min(speed * 6, 12);
+          const nx = p.vx / speed;
+          const ny = p.vy / speed;
+          const tailX = p.x - nx * streakLen;
+          const tailY = p.y - ny * streakLen;
+
+          const grad = ctx.createLinearGradient(tailX, tailY, p.x, p.y);
+          grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
+          grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${opacity * 0.6})`);
+
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = drawRadius * 0.7;
+          ctx.beginPath();
+          ctx.moveTo(tailX, tailY);
+          ctx.lineTo(p.x, p.y);
+          ctx.stroke();
+          // Fall through to normal dot rendering
+        }
+      }
+
+      // Normal dot/shape rendering
       if (p.layer === 'foreground' && opacity > 0.5) {
-        const glowRadius = p.radius * (3 + beat * 2);
+        const glowRadius = drawRadius * (3 + beat * 2);
         const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
         grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 0.15})`);
         grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
@@ -960,7 +1039,7 @@ export function PlexusBackground({
       }
 
       ctx.beginPath();
-      SHAPE_DRAW[p.shape](ctx, p.x, p.y, p.radius);
+      SHAPE_DRAW[p.shape](ctx, p.x, p.y, drawRadius);
       ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
       ctx.fill();
     },
@@ -981,38 +1060,53 @@ export function PlexusBackground({
       const depthResponse = 1 - particle.depth;
 
       if (state === 'drifting') {
+        const beat = beatIntensityRef?.current ?? 0;
+
+        // Radial outflow from center — space travel effect
+        const rdx = particle.x - centerX;
+        const rdy = particle.y - centerY;
+        const dist = Math.sqrt(rdx * rdx + rdy * rdy);
+        const maxDim = Math.max(width, height);
+        if (dist > 1) {
+          const BASE_RADIAL_SPEED = 0.35;
+          const distRatio = dist / (maxDim * 0.5);
+          const beatBoost = 1 + beat * 0.6;
+          const targetRadialSpeed = BASE_RADIAL_SPEED * distRatio * depthResponse * beatBoost;
+          const currentRadialSpeed = (particle.vx * rdx + particle.vy * rdy) / dist;
+          const blendRate = 0.08;
+          const delta = (targetRadialSpeed - currentRadialSpeed) * blendRate;
+          particle.vx += (rdx / dist) * delta;
+          particle.vy += (rdy / dist) * delta;
+        }
+
         // Mouse interaction (scaled by depth)
         const mouse = mouseRef.current;
-        const dx = mouse.x - particle.x;
-        const dy = mouse.y - particle.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist > 0 && dist < 200) {
+        const mdx = mouse.x - particle.x;
+        const mdy = mouse.y - particle.y;
+        const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
+        if (mdist > 0 && mdist < 200) {
           if (isDarkRef.current) {
-            // Dark: uniform gravity attract
-            const force = (gravityStrength / 80000) * (1 - dist / 200) * depthResponse;
-            particle.vx += (dx / dist) * force;
-            particle.vy += (dy / dist) * force;
+            const force = (gravityStrength / 80000) * (1 - mdist / 200) * depthResponse;
+            particle.vx += (mdx / mdist) * force;
+            particle.vy += (mdy / mdist) * force;
           } else {
-            // Light: two-zone wake effect
-            if (dist < 80) {
-              // Inner zone: repel outward
-              const force = (gravityStrength / 40000) * (1 - dist / 80) * depthResponse;
-              particle.vx -= (dx / dist) * force;
-              particle.vy -= (dy / dist) * force;
+            if (mdist < 80) {
+              const force = (gravityStrength / 40000) * (1 - mdist / 80) * depthResponse;
+              particle.vx -= (mdx / mdist) * force;
+              particle.vy -= (mdy / mdist) * force;
             } else {
-              // Outer zone (80-200px): weak attract inward
-              const force = (gravityStrength / 200000) * (1 - (dist - 80) / 120) * depthResponse;
-              particle.vx += (dx / dist) * force;
-              particle.vy += (dy / dist) * force;
+              const force = (gravityStrength / 200000) * (1 - (mdist - 80) / 120) * depthResponse;
+              particle.vx += (mdx / mdist) * force;
+              particle.vy += (mdy / mdist) * force;
             }
           }
         }
 
-        // Wave drift — light mode gets full strength (ocean currents), dark is subtle stardust
+        // Wave drift — reduced in dark mode for subtle organic wobble
         const emitters = emittersRef.current;
         const maxDist = Math.sqrt(width * width + height * height);
         const timeSec = now * 0.001;
-        const waveMult = isDarkRef.current ? 0.3 : 1.0;
+        const waveMult = isDarkRef.current ? 0.15 : 1.0;
         for (let e = 0; e < emitters.length; e++) {
           const wf = computeWaveForce(emitters[e], particle.x, particle.y, timeSec, maxDist);
           particle.vx += wf.fx * depthResponse * waveMult;
@@ -1032,12 +1126,6 @@ export function PlexusBackground({
             particle.vx += (hdx / hdist) * pulseStrength;
             particle.vy += (hdy / hdist) * pulseStrength;
           }
-        }
-
-        // Ocean: slow rightward current + gentle vertical bob
-        if (!isDarkRef.current) {
-          particle.vx += 0.002;
-          particle.vy += Math.sin(now * 0.0008 + particle.id * 0.5) * 0.0005;
         }
 
         // Damping — light mode has more drag (water resistance vs vacuum)
@@ -1095,8 +1183,25 @@ export function PlexusBackground({
       particle.x += particle.vx;
       particle.y += particle.vy;
 
-      // Edge wrapping only during drifting/expanding
-      if (state === 'drifting' || state === 'expanding') {
+      // Drifting: center-respawn when particles exit viewport
+      if (state === 'drifting') {
+        const margin = 50;
+        if (
+          particle.x < -margin ||
+          particle.x > width + margin ||
+          particle.y < -margin ||
+          particle.y > height + margin
+        ) {
+          const angle = Math.random() * Math.PI * 2;
+          const spawnDist = 30 + Math.random() * 40;
+          particle.x = centerX + Math.cos(angle) * spawnDist;
+          particle.y = centerY + Math.sin(angle) * spawnDist;
+          particle.vx = 0;
+          particle.vy = 0;
+          particle.twinklePhase = Math.random() * Math.PI * 2;
+        }
+      } else if (state === 'expanding') {
+        // Edge wrapping only during expanding
         if (particle.x < 0) particle.x = width;
         if (particle.x > width) particle.x = 0;
         if (particle.y < 0) particle.y = height;
@@ -1295,10 +1400,16 @@ export function PlexusBackground({
         ctx.drawImage(nebulaRef.current, 0, 0, width, height);
       }
       const now = Date.now();
-      for (const p of distantRef.current) drawParticle(ctx, p, now);
-      for (const p of mediumRef.current) drawParticle(ctx, p, now);
+      const staticCX = width / 2;
+      const staticCY = height / 2;
+      const staticMaxDim = Math.max(width, height);
+      for (const p of distantRef.current)
+        drawParticle(ctx, p, now, 'drifting', staticCX, staticCY, staticMaxDim);
+      for (const p of mediumRef.current)
+        drawParticle(ctx, p, now, 'drifting', staticCX, staticCY, staticMaxDim);
       drawConnections(ctx, connectableRef.current, effectiveConnDist, lineColorRef.current);
-      for (const p of foregroundRef.current) drawParticle(ctx, p, now);
+      for (const p of foregroundRef.current)
+        drawParticle(ctx, p, now, 'drifting', staticCX, staticCY, staticMaxDim);
       return;
     }
 
@@ -1397,6 +1508,32 @@ export function PlexusBackground({
         hintActiveRef.current = null;
       }
 
+      // Warp tunnel vignette (drawn before particles for background effect)
+      if (state === 'collapsing' || state === 'expanding') {
+        const warpElapsed = now - stateStartTimeRef.current;
+        const duration = state === 'collapsing' ? COLLAPSE_DURATION : EXPAND_DURATION;
+        const progress = Math.min(warpElapsed / duration, 1);
+        const easedProgress = easeInOutCubic(progress);
+        // Collapsing: vignette increases; expanding: vignette decreases
+        const vignetteAlpha =
+          state === 'collapsing' ? easedProgress * 0.15 : (1 - easedProgress) * 0.15;
+        if (vignetteAlpha > 0.001) {
+          const maxDim = Math.max(width, height);
+          const grad = ctx.createRadialGradient(
+            centerX,
+            centerY,
+            maxDim * 0.15,
+            centerX,
+            centerY,
+            maxDim * 0.75
+          );
+          grad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+          grad.addColorStop(1, `rgba(0, 0, 0, ${vignetteAlpha})`);
+          ctx.fillStyle = grad;
+          ctx.fillRect(0, 0, width, height);
+        }
+      }
+
       // Cosmic shape glow (drawn before particles for background effect)
       if (state === 'shape_forming') {
         const shapeBeat = beatIntensityRef?.current ?? 0;
@@ -1419,9 +1556,12 @@ export function PlexusBackground({
       const distant = distantRef.current;
       const medium = mediumRef.current;
       const foreground = foregroundRef.current;
+      const maxDim = Math.max(width, height);
 
-      for (let i = 0; i < distant.length; i++) drawParticle(ctx, distant[i], now);
-      for (let i = 0; i < medium.length; i++) drawParticle(ctx, medium[i], now);
+      for (let i = 0; i < distant.length; i++)
+        drawParticle(ctx, distant[i], now, state, centerX, centerY, maxDim);
+      for (let i = 0; i < medium.length; i++)
+        drawParticle(ctx, medium[i], now, state, centerX, centerY, maxDim);
 
       // Connections (medium + foreground only) — light mode: 20% longer range
       const beat = beatIntensityRef?.current ?? 0;
@@ -1435,7 +1575,8 @@ export function PlexusBackground({
       }
       drawConnections(ctx, connectableRef.current, connDist, lineColor);
 
-      for (let i = 0; i < foreground.length; i++) drawParticle(ctx, foreground[i], now);
+      for (let i = 0; i < foreground.length; i++)
+        drawParticle(ctx, foreground[i], now, state, centerX, centerY, maxDim);
 
       // Ambient effects: dark = shooting stars, light = bioluminescent ripples
       if (isDarkRef.current) {
