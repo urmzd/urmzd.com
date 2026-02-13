@@ -2,6 +2,7 @@
 import '@/styles/global.css';
 import AutoHideHeader from '@/components/AutoHideHeader';
 import SocialDock from '@/components/SocialDock';
+import CookieConsent from '@/components/CookieConsent';
 import SEOMeta from '@/components/SEOMeta.astro';
 
 interface Props {
@@ -55,16 +56,6 @@ const {
       rel="stylesheet"
     />
     <title>{title}</title>
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-C6ZEFE95YR" is:inline></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        window.dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-      gtag('config', 'G-C6ZEFE95YR');
-    </script>
     <script is:inline>
       const getThemePreference = () => {
         if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
@@ -91,5 +82,6 @@ const {
     <AutoHideHeader client:load />
     <slot />
     {showSocialDock && <SocialDock client:visible />}
+    <CookieConsent client:load />
   </body>
 </html>
