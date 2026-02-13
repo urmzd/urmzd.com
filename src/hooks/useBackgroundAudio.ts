@@ -24,6 +24,7 @@ export function useBackgroundAudio({
   // Web Audio API refs
   const audioCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
+  const gainNodeRef = useRef<GainNode | null>(null);
   const sourceRef = useRef<MediaElementAudioSourceNode | null>(null);
   const rafIdRef = useRef<number>(0);
   const dataArrayRef = useRef<Uint8Array | null>(null);
@@ -49,8 +50,6 @@ export function useBackgroundAudio({
 
   const setupAnalyser = useCallback(
     (audio: HTMLAudioElement) => {
-      if (!beatIntensityRef) return;
-
       // Already wired up — just resume if suspended
       if (audioCtxRef.current) {
         if (audioCtxRef.current.state === 'suspended') {
@@ -64,16 +63,21 @@ export function useBackgroundAudio({
       analyser.fftSize = 256;
       analyser.smoothingTimeConstant = 0.4;
 
+      const gainNode = ctx.createGain();
       const source = ctx.createMediaElementSource(audio);
       source.connect(analyser);
-      analyser.connect(ctx.destination);
+      analyser.connect(gainNode);
+      gainNode.connect(ctx.destination);
 
       audioCtxRef.current = ctx;
       analyserRef.current = analyser;
+      gainNodeRef.current = gainNode;
       sourceRef.current = source;
       dataArrayRef.current = new Uint8Array(analyser.frequencyBinCount);
 
-      // Beat detection loop
+      // Beat detection loop — only runs when beatIntensityRef is provided
+      if (!beatIntensityRef) return;
+
       let smoothedIntensity = 0;
       const tick = () => {
         if (!analyserRef.current || !dataArrayRef.current) return;
@@ -151,6 +155,7 @@ export function useBackgroundAudio({
         audioCtxRef.current = null;
       }
       analyserRef.current = null;
+      gainNodeRef.current = null;
       sourceRef.current = null;
       dataArrayRef.current = null;
     };
@@ -174,16 +179,17 @@ export function useBackgroundAudio({
   }, [fadeIn, setupAnalyser]);
 
   const toggleMute = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const next = !audio.muted;
-    audio.muted = next;
+    const next = !muted;
     setMuted(next);
+    // Control volume through the GainNode (audio.muted doesn't affect Web Audio output)
+    if (gainNodeRef.current) {
+      gainNodeRef.current.gain.value = next ? 0 : 1;
+    }
     // When muted, zero out beat intensity
     if (next && beatIntensityRef) {
       beatIntensityRef.current = 0;
     }
-  }, [beatIntensityRef]);
+  }, [muted, beatIntensityRef]);
 
-  return { muted, toggleMute, ensurePlaying, currentTime, duration };
+  return { muted, toggleMute, ensurePlaying, currentTime, duration, analyserRef, dataArrayRef };
 }
