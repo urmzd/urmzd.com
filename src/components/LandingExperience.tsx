@@ -5,9 +5,11 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Pointer } from 'lucide-react';
 import { PlexusBackground } from '@/components/ui/plexus-background';
 import SocialDock from '@/components/SocialDock';
+import { useTextScramble } from '@/hooks/useTextScramble';
 
 export default function LandingExperience() {
   const [showHint, setShowHint] = useState(false);
+  const [showEasterEgg, setShowEasterEgg] = useState(false);
   const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -17,12 +19,16 @@ export default function LandingExperience() {
     };
   }, []);
 
+  const targetText = showEasterEgg ? 'ANYTHING IS POSSIBLE' : '/ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/';
+  const displayText = useTextScramble(targetText);
+
   const handleClick = () => {
     if (hintTimerRef.current) {
       clearTimeout(hintTimerRef.current);
       hintTimerRef.current = null;
     }
     setShowHint(false);
+    setShowEasterEgg((prev) => !prev);
   };
 
   return (
@@ -39,7 +45,7 @@ export default function LandingExperience() {
           <AnimatePresence>
             {showHint && (
               <motion.div
-                className="click-hint pointer-events-none"
+                className="click-hint pointer-events-none absolute bottom-full mb-3"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
@@ -62,19 +68,19 @@ export default function LandingExperience() {
             </motion.h1>
 
             <motion.p
-              className="final-card-phonetic"
+              className={`final-card-phonetic ${showEasterEgg ? 'tracking-[0.25em]' : ''}`}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 }}
             >
-              /ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/
+              {displayText}
             </motion.p>
           </div>
 
           <motion.div
             className="pointer-events-auto absolute top-full mt-6"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1.0 }}
           >
             <SocialDock
