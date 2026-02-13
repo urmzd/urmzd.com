@@ -1,6 +1,6 @@
 ---
 import '@/styles/global.css';
-import Header from '@/components/Header.astro';
+import AutoHideHeader from '@/components/AutoHideHeader';
 import SocialDock from '@/components/SocialDock';
 import SEOMeta from '@/components/SEOMeta.astro';
 
@@ -78,7 +78,7 @@ const {
     </script>
   </head>
   <body class="min-h-screen bg-background text-foreground antialiased">
-    <Header />
+    <AutoHideHeader client:load />
     <slot />
     {showSocialDock && <SocialDock client:visible />}
   </body>
