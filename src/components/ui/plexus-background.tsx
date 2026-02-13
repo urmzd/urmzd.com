@@ -170,7 +170,7 @@ const getOpacityBand = (opacity: number): number =>
 const COLLAPSE_DURATION = 1500;
 const EXPAND_DURATION = 1200;
 
-const SHAPE_NAMES = ['sphere', 'cube', 'pyramid', 'torus'] as const;
+const SHAPE_NAMES = ['sphere', 'cube', 'pyramid', 'torus', 'helix'] as const;
 type ShapeName = (typeof SHAPE_NAMES)[number];
 const SHAPE_CYCLE_DURATION = 8000;
 const SHAPE_TRANSITION_DURATION = 2000;
@@ -609,6 +609,26 @@ function generateTorusPoints(n: number, majorRadius: number): Point3D[] {
   return points;
 }
 
+function generateHelixPoints(n: number, radius: number): Point3D[] {
+  const points: Point3D[] = [];
+  const height = radius * 3;
+  const turns = 3;
+  const half = Math.floor(n / 2);
+  for (let strand = 0; strand < 2; strand++) {
+    const offset = strand * Math.PI;
+    for (let i = 0; i < half && points.length < n; i++) {
+      const t = i / (half - 1);
+      const theta = turns * 2 * Math.PI * t + offset;
+      points.push({
+        x: radius * Math.cos(theta),
+        y: -height / 2 + height * t,
+        z: radius * Math.sin(theta),
+      });
+    }
+  }
+  return points;
+}
+
 function generateShapePoints(shape: ShapeName, n: number, baseSize: number): Point3D[] {
   switch (shape) {
     case 'sphere':
@@ -619,6 +639,8 @@ function generateShapePoints(shape: ShapeName, n: number, baseSize: number): Poi
       return generatePyramidPoints(n, baseSize);
     case 'torus':
       return generateTorusPoints(n, baseSize);
+    case 'helix':
+      return generateHelixPoints(n, baseSize);
   }
 }
 
