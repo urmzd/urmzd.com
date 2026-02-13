@@ -737,6 +737,7 @@ interface PlexusBackgroundProps {
   autoCollapseDelay?: number;
   onAutoCollapse?: () => void;
   beatIntensityRef?: React.RefObject<number>;
+  onShapeChange?: () => void;
 }
 
 export function PlexusBackground({
@@ -747,6 +748,7 @@ export function PlexusBackground({
   autoCollapseDelay,
   onAutoCollapse,
   beatIntensityRef,
+  onShapeChange,
 }: PlexusBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
@@ -795,6 +797,10 @@ export function PlexusBackground({
 
   // Auto-collapse timer
   const autoCollapseTimerRef = useRef<number>(0);
+
+  // Shape change callback ref (avoids re-init of animation loop)
+  const onShapeChangeRef = useRef(onShapeChange);
+  onShapeChangeRef.current = onShapeChange;
 
   // Theme detection + nebula/colorTint updates
   useEffect(() => {
@@ -1433,6 +1439,7 @@ export function PlexusBackground({
         stateRef.current = 'shape_forming';
         stateStartTimeRef.current = now;
         initShapeForming(width, height);
+        onShapeChangeRef.current?.();
       } else if (stateRef.current === 'expanding' && elapsed >= EXPAND_DURATION) {
         stateRef.current = 'drifting';
         stateStartTimeRef.current = now;
@@ -1453,6 +1460,7 @@ export function PlexusBackground({
           );
           shapeTransitionStartRef.current = now;
           shapeTimerRef.current = now;
+          onShapeChangeRef.current?.();
         }
 
         rotationRef.current.y += SHAPE_ROTATION_SPEED_Y * dtSec;

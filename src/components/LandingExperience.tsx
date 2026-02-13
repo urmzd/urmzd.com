@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { Volume2, VolumeX } from 'lucide-react';
 import { PlexusBackground } from '@/components/ui/plexus-background';
 import SocialDock from '@/components/SocialDock';
 import { useTextScramble } from '@/hooks/useTextScramble';
-import { useBackgroundAudio } from '@/hooks/useBackgroundAudio';
+import { useSimulatedPulse } from '@/hooks/useSimulatedPulse';
 
 const NAME_CHARS = 'URMZD MUKHAMMADNAIM'.split('');
 
@@ -27,53 +26,44 @@ const QUOTES = [
 
 export default function LandingExperience() {
   const [hasClicked, setHasClicked] = useState(false);
-  const [quoteIndex, setQuoteIndex] = useState(0);
+  const [quoteIndex, setQuoteIndex] = useState(-1);
   const beatIntensityRef = useRef(0);
+  const nameRef = useRef<HTMLHeadingElement>(null);
+  const [nameWidth, setNameWidth] = useState<number | undefined>(undefined);
 
-  const { muted, toggleMute, ensurePlaying } = useBackgroundAudio({
-    src: '/audio/the-end.mp3',
-    beatIntensityRef,
-  });
+  useSimulatedPulse(beatIntensityRef);
 
-  const targetText = hasClicked ? QUOTES[quoteIndex] : '/ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/';
+  const targetText = quoteIndex < 0 ? '/ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/' : QUOTES[quoteIndex];
   const displayText = useTextScramble(targetText);
 
-  // Beat-synced phrase cycling after click
+  const handleShapeChange = useCallback(() => {
+    setQuoteIndex((prev) => (prev + 1) % QUOTES.length);
+  }, []);
+
+  // Track name element width via ResizeObserver
   useEffect(() => {
-    if (!hasClicked) return;
-    let lastChangeTime = Date.now();
-    let wasAbove = false;
-    let rafId: number;
-    const THRESHOLD = 0.35;
-    const MIN_INTERVAL = 3000;
-    const FALLBACK_INTERVAL = 5000;
-
-    const tick = () => {
-      const intensity = beatIntensityRef.current;
-      const now = Date.now();
-      const elapsed = now - lastChangeTime;
-      const isAbove = intensity > THRESHOLD;
-
-      if ((isAbove && !wasAbove && elapsed > MIN_INTERVAL) || elapsed > FALLBACK_INTERVAL) {
-        setQuoteIndex((prev) => (prev + 1) % QUOTES.length);
-        lastChangeTime = now;
-      }
-      wasAbove = isAbove;
-      rafId = requestAnimationFrame(tick);
-    };
-
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [hasClicked]);
+    const el = nameRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      setNameWidth(entry.contentRect.width);
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const handleClick = () => {
-    if (!hasClicked) setHasClicked(true);
-    ensurePlaying();
+    if (!hasClicked) {
+      setHasClicked(true);
+    }
   };
 
   return (
     <div className="landing-root" onClick={handleClick}>
-      <PlexusBackground className="pointer-events-auto" beatIntensityRef={beatIntensityRef} />
+      <PlexusBackground
+        className="pointer-events-auto"
+        beatIntensityRef={beatIntensityRef}
+        onShapeChange={handleShapeChange}
+      />
 
       <motion.div
         className="final-card-container pointer-events-none"
@@ -82,9 +72,9 @@ export default function LandingExperience() {
         transition={{ duration: 0.6, delay: 0.5 }}
       >
         <div className="relative flex flex-col items-center">
-          <div>
+          <div className="px-4 sm:px-0">
             <div className="landing-hero pointer-events-auto">
-              <h1 className="landing-hero-name" aria-label="Urmzd Mukhammadnaim">
+              <h1 ref={nameRef} className="landing-hero-name" aria-label="Urmzd Mukhammadnaim">
                 {NAME_CHARS.map((char, i) => (
                   <motion.span
                     key={i}
@@ -104,6 +94,7 @@ export default function LandingExperience() {
 
               <motion.p
                 className={`landing-hero-sub ${hasClicked ? 'tracking-[0.25em]' : ''}`}
+                style={nameWidth ? { maxWidth: nameWidth } : undefined}
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 1.4 }}
@@ -119,45 +110,6 @@ export default function LandingExperience() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1.6 }}
           >
-            <div
-              className="rounded-2xl bg-white/[0.06] backdrop-blur-sm px-4 py-3 flex items-center justify-center gap-2"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (!hasClicked) handleClick();
-              }}
-            >
-              {hasClicked ? (
-                <>
-                  <span className="text-[11px] text-white/50">
-                    <span className="font-medium text-white/80">The End</span>
-                    {' \u2014 '}
-                    <a
-                      href="https://open.spotify.com/artist/0Z3FT3WAN3qbaAIMrs1lbr"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="transition-colors hover:text-white/80"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Llow
-                    </a>
-                  </span>
-                  <button
-                    type="button"
-                    className="rounded-full p-0.5 text-white/40 transition-colors hover:text-white/80"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleMute();
-                    }}
-                    aria-label={muted ? 'Unmute' : 'Mute'}
-                  >
-                    {muted ? <VolumeX size={12} /> : <Volume2 size={12} />}
-                  </button>
-                </>
-              ) : (
-                <span className="text-[11px] text-white/60 cursor-pointer">awaken the sound</span>
-              )}
-            </div>
-
             <SocialDock
               mobileClassName="z-40"
               desktopClassName="fixed bottom-16 left-1/2 -translate-x-1/2 z-40"

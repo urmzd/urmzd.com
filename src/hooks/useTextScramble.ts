@@ -9,58 +9,107 @@ function randomChar() {
 export function useTextScramble(text: string, options?: { speed?: number; revealDelay?: number }) {
   const { speed = 40, revealDelay = 30 } = options ?? {};
   const [displayText, setDisplayText] = useState(text);
-  const frameRef = useRef<number | null>(null);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const cancelRef = useRef<(() => void) | null>(null);
   const isFirstRender = useRef(true);
+  const prevTextRef = useRef(text);
 
   useEffect(() => {
-    // Don't animate on mount — just show the initial text
     if (isFirstRender.current) {
       isFirstRender.current = false;
       setDisplayText(text);
+      prevTextRef.current = text;
       return;
     }
 
-    // Cancel any in-progress animation
-    if (frameRef.current) cancelAnimationFrame(frameRef.current);
-    if (intervalRef.current) clearInterval(intervalRef.current);
+    cancelRef.current?.();
 
+    const prev = prevTextRef.current;
     const target = text;
-    const len = target.length;
-    let revealedCount = 0;
-    const scrambled = Array.from({ length: len }, () => randomChar());
+    const prevLen = prev.length;
+    const targetLen = target.length;
+    prevTextRef.current = text;
 
-    // Cycle unresolved characters at `speed` interval
-    intervalRef.current = setInterval(() => {
-      for (let i = revealedCount; i < len; i++) {
-        scrambled[i] = randomChar();
+    // Mutable animation state
+    let phase: 'encrypt' | 'resize' | 'decrypt' = 'encrypt';
+    let len = prevLen;
+    const encrypted = new Set<number>();
+    const decrypted = new Set<number>();
+    let cancelled = false;
+
+    // Render current frame based on phase + state
+    // Preserve spaces from the reference text so word-break points stay stable
+    function render() {
+      const buf: string[] = [];
+      for (let i = 0; i < len; i++) {
+        if (phase === 'decrypt' && decrypted.has(i)) {
+          buf.push(target[i]);
+        } else if (phase === 'encrypt' && !encrypted.has(i) && i < prevLen) {
+          buf.push(prev[i]);
+        } else {
+          const ref = phase === 'encrypt' ? prev : target;
+          buf.push(i < ref.length && ref[i] === ' ' ? ' ' : randomChar());
+        }
       }
-      setDisplayText(
-        target.slice(0, revealedCount).concat(scrambled.slice(revealedCount).join(''))
-      );
-    }, speed);
+      setDisplayText(buf.join(''));
+    }
 
-    // Reveal characters left-to-right with stagger
-    function revealNext() {
-      if (revealedCount >= len) {
-        if (intervalRef.current) clearInterval(intervalRef.current);
+    // Continuous cycling of scrambled positions
+    const tickId = setInterval(render, speed);
+
+    // Phase 1 — Encrypt: scramble old text from edges inward
+    function encrypt() {
+      if (cancelled) return;
+      if (encrypted.size >= prevLen) {
+        phase = 'resize';
+        resize();
+        return;
+      }
+      const half = Math.floor(encrypted.size / 2);
+      encrypted.add(half);
+      if (prevLen - 1 - half !== half) encrypted.add(prevLen - 1 - half);
+      setTimeout(encrypt, revealDelay * 0.5);
+    }
+
+    // Phase 2 — Resize: grow or shrink one char at a time toward target length
+    function resize() {
+      if (cancelled) return;
+      if (len === targetLen) {
+        phase = 'decrypt';
+        decrypt();
+        return;
+      }
+      len += len < targetLen ? 1 : -1;
+      render();
+      setTimeout(resize, speed * 0.3);
+    }
+
+    // Phase 3 — Decrypt: reveal target text from center outward
+    function decrypt() {
+      if (cancelled) return;
+      if (decrypted.size >= targetLen) {
+        clearInterval(tickId);
         setDisplayText(target);
         return;
       }
-      revealedCount++;
-      frameRef.current = requestAnimationFrame(() => {
-        setTimeout(revealNext, revealDelay);
-      });
+      const mid = Math.floor(targetLen / 2);
+      const r = Math.floor(decrypted.size / 2);
+      if (mid + r < targetLen) decrypted.add(mid + r);
+      if (mid - r - 1 >= 0) decrypted.add(mid - r - 1);
+      // Catch any remaining indices
+      if (decrypted.size >= targetLen - 1) {
+        for (let i = 0; i < targetLen; i++) decrypted.add(i);
+      }
+      setTimeout(decrypt, revealDelay);
     }
 
-    // Kick off reveals after a short initial scramble burst
-    const startTimeout = setTimeout(revealNext, speed * 2);
+    setTimeout(encrypt, speed);
 
-    return () => {
-      clearTimeout(startTimeout);
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
-      if (intervalRef.current) clearInterval(intervalRef.current);
+    const cancel = () => {
+      cancelled = true;
+      clearInterval(tickId);
     };
+    cancelRef.current = cancel;
+    return cancel;
   }, [text, speed, revealDelay]);
 
   return displayText;
