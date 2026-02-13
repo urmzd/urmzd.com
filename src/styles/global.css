@@ -974,7 +974,6 @@
     align-items: center;
     gap: 0.4rem;
     z-index: 20;
-    margin-bottom: 0.75rem;
   }
 
   .click-hint-hand {
