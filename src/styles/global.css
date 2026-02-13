@@ -836,6 +836,7 @@
   /* Landing Hero — immersive translucent name treatment */
   .landing-hero {
     @apply flex flex-col items-center gap-4 text-center;
+    animation: space-breathe 8s ease-in-out infinite;
   }
 
   .landing-hero-name {
@@ -851,6 +852,7 @@
     text-shadow:
       0 0 20px oklch(0.6 0.08 250 / 30%),
       0 0 60px oklch(0.5 0.06 250 / 15%);
+    animation: name-depth-glow-light 8s ease-in-out infinite;
   }
 
   .dark .landing-hero-name {
@@ -860,6 +862,7 @@
       0 0 20px oklch(0.7 0.15 270 / 35%),
       0 0 60px oklch(0.6 0.1 270 / 18%),
       0 0 120px oklch(0.5 0.08 270 / 8%);
+    animation: name-depth-glow 8s ease-in-out infinite;
   }
 
   .landing-hero-char {
@@ -1017,6 +1020,49 @@
   }
 }
 
+@keyframes space-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.015);
+  }
+}
+
+@keyframes name-depth-glow {
+  0%,
+  100% {
+    text-shadow:
+      0 0 20px oklch(0.7 0.15 270 / 35%),
+      0 0 60px oklch(0.6 0.1 270 / 18%),
+      0 0 120px oklch(0.5 0.08 270 / 8%);
+  }
+
+  50% {
+    text-shadow:
+      0 0 28px oklch(0.7 0.15 270 / 45%),
+      0 0 80px oklch(0.6 0.1 270 / 25%),
+      0 0 150px oklch(0.5 0.08 270 / 12%);
+  }
+}
+
+@keyframes name-depth-glow-light {
+  0%,
+  100% {
+    text-shadow:
+      0 0 20px oklch(0.6 0.08 250 / 30%),
+      0 0 60px oklch(0.5 0.06 250 / 15%);
+  }
+
+  50% {
+    text-shadow:
+      0 0 28px oklch(0.6 0.08 250 / 40%),
+      0 0 80px oklch(0.5 0.06 250 / 22%);
+  }
+}
+
 @layer components {
   .click-hint {
     display: flex;
@@ -1052,7 +1098,9 @@
   .splash-flow-label,
   .splash-focus,
   .splash-focus-card,
-  .click-hint-hand {
+  .click-hint-hand,
+  .landing-hero,
+  .landing-hero-name {
     animation: none;
   }
 }
