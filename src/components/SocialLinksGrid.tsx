@@ -1,12 +1,13 @@
 'use client';
 
 import { socialLinks, type SocialLink } from '@/data/socialLinks';
-import { SiArxiv, SiBehance, SiGithub } from '@icons-pack/react-simple-icons';
+import { SiArxiv, SiBehance, SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import { IconBrandLinkedin, IconMail, IconRss } from '@tabler/icons-react';
 
 const iconMap: Record<SocialLink['icon'], React.ReactNode> = {
   github: <SiGithub className="h-5 w-5" />,
   linkedin: <IconBrandLinkedin className="h-5 w-5" />,
+  x: <SiX className="h-5 w-5" />,
   email: <IconMail className="h-5 w-5" />,
   behance: <SiBehance className="h-5 w-5" />,
   arxiv: <SiArxiv className="h-5 w-5" />,

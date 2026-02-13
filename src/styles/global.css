@@ -583,7 +583,8 @@
   }
 
   .landing-root {
-    @apply relative min-h-screen overflow-hidden bg-background;
+    @apply relative overflow-hidden bg-background;
+    min-height: 100dvh;
   }
 
   .landing-skip {
@@ -699,25 +700,6 @@
     @apply absolute inset-0 flex flex-col items-center justify-center;
   }
 
-  .final-card-contact {
-    @apply mt-6 flex flex-col items-center gap-1;
-  }
-
-  .final-card-contact-label {
-    @apply text-xs uppercase tracking-widest text-muted-foreground/70;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-
-  .final-card-email {
-    @apply text-sm text-foreground/80 transition-colors hover:text-foreground;
-    font-family: 'IBM Plex Mono', monospace;
-    text-decoration: none;
-  }
-
-  .final-card-email:hover {
-    text-shadow: 0 0 12px color-mix(in oklch, var(--foreground) 30%, transparent);
-  }
-
   .rolodex {
     @apply relative z-10 flex min-h-screen items-center justify-center px-6;
   }
@@ -801,9 +783,33 @@
     justify-content: center;
   }
 
+  .glass-panel {
+    background: oklch(1 0 0 / 1.5%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid oklch(1 0 0 / 3%);
+    border-radius: 1.25rem;
+    padding: 1.75rem 2.25rem;
+    box-shadow: 0 4px 24px oklch(0 0 0 / 2%);
+  }
+
+  .dark .glass-panel {
+    background: oklch(1 0 0 / 1%);
+    border-color: oklch(1 0 0 / 2.5%);
+    box-shadow: 0 4px 24px oklch(0 0 0 / 8%);
+  }
+
+  .final-card-tagline {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    color: var(--muted-foreground);
+    line-height: 1.4;
+  }
+
   .final-card {
     @apply flex flex-col items-center gap-3 text-center text-foreground;
-    width: 100%;
+    width: auto;
   }
 
   .final-card-title {
@@ -850,19 +856,6 @@
 
   .final-card-link:hover {
     @apply text-foreground;
-  }
-
-  .final-card-name-link {
-    color: inherit;
-    transition:
-      color 0.2s ease,
-      text-shadow 0.2s ease;
-    text-decoration: none;
-  }
-
-  .final-card-name-link:hover {
-    color: inherit;
-    text-shadow: 0 0 20px oklch(1 0 0 / 30%);
   }
 
   .final-card-bracket {
@@ -980,8 +973,8 @@
     flex-direction: column;
     align-items: center;
     gap: 0.4rem;
-    margin-bottom: 1rem;
     z-index: 20;
+    margin-bottom: 0.75rem;
   }
 
   .click-hint-hand {
