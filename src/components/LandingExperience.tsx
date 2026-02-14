@@ -15,7 +15,7 @@ const QUOTES = [
   '"THE SECRET OF HAPPINESS IS FREEDOM, AND THE SECRET OF FREEDOM IS COURAGE" — THUCYDIDES',
   '"PEOPLE DEMAND FREEDOM OF SPEECH AS A COMPENSATION FOR THE FREEDOM OF THOUGHT WHICH THEY SELDOM USE" — KIERKEGAARD',
   '"THE ONLY WAY TO DEAL WITH AN UNFREE WORLD IS TO BECOME SO ABSOLUTELY FREE THAT YOUR VERY EXISTENCE IS AN ACT OF REBELLION" — CAMUS',
-  '"BRAVE NEW WORLD" — ALDOUS HUXLEY',
+  '"I DON\'T WANT COMFORT. I WANT POETRY, I WANT REAL DANGER, I WANT FREEDOM" — ALDOUS HUXLEY',
   '"TO THINE OWN SELF BE TRUE" — SHAKESPEARE',
   '"THE UNEXAMINED LIFE IS NOT WORTH LIVING" — SOCRATES',
   '"MAN IS BORN FREE, AND EVERYWHERE HE IS IN CHAINS" — ROUSSEAU',
@@ -24,8 +24,18 @@ const QUOTES = [
   '"THE MIND IS ITS OWN PLACE, AND IN ITSELF CAN MAKE A HEAVEN OF HELL" — MILTON',
 ];
 
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 export default function LandingExperience() {
   const [hasClicked, setHasClicked] = useState(false);
+  const [quotes] = useState(() => shuffleArray(QUOTES));
   const [quoteIndex, setQuoteIndex] = useState(-1);
   const beatIntensityRef = useRef(0);
   const nameRef = useRef<HTMLHeadingElement>(null);
@@ -33,12 +43,12 @@ export default function LandingExperience() {
 
   useSimulatedPulse(beatIntensityRef);
 
-  const targetText = quoteIndex < 0 ? '/ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/' : QUOTES[quoteIndex];
+  const targetText = quoteIndex < 0 ? '/ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/' : quotes[quoteIndex];
   const displayText = useTextScramble(targetText);
 
   const handleShapeChange = useCallback(() => {
-    setQuoteIndex((prev) => (prev + 1) % QUOTES.length);
-  }, []);
+    setQuoteIndex((prev) => (prev + 1) % quotes.length);
+  }, [quotes]);
 
   // Track name element width via ResizeObserver
   useEffect(() => {
