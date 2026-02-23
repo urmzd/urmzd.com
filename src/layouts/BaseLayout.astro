@@ -3,6 +3,7 @@ import '@/styles/global.css';
 import AutoHideHeader from '@/components/AutoHideHeader';
 import SocialDock from '@/components/SocialDock';
 import CookieConsent from '@/components/CookieConsent';
+import Footer from '@/components/Footer.astro';
 import SEOMeta from '@/components/SEOMeta.astro';
 
 interface Props {
@@ -55,6 +56,7 @@ const {
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://use.typekit.net/qyu8tlw.css" />
     <title>{title}</title>
     <script is:inline>
       const getThemePreference = () => {
@@ -81,6 +83,7 @@ const {
   <body class="min-h-screen bg-background text-foreground antialiased">
     <AutoHideHeader client:load />
     <slot />
+    <Footer />
     {showSocialDock && <SocialDock client:visible />}
     <CookieConsent client:load />
   </body>

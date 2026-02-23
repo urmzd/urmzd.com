@@ -1,0 +1,11 @@
+---
+import { useTranslations } from '@/lib/i18n';
+const t = useTranslations();
+const year = new Date().getFullYear().toString();
+const copyright = t('footer.copyright').replace('{year}', year);
+---
+<footer class="border-t border-border py-6 text-center text-sm text-muted-foreground">
+  <div class="container mx-auto px-4">
+    <p>{copyright}</p>
+  </div>
+</footer>
