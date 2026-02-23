@@ -126,6 +126,7 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: "elza-text", sans-serif;
   }
 
   /* Scroll margin for anchor navigation */
@@ -602,7 +603,7 @@
 
   .film-loading-text {
     @apply text-sm text-white/60;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "elza-text", sans-serif;
     letter-spacing: 0.1em;
   }
 
@@ -662,7 +663,7 @@
 
   .film-frame-desc {
     @apply text-sm text-white/60;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "elza-text", sans-serif;
   }
 
   .film-sprocket {
@@ -800,7 +801,7 @@
   }
 
   .final-card-tagline {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "elza-text", sans-serif;
     font-size: 0.85rem;
     letter-spacing: 0.08em;
     color: var(--muted-foreground);
@@ -814,20 +815,20 @@
 
   .final-card-title {
     @apply text-2xl font-bold sm:text-4xl;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "elza-text", sans-serif;
     letter-spacing: 0.04em;
     line-height: 1.1;
   }
 
   .final-card-subtitle {
     @apply text-xs uppercase tracking-[0.25em] text-muted-foreground;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "elza-text", sans-serif;
     line-height: 1.2;
   }
 
   .final-card-phonetic {
     @apply text-xs text-foreground;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "elza-text", sans-serif;
     letter-spacing: 0.06em;
     line-height: 1.2;
     margin-top: 0.5rem;
@@ -840,28 +841,13 @@
 
   .landing-hero-name {
     @apply flex flex-wrap justify-center;
-    font-family: "IBM Plex Mono", monospace;
-    font-size: clamp(2rem, 6vw, 4.5rem);
+    font-family: "elza-text", sans-serif;
+    font-size: clamp(1.6rem, 5vw, 3.5rem);
     font-weight: 700;
     letter-spacing: 0.06em;
     line-height: 1.15;
     text-transform: uppercase;
     color: var(--foreground);
-    -webkit-text-stroke: 1px oklch(0.95 0.03 250 / 60%);
-    text-shadow:
-      0 0 20px oklch(0.6 0.08 250 / 30%),
-      0 0 60px oklch(0.5 0.06 250 / 15%);
-    animation: name-depth-glow-light 8s ease-in-out infinite;
-  }
-
-  .dark .landing-hero-name {
-    color: oklch(0.98 0.01 270 / 100%);
-    -webkit-text-stroke: 1px oklch(0.8 0.1 270 / 40%);
-    text-shadow:
-      0 0 20px oklch(0.7 0.15 270 / 35%),
-      0 0 60px oklch(0.6 0.1 270 / 18%),
-      0 0 120px oklch(0.5 0.08 270 / 8%);
-    animation: name-depth-glow 8s ease-in-out infinite;
   }
 
   .landing-hero-char {
@@ -875,7 +861,7 @@
 
   .landing-hero-sub {
     @apply text-xs;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "elza-text", sans-serif;
     letter-spacing: 0.04em;
     line-height: 1.5;
     color: oklch(0.3 0.02 250 / 65%);
@@ -889,7 +875,7 @@
 
   .final-card-pronunciation {
     @apply text-xs text-muted-foreground/60;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "elza-text", sans-serif;
     letter-spacing: 0.04em;
     line-height: 1.2;
     font-style: italic;
@@ -897,14 +883,14 @@
 
   .final-card-intro {
     @apply text-sm text-foreground/80;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "elza-text", sans-serif;
     line-height: 1.4;
     max-width: 30rem;
   }
 
   .final-card-link {
     @apply text-xs uppercase tracking-[0.25em] text-muted-foreground;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "elza-text", sans-serif;
     transition: color 0.2s ease;
   }
 
@@ -1032,38 +1018,6 @@
   }
 }
 
-@keyframes name-depth-glow {
-  0%,
-  100% {
-    text-shadow:
-      0 0 20px oklch(0.7 0.15 270 / 35%),
-      0 0 60px oklch(0.6 0.1 270 / 18%),
-      0 0 120px oklch(0.5 0.08 270 / 8%);
-  }
-
-  50% {
-    text-shadow:
-      0 0 28px oklch(0.7 0.15 270 / 45%),
-      0 0 80px oklch(0.6 0.1 270 / 25%),
-      0 0 150px oklch(0.5 0.08 270 / 12%);
-  }
-}
-
-@keyframes name-depth-glow-light {
-  0%,
-  100% {
-    text-shadow:
-      0 0 20px oklch(0.6 0.08 250 / 30%),
-      0 0 60px oklch(0.5 0.06 250 / 15%);
-  }
-
-  50% {
-    text-shadow:
-      0 0 28px oklch(0.6 0.08 250 / 40%),
-      0 0 80px oklch(0.5 0.06 250 / 22%);
-  }
-}
-
 @layer components {
   .click-hint {
     display: flex;
@@ -1081,7 +1035,7 @@
   }
 
   .click-hint-text {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: "elza-text", sans-serif;
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
