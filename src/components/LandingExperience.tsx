@@ -73,6 +73,7 @@ export default function LandingExperience() {
         className="pointer-events-auto"
         beatIntensityRef={beatIntensityRef}
         onShapeChange={handleShapeChange}
+        logoLightUrl="/logo-mark.svg"
       />
 
       <motion.div
@@ -85,21 +86,31 @@ export default function LandingExperience() {
           <div className="px-4 sm:px-0">
             <div className="landing-hero pointer-events-auto">
               <h1 ref={nameRef} className="landing-hero-name" aria-label="Urmzd Mukhammadnaim">
-                {NAME_CHARS.map((char, i) => (
-                  <motion.span
-                    key={i}
-                    className={`landing-hero-char ${char === ' ' ? 'landing-hero-space' : ''}`}
-                    initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                    transition={{
-                      duration: 0.5,
-                      delay: 0.6 + i * 0.04,
-                      ease: [0.25, 0.46, 0.45, 0.94],
-                    }}
-                  >
-                    {char === ' ' ? '\u00A0' : char}
-                  </motion.span>
-                ))}
+                {NAME_CHARS.map((char, i) =>
+                  char === ' ' ? (
+                    <motion.span
+                      key={i}
+                      className="w-full"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.5, delay: 0.6 + i * 0.04 }}
+                    />
+                  ) : (
+                    <motion.span
+                      key={i}
+                      className="landing-hero-char"
+                      initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+                      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 0.6 + i * 0.04,
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                      }}
+                    >
+                      {char}
+                    </motion.span>
+                  ),
+                )}
               </h1>
 
               <motion.p
