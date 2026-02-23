@@ -5,9 +5,10 @@ interface TimelineImageProps {
   src: string;
   alt: string;
   caption?: string;
+  credit?: { photographer: string; url: string };
 }
 
-export default function TimelineImage({ src, alt, caption }: TimelineImageProps) {
+export default function TimelineImage({ src, alt, caption, credit }: TimelineImageProps) {
   return (
     <motion.figure
       whileHover={{ scale: 0.98 }}
@@ -26,6 +27,15 @@ export default function TimelineImage({ src, alt, caption }: TimelineImageProps)
         <figcaption className="absolute bottom-0 left-0 right-0 bg-black/60 dark:bg-black/80 text-white p-2 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           {caption}
         </figcaption>
+      )}
+      {credit?.photographer && (
+        <p className="mt-1 text-xs text-muted-foreground">
+          Photo by{' '}
+          <a href={credit.url} target="_blank" rel="noopener noreferrer" className="underline">
+            {credit.photographer}
+          </a>{' '}
+          on Unsplash
+        </p>
       )}
     </motion.figure>
   );

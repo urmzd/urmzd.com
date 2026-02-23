@@ -2,6 +2,7 @@
 import PreviewLink from '@/components/PreviewLink';
 import TimelineImage from '@/components/TimelineImage';
 import YouTubeEmbed from '@/components/YouTubeEmbed';
+import { imageCredits } from '@/data/imageCredits';
 
 interface Subsection {
   label: string;
@@ -29,6 +30,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
               src="/images/welcome/020_tajikistan.webp"
               alt="Tajikistan"
               caption="Dushanbe, Tajikistan"
+              credit={imageCredits['/images/welcome/020_tajikistan.webp']}
             />
           </>
         ),
@@ -49,6 +51,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
               src="/images/welcome/021_halifax.webp"
               alt="Halifax"
               caption="Halifax, Nova Scotia"
+              credit={imageCredits['/images/welcome/021_halifax.webp']}
             />
           </>
         ),
@@ -69,6 +72,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
               src="/images/welcome/023_toronto.webp"
               alt="Toronto"
               caption="Toronto, Ontario"
+              credit={imageCredits['/images/welcome/023_toronto.webp']}
             />
           </>
         ),
@@ -160,6 +164,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
               src="/images/welcome/026_dalhousie.webp"
               alt="Dalhousie University"
               caption="Dalhousie University, Halifax"
+              credit={imageCredits['/images/welcome/026_dalhousie.webp']}
             />
           </>
         ),
@@ -246,6 +251,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
               src="/images/welcome/014_mountain.webp"
               alt="Travelling"
               caption="Travelling the world"
+              credit={imageCredits['/images/welcome/014_mountain.webp']}
             />
           </>
         ),
@@ -261,6 +267,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
               src="/images/welcome/022_austin.webp"
               alt="Austin, Texas"
               caption="Austin, Texas"
+              credit={imageCredits['/images/welcome/022_austin.webp']}
             />
           </>
         ),
