@@ -172,7 +172,7 @@ const getOpacityBand = (opacity: number): number =>
 const COLLAPSE_DURATION = 1500;
 const EXPAND_DURATION = 1200;
 
-const SHAPE_NAMES = ['sphere', 'cube', 'pyramid', 'torus', 'helix', 'brain'] as const;
+const SHAPE_NAMES = ['sphere', 'cube', 'pyramid', 'torus', 'helix', 'brain', 'logo'] as const;
 type ShapeName = (typeof SHAPE_NAMES)[number];
 const SHAPE_CYCLE_DURATION = 8000;
 const SHAPE_TRANSITION_DURATION = 2000;
@@ -702,6 +702,8 @@ function generateShapePoints(shape: ShapeName, n: number, baseSize: number): Poi
       return generateHelixPoints(n, baseSize);
     case 'brain':
       return generateBrainPoints(n, baseSize);
+    case 'logo':
+      return []; // actual points generated via logoShapePointsRef in closure
   }
 }
 
@@ -821,6 +823,7 @@ interface PlexusBackgroundProps {
   onAutoCollapse?: () => void;
   beatIntensityRef?: React.RefObject<number>;
   onShapeChange?: () => void;
+  logoLightUrl?: string;
 }
 
 export function PlexusBackground({
@@ -832,6 +835,7 @@ export function PlexusBackground({
   onAutoCollapse,
   beatIntensityRef,
   onShapeChange,
+  logoLightUrl,
 }: PlexusBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
@@ -841,6 +845,7 @@ export function PlexusBackground({
   const channelRef = useRef('255, 255, 255');
   const lineColorRef = useRef('rgba(255, 255, 255,');
   const isDarkRef = useRef(true);
+  const logoShapePointsRef = useRef<{ x: number; y: number }[]>([]);
 
   const emittersRef = useRef<WaveEmitter[]>([]);
 
@@ -887,6 +892,32 @@ export function PlexusBackground({
   // Shape change callback ref (avoids re-init of animation loop)
   const onShapeChangeRef = useRef(onShapeChange);
   onShapeChangeRef.current = onShapeChange;
+
+  // Pixel-sample logo-mark for shape formation
+  useEffect(() => {
+    if (!logoLightUrl) return;
+    const img = new Image();
+    img.src = logoLightUrl;
+    img.onload = () => {
+      const SIZE = 256;
+      const offscreen = document.createElement('canvas');
+      offscreen.width = SIZE;
+      offscreen.height = SIZE;
+      const ctx2 = offscreen.getContext('2d');
+      if (!ctx2) return;
+      ctx2.drawImage(img, 0, 0, SIZE, SIZE);
+      const data = ctx2.getImageData(0, 0, SIZE, SIZE).data;
+      const pts: { x: number; y: number }[] = [];
+      for (let y = 0; y < SIZE; y++) {
+        for (let x = 0; x < SIZE; x++) {
+          if (data[(y * SIZE + x) * 4 + 3] > 128) {
+            pts.push({ x: x / SIZE - 0.5, y: y / SIZE - 0.5 });
+          }
+        }
+      }
+      logoShapePointsRef.current = pts;
+    };
+  }, [logoLightUrl]);
 
   // Theme detection + nebula/colorTint updates
   useEffect(() => {
@@ -1370,6 +1401,18 @@ export function PlexusBackground({
     shootingStarsRef.current = [];
     ripplesRef.current = [];
 
+    const generateLogoAwareShape = (shape: ShapeName, n: number, baseSize: number): Point3D[] => {
+      if (shape === 'logo') {
+        const pts = logoShapePointsRef.current;
+        if (!pts.length) return generateShapePoints('sphere', n, baseSize);
+        return Array.from({ length: n }, () => {
+          const p = pts[Math.floor(Math.random() * pts.length)];
+          return { x: p.x * baseSize * 1.5, y: p.y * baseSize * 1.5, z: 0 };
+        });
+      }
+      return generateShapePoints(shape, n, baseSize);
+    };
+
     const initShapeForming = (w: number, h: number) => {
       shapeIndexRef.current = 0;
       rotationRef.current = { y: 0, x: 0 };
@@ -1377,7 +1420,7 @@ export function PlexusBackground({
       shapeTransitionStartRef.current = 0;
       const minDim = Math.min(w, h);
       const baseSize = minDim * (minDim < 500 ? 0.32 : 0.2);
-      shapePoints3DRef.current = generateShapePoints(
+      shapePoints3DRef.current = generateLogoAwareShape(
         SHAPE_NAMES[0],
         particlesRef.current.length,
         baseSize,
@@ -1424,14 +1467,14 @@ export function PlexusBackground({
         if (stateRef.current === 'shape_forming') {
           const minDim = Math.min(width, height);
           const baseSize = minDim * (minDim < 500 ? 0.32 : 0.2);
-          shapePoints3DRef.current = generateShapePoints(
+          shapePoints3DRef.current = generateLogoAwareShape(
             SHAPE_NAMES[shapeIndexRef.current],
             particlesRef.current.length,
             baseSize,
           );
           if (prevShapePoints3DRef.current.length > 0) {
             const prevIndex = (shapeIndexRef.current - 1 + SHAPE_NAMES.length) % SHAPE_NAMES.length;
-            prevShapePoints3DRef.current = generateShapePoints(
+            prevShapePoints3DRef.current = generateLogoAwareShape(
               SHAPE_NAMES[prevIndex],
               particlesRef.current.length,
               baseSize,
@@ -1565,7 +1608,7 @@ export function PlexusBackground({
           shapeIndexRef.current = (shapeIndexRef.current + 1) % SHAPE_NAMES.length;
           const minDim = Math.min(width, height);
           const baseSize = minDim * (minDim < 500 ? 0.32 : 0.2);
-          shapePoints3DRef.current = generateShapePoints(
+          shapePoints3DRef.current = generateLogoAwareShape(
             SHAPE_NAMES[shapeIndexRef.current],
             particlesRef.current.length,
             baseSize,
