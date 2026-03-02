@@ -1,0 +1,39 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ResearchHero from '@/components/ResearchHero';
+import ImageShowcase from '@/components/ImageShowcase';
+import FeatureGrid from '@/components/FeatureGrid';
+import TechStackGrid from '@/components/TechStackGrid';
+import { research, getResearchItem } from '@/data/research';
+
+export function getStaticPaths() {
+  return research
+    .filter((r) => r.hasDetailPage)
+    .map((r) => ({ params: { slug: r.slug } }));
+}
+
+const { slug } = Astro.params;
+const item = getResearchItem(slug!);
+
+if (!item) {
+  return Astro.redirect('/research');
+}
+---
+
+<BaseLayout title={`${item.title} - urmzd`} description={item.tagline}>
+  <main class="pb-16">
+    <ResearchHero item={item} client:load />
+
+    <section class="container mx-auto px-4 py-12">
+      <h2 class="mb-4 text-2xl font-bold">Overview</h2>
+      <p class="max-w-3xl leading-relaxed text-muted-foreground">
+        {item.description}
+      </p>
+    </section>
+
+    {item.demo?.kind === 'image' && <ImageShowcase images={item.demo.images} client:visible />}
+
+    {item.features && <FeatureGrid features={item.features} client:visible />}
+    {item.detailTech && <TechStackGrid tech={item.detailTech} client:visible />}
+  </main>
+</BaseLayout>

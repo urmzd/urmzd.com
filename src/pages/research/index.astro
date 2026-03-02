@@ -1,0 +1,33 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ResearchCard from '@/components/ResearchCard';
+import { research } from '@/data/research';
+
+const papers = research.filter((r) => r.category === 'paper');
+const tooling = research.filter((r) => r.category === 'tooling');
+---
+
+<BaseLayout title="Research - urmzd" description="Academic research and tooling by urmzd">
+  <main class="container mx-auto px-4 pt-24 pb-16">
+    <h1 class="mb-2 text-4xl font-bold">Research</h1>
+    <p class="mb-10 text-muted-foreground">Papers, theses, and the tooling behind them.</p>
+
+    <section class="mb-12">
+      <h2 class="mb-6 text-2xl font-semibold">Papers & Theses</h2>
+      <div class="grid gap-6">
+        {papers.map((item, i) => (
+          <ResearchCard item={item} index={i} client:visible />
+        ))}
+      </div>
+    </section>
+
+    <section>
+      <h2 class="mb-6 text-2xl font-semibold">Research Tooling</h2>
+      <div class="grid gap-6">
+        {tooling.map((item, i) => (
+          <ResearchCard item={item} index={i} client:visible />
+        ))}
+      </div>
+    </section>
+  </main>
+</BaseLayout>
