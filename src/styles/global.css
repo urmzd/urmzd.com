@@ -36,6 +36,31 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-secondary-foreground: var(--brand-secondary-foreground);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-terminal-bg: var(--terminal-bg);
+  --color-terminal-prompt: var(--terminal-prompt);
+  --color-terminal-command: var(--terminal-command);
+  --color-terminal-output: var(--terminal-output);
+  --color-terminal-dot-close: var(--terminal-dot-close);
+  --color-terminal-dot-minimize: var(--terminal-dot-minimize);
+  --color-terminal-dot-expand: var(--terminal-dot-expand);
+  --color-status-active: var(--status-active);
+  --color-status-wip: var(--status-wip);
+  --color-status-archived: var(--status-archived);
+  --color-chat-system: var(--chat-system);
+  --color-chat-user: var(--chat-user);
+  --color-chat-assistant: var(--chat-assistant);
+  --color-chat-note: var(--chat-note);
+  --color-chat-bg: var(--chat-bg);
+  --color-chat-border: var(--chat-border);
+  --color-chat-text: var(--chat-text);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -44,14 +69,55 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --font-sans: "elza-text", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  --font-script: "Great Vibes", cursive;
+  --z-index-header: var(--z-header);
+  --z-index-navbar-menu: var(--z-navbar-menu);
+  --z-index-floating-dock: var(--z-floating-dock);
+  --z-index-dropdown: var(--z-dropdown);
+  --z-index-modal: var(--z-modal);
+  --z-index-tooltip: var(--z-tooltip);
+  --z-index-link-preview: var(--z-link-preview);
 }
 
+/*
+ * ─── Brand System ───────────────────────────────────────────────
+ *
+ * Colors
+ *   --brand          warm amber  (hue ~80)  — primary accent, prompts, warnings
+ *   --brand-secondary cool blue  (hue ~220) — secondary accent, info, active states
+ *   Achromatic grays (0 chroma) for all neutral surfaces.
+ *
+ * Fonts
+ *   --font-sans   "elza-text"      — body copy, headings
+ *   --font-mono   "IBM Plex Mono"  — code, terminals
+ *   --font-script "Great Vibes"    — decorative name treatment
+ *
+ * Z-Index Scale
+ *   --z-floating-dock  40   social dock
+ *   --z-header         50   sticky header
+ *   --z-dropdown       55   dropdowns / popovers
+ *   --z-navbar-menu    60   nav flyouts
+ *   --z-modal          65   modals / overlays
+ *   --z-link-preview   70   link preview popups
+ *   --z-tooltip        80   tooltips
+ * ────────────────────────────────────────────────────────────────
+ */
+
 :root {
+  /* Z-Index scale */
   --z-header: 50;
+  --z-dropdown: 55;
   --z-navbar-menu: 60;
+  --z-modal: 65;
   --z-floating-dock: 40;
   --z-link-preview: 70;
+  --z-tooltip: 80;
+
   --radius: 0.625rem;
+
+  /* Base palette */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -70,11 +136,50 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+
+  /* Brand accents */
+  --brand: oklch(0.82 0.08 80);
+  --brand-foreground: oklch(0.2 0.02 80);
+  --brand-secondary: oklch(0.7 0.12 220);
+  --brand-secondary-foreground: oklch(0.98 0.01 220);
+
+  /* Semantic */
+  --success: oklch(0.72 0.19 145);
+  --warning: var(--brand);
+  --info: var(--brand-secondary);
+
+  /* Terminal */
+  --terminal-bg: oklch(0.12 0 0);
+  --terminal-prompt: var(--brand);
+  --terminal-command: var(--brand-secondary);
+  --terminal-output: var(--muted-foreground);
+  --terminal-dot-close: var(--destructive);
+  --terminal-dot-minimize: var(--brand);
+  --terminal-dot-expand: var(--brand-secondary);
+
+  /* Status */
+  --status-active: var(--brand-secondary);
+  --status-wip: var(--brand);
+  --status-archived: oklch(0.55 0 0);
+
+  /* Chat */
+  --chat-system: var(--brand);
+  --chat-user: var(--brand-secondary);
+  --chat-assistant: var(--brand);
+  --chat-note: var(--muted-foreground);
+  --chat-bg: oklch(0.175 0 0);
+  --chat-border: oklch(0.3 0 0);
+  --chat-text: oklch(0.82 0 0);
+
+  /* Charts */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
+  --chart-6: oklch(0.68 0.14 180);
+
+  /* Sidebar */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -104,11 +209,26 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+
+  /* Brand accents */
+  --brand: oklch(0.88 0.1 80);
+  --brand-foreground: oklch(0.15 0.02 80);
+  --brand-secondary: oklch(0.78 0.14 220);
+  --brand-secondary-foreground: oklch(0.12 0.02 220);
+
+  /* Semantic */
+  --success: oklch(0.72 0.19 145);
+  --warning: var(--brand);
+  --info: var(--brand-secondary);
+
+  /* Charts */
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
+  --chart-6: oklch(0.72 0.16 180);
+
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -259,15 +379,15 @@
 @keyframes pulse-focus {
   0%,
   80% {
-    box-shadow: 0 0 0 0 oklch(0.88 0.08 80 / 0%);
+    box-shadow: 0 0 0 0 oklch(from var(--brand) l c h / 0%);
   }
 
   90% {
-    box-shadow: 0 0 0 12px oklch(0.88 0.08 80 / 15%);
+    box-shadow: 0 0 0 12px oklch(from var(--brand) l c h / 15%);
   }
 
   100% {
-    box-shadow: 0 0 0 0 oklch(0.88 0.08 80 / 0%);
+    box-shadow: 0 0 0 0 oklch(from var(--brand) l c h / 0%);
   }
 }
 
@@ -313,7 +433,7 @@
     width: 70vmax;
     height: 70vmax;
     border-radius: 999px;
-    background: radial-gradient(circle, oklch(0.9 0.08 85 / 65%), transparent 62%);
+    background: radial-gradient(circle, oklch(from var(--brand) l c h / 65%), transparent 62%);
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.6);
     pointer-events: none;
@@ -326,9 +446,17 @@
   .splash-texture {
     @apply absolute inset-0;
     background-image:
-      radial-gradient(circle at 20% 20%, oklch(0.85 0.08 80 / 45%), transparent 55%),
-      radial-gradient(circle at 80% 40%, oklch(0.88 0.05 200 / 35%), transparent 60%),
-      radial-gradient(circle at 40% 80%, oklch(0.92 0.06 40 / 40%), transparent 65%);
+      radial-gradient(circle at 20% 20%, oklch(from var(--brand) l c h / 45%), transparent 55%),
+      radial-gradient(
+        circle at 80% 40%,
+        oklch(from var(--brand-secondary) l c h / 35%),
+        transparent 60%
+      ),
+      radial-gradient(
+        circle at 40% 80%,
+        oklch(from var(--brand) 0.92 0.06 h / 40%),
+        transparent 65%
+      );
     filter: blur(20px);
     animation: aurora 40s linear infinite;
   }
@@ -366,7 +494,7 @@
   }
 
   .splash-path {
-    stroke: oklch(0.85 0.06 80 / 60%);
+    stroke: oklch(from var(--brand) l c h / 60%);
     stroke-width: 2;
     stroke-dasharray: 12 14;
     fill: none;
@@ -374,7 +502,7 @@
   }
 
   .splash-node {
-    fill: oklch(0.88 0.08 80 / 70%);
+    fill: oklch(from var(--brand) l c h / 70%);
     offset-path: path(
       "M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600"
     );
@@ -393,12 +521,12 @@
   }
 
   .splash-tracer {
-    fill: oklch(0.9 0.1 80 / 80%);
+    fill: oklch(from var(--brand) l c h / 80%);
     offset-path: path(
       "M40,80 C200,140 120,240 240,320 C360,400 280,520 420,560 C520,600 520,640 360,620 C320,610 300,600 300,600"
     );
     animation: tracer-travel 7.5s linear infinite;
-    filter: drop-shadow(0 0 12px oklch(0.9 0.1 80 / 40%));
+    filter: drop-shadow(0 0 12px oklch(from var(--brand) l c h / 40%));
     will-change: offset-distance, transform;
   }
 
@@ -429,7 +557,7 @@
   }
 
   .splash-graph-image:focus-visible {
-    outline: 2px solid oklch(0.9 0.1 80 / 60%);
+    outline: 2px solid oklch(from var(--brand) l c h / 60%);
     outline-offset: 3px;
   }
 
@@ -458,15 +586,15 @@
     background-image:
       repeating-linear-gradient(
         45deg,
-        oklch(0.92 0.02 80 / 15%) 0,
-        oklch(0.92 0.02 80 / 15%) 1px,
+        oklch(from var(--brand) 0.92 0.02 h / 15%) 0,
+        oklch(from var(--brand) 0.92 0.02 h / 15%) 1px,
         transparent 1px,
         transparent 6px
       ),
       repeating-linear-gradient(
         -45deg,
-        oklch(0.9 0.03 200 / 12%) 0,
-        oklch(0.9 0.03 200 / 12%) 1px,
+        oklch(from var(--brand-secondary) 0.9 0.03 h / 12%) 0,
+        oklch(from var(--brand-secondary) 0.9 0.03 h / 12%) 1px,
         transparent 1px,
         transparent 7px
       );
@@ -483,13 +611,13 @@
     position: absolute;
     inset: -12px;
     border-radius: 999px;
-    border: 1px solid oklch(0.88 0.08 80 / 40%);
+    border: 1px solid oklch(from var(--brand) l c h / 40%);
     opacity: 0.6;
   }
 
   .name-node {
     @apply absolute -left-3 top-1/2 h-3 w-3 -translate-y-1/2 rounded-full bg-foreground/70;
-    box-shadow: 0 0 12px oklch(0.88 0.08 80 / 50%);
+    box-shadow: 0 0 12px oklch(from var(--brand) l c h / 50%);
   }
 
   .splash-focus {
@@ -516,9 +644,21 @@
   .hero-texture {
     @apply absolute inset-0 opacity-40;
     background-image:
-      radial-gradient(circle at 20% 20%, oklch(0.87 0.07 90 / 55%), transparent 55%),
-      radial-gradient(circle at 80% 30%, oklch(0.9 0.04 200 / 35%), transparent 60%),
-      radial-gradient(circle at 40% 80%, oklch(0.92 0.05 30 / 40%), transparent 65%);
+      radial-gradient(
+        circle at 20% 20%,
+        oklch(from var(--brand) 0.87 0.07 h / 55%),
+        transparent 55%
+      ),
+      radial-gradient(
+        circle at 80% 30%,
+        oklch(from var(--brand-secondary) 0.9 0.04 h / 35%),
+        transparent 60%
+      ),
+      radial-gradient(
+        circle at 40% 80%,
+        oklch(from var(--brand) 0.92 0.05 h / 40%),
+        transparent 65%
+      );
     animation: aurora 50s linear infinite;
   }
 
@@ -579,7 +719,11 @@
 
   .textile-glow {
     @apply absolute inset-0;
-    background: radial-gradient(circle at 50% 40%, oklch(0.9 0.05 80 / 30%), transparent 60%);
+    background: radial-gradient(
+      circle at 50% 40%,
+      oklch(from var(--brand) 0.9 0.05 h / 30%),
+      transparent 60%
+    );
     opacity: 0.6;
   }
 
@@ -625,9 +769,9 @@
     height: min(70vh, 500px);
     border-radius: 8px;
     box-shadow:
-      0 0 0 4px #1a1a1a,
-      0 0 0 6px #2a2a2a,
-      0 20px 60px rgba(0, 0, 0, 0.8);
+      0 0 0 4px oklch(0.15 0 0),
+      0 0 0 6px oklch(0.22 0 0),
+      0 20px 60px oklch(0 0 0 / 80%);
   }
 
   .film-strip {
@@ -639,7 +783,7 @@
     @apply relative w-full;
     background-size: cover;
     background-position: center;
-    border-bottom: 3px solid #1a1a1a;
+    border-bottom: 3px solid oklch(0.15 0 0);
   }
 
   .film-frame-overlay {
@@ -768,7 +912,7 @@
 
   .rolodex-card-final {
     border: 1px solid rgba(255, 255, 255, 0.08);
-    background: #080808;
+    background: oklch(0.07 0 0);
   }
 
   .rolodex-bg {
@@ -864,13 +1008,13 @@
     font-family: "elza-text", sans-serif;
     letter-spacing: 0.04em;
     line-height: 1.5;
-    color: oklch(0.3 0.02 250 / 65%);
+    color: oklch(from var(--brand-secondary) 0.3 0.02 h / 65%);
     overflow-wrap: break-word;
     min-height: 3.75rem;
   }
 
   .dark .landing-hero-sub {
-    color: oklch(0.9 0.02 270 / 60%);
+    color: oklch(from var(--brand-secondary) 0.9 0.02 h / 60%);
   }
 
   .final-card-pronunciation {
@@ -938,6 +1082,77 @@
     scroll-snap-align: start;
   }
 
+  /* Project components */
+  .project-card {
+    @apply rounded-xl border border-border bg-background p-6 transition-all;
+    box-shadow: 0 2px 12px oklch(0 0 0 / 3%);
+  }
+
+  .project-card:hover {
+    border-color: oklch(0.7 0 0 / 30%);
+    box-shadow: 0 8px 32px oklch(0 0 0 / 8%);
+  }
+
+  .dark .project-card:hover {
+    border-color: oklch(1 0 0 / 12%);
+    box-shadow: 0 8px 32px oklch(0 0 0 / 25%);
+  }
+
+  .tech-badge {
+    @apply rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground transition-colors;
+  }
+
+  .tech-badge:hover {
+    @apply border-foreground/20 text-foreground;
+  }
+
+  .tech-stack-card {
+    @apply flex flex-col items-center justify-center rounded-xl border border-border bg-background p-6 text-center transition-all;
+  }
+
+  .feature-card {
+    @apply rounded-xl border border-border bg-background p-5 transition-all;
+  }
+
+  .status-dot {
+    @apply inline-block h-2 w-2 rounded-full;
+  }
+
+  .status-dot-active {
+    background: var(--status-active);
+    box-shadow: 0 0 6px oklch(from var(--status-active) l c h / 50%);
+    animation: status-pulse 2s ease-in-out infinite;
+  }
+
+  .status-dot-wip {
+    background: var(--status-wip);
+    box-shadow: 0 0 6px oklch(from var(--status-wip) l c h / 50%);
+    animation: status-pulse 2s ease-in-out infinite;
+  }
+
+  .status-dot-archived {
+    background: var(--status-archived);
+  }
+
+  .flow-stage {
+    transition: transform 0.2s ease;
+  }
+
+  .flow-stage:hover {
+    transform: scale(1.05);
+  }
+
+  .flow-particle {
+    fill: var(--brand-secondary);
+    filter: drop-shadow(0 0 4px oklch(from var(--brand-secondary) l c h / 60%));
+  }
+
+  .terminal-mock {
+    @apply rounded-xl border border-border p-5;
+    background: var(--terminal-bg);
+    font-family: var(--font-mono);
+  }
+
   .blog-search {
     @apply flex flex-col gap-6;
   }
@@ -969,7 +1184,7 @@
   }
 
   .copy-button.copied {
-    @apply border-green-500 text-green-500;
+    @apply border-success text-success;
   }
 
   /* Heading link button */
@@ -992,7 +1207,18 @@
   }
 
   .heading-link-button.copied {
-    @apply text-green-500 opacity-100;
+    @apply text-success opacity-100;
+  }
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
   }
 }
 
