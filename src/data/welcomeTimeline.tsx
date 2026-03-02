@@ -23,9 +23,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Origin',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
-              Born in Dushanbe, Tajikistan.
-            </p>
+            <p className="text-foreground text-sm md:text-base">Born in Dushanbe, Tajikistan.</p>
             <TimelineImage
               src="/images/welcome/020_tajikistan.webp"
               alt="Tajikistan"
@@ -44,9 +42,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Relocation',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
-              Moved to Halifax, Nova Scotia.
-            </p>
+            <p className="text-foreground text-sm md:text-base">Moved to Halifax, Nova Scotia.</p>
             <TimelineImage
               src="/images/welcome/021_halifax.webp"
               alt="Halifax"
@@ -65,9 +61,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Relocation',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
-              Moved to Toronto, Ontario.
-            </p>
+            <p className="text-foreground text-sm md:text-base">Moved to Toronto, Ontario.</p>
             <TimelineImage
               src="/images/welcome/023_toronto.webp"
               alt="Toronto"
@@ -86,7 +80,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Creative',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
+            <p className="text-foreground text-sm md:text-base mb-4">
               Created a YouTube channel and started my short stint as a Graphics Designer and Video
               Effects Editor.
             </p>
@@ -114,7 +108,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
       {
         label: 'Martial Arts',
         content: () => (
-          <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400">
+          <p className="text-base md:text-lg text-muted-foreground">
             Started{' '}
             <PreviewLink href="https://en.wikipedia.org/wiki/Muay_Thai">Muay Thai</PreviewLink>
           </p>
@@ -129,7 +123,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Competition',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
+            <p className="text-foreground text-sm md:text-base mb-4">
               Competed for the first time in Muay Thai.
             </p>
             <YouTubeEmbed id="OiWDNeRD8u8" title="First Muay Thai competition" />
@@ -145,7 +139,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Competition',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
+            <p className="text-foreground text-sm md:text-base mb-4">
               Had my last amateur Muay Thai fight.
             </p>
             <YouTubeEmbed id="3tH2AivVQDQ" title="Last Muay Thai fight" />
@@ -156,7 +150,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Education',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
+            <p className="text-foreground text-sm md:text-base mb-4">
               Went to Dalhousie University out in Halifax, Nova Scotia to pursue Computer Science &
               Mathematics.
             </p>
@@ -178,7 +172,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
       {
         label: 'Martial Arts',
         content: () => (
-          <p className="text-base md:text-lg text-neutral-600 dark:text-neutral-400">
+          <p className="text-base md:text-lg text-muted-foreground">
             Started{' '}
             <PreviewLink href="https://en.wikipedia.org/wiki/Brazilian_jiu-jitsu">
               Brazilian Jiu-Jitsu
@@ -195,7 +189,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Competition',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
+            <p className="text-foreground text-sm md:text-base mb-4">
               Competed for the first time in Brazilian Jiu-Jitsu.
             </p>
             <YouTubeEmbed id="CbufTZ4ab8o" title="First BJJ competition" />
@@ -211,7 +205,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Education',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
+            <p className="text-foreground text-sm md:text-base mb-4">
               Graduated from Dalhousie University in May with a Bachelor of Computer Science with
               Honours, a minor in Mathematics, and a certificate in Artificial Intelligence &
               Intelligent Systems. During my time at Dalhousie I connected and worked with amazing
@@ -225,7 +219,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Competition',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base mb-4">
+            <p className="text-foreground text-sm md:text-base mb-4">
               By the end of the year, I had dominated at the BJJ tournaments and earned my blue
               belt. This is one of the first tournaments where I was able to get 4 straight
               submissions — receiving my first gold medal.
@@ -243,7 +237,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Travel',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
+            <p className="text-foreground text-sm md:text-base">
               Started travelling. I&apos;ve been to 9 different countries since February and hope to
               learn about more cultures and study many more languages.
             </p>
@@ -260,9 +254,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
         label: 'Relocation',
         content: () => (
           <>
-            <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
-              Moved to Austin, Texas.
-            </p>
+            <p className="text-foreground text-sm md:text-base">Moved to Austin, Texas.</p>
             <TimelineImage
               src="/images/welcome/022_austin.webp"
               alt="Austin, Texas"
@@ -280,7 +272,7 @@ export const welcomeTimelineData: TimelineEntryData[] = [
       {
         label: 'Present',
         content: () => (
-          <p className="text-neutral-800 dark:text-neutral-200 text-sm md:text-base">
+          <p className="text-foreground text-sm md:text-base">
             Building things and writing about it :)
           </p>
         ),

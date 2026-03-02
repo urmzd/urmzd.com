@@ -51,6 +51,16 @@ function formatDate(date: Date): string {
   });
 }
 
+// Brand-aligned colors for server-side OG generation
+// (Resvg can't resolve CSS custom properties)
+const BRAND_HEX = {
+  bg: '#1a1a1e',
+  text: '#fafafa',
+  muted: '#a1a1aa',
+  brand: '#d4a855',
+  brandSecondary: '#5b9bd5',
+} as const;
+
 function OGImage({ title, description, pubDate, readTime }: OGImageProps) {
   const metadataText = pubDate && readTime ? `${formatDate(pubDate)} · ${readTime}` : undefined;
   return {
@@ -62,7 +72,7 @@ function OGImage({ title, description, pubDate, readTime }: OGImageProps) {
         display: 'flex',
         flexDirection: 'column' as const,
         justifyContent: 'space-between',
-        backgroundColor: '#09090b',
+        backgroundColor: BRAND_HEX.bg,
         padding: '60px',
         fontFamily: 'Inter',
       },
@@ -82,7 +92,7 @@ function OGImage({ title, description, pubDate, readTime }: OGImageProps) {
                   style: {
                     fontSize: '56px',
                     fontWeight: 700,
-                    color: '#fafafa',
+                    color: BRAND_HEX.text,
                     lineHeight: 1.2,
                     maxWidth: '900px',
                   },
@@ -94,7 +104,7 @@ function OGImage({ title, description, pubDate, readTime }: OGImageProps) {
                 props: {
                   style: {
                     fontSize: '28px',
-                    color: '#a1a1aa',
+                    color: BRAND_HEX.muted,
                     lineHeight: 1.4,
                     maxWidth: '800px',
                   },
@@ -119,7 +129,7 @@ function OGImage({ title, description, pubDate, readTime }: OGImageProps) {
                     props: {
                       style: {
                         fontSize: '24px',
-                        color: '#71717a',
+                        color: BRAND_HEX.muted,
                         fontWeight: 400,
                       },
                       children: metadataText,
