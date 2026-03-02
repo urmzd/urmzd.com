@@ -348,7 +348,7 @@ export function ConfirmationBiasVisual() {
           <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
             {biased
               ? `Showing ${supporting} of ${EVIDENCE.length} — contradicting evidence fades from view.`
-              : `${supporting} supporting, ${contradicting} contradicting — evidence is rarely one-sided.`}
+              : `Of ${EVIDENCE.length} pieces of evidence, ${supporting} support and ${contradicting} contradict — rarely is it one-sided.`}
           </p>
         </div>
       </div>
@@ -557,7 +557,7 @@ export function ExtrapolationVisual() {
           {/* "Linear Prediction" label */}
           <motion.text
             x={exSvgX(0.82)}
-            y={exSvgY(exLin(0.88)) - 8}
+            y={42}
             textAnchor="middle"
             fontSize={TXT.SM.fontSize}
             fontWeight={TXT.SM.fontWeight}
@@ -597,7 +597,7 @@ export function ExtrapolationVisual() {
           {/* "Actual Trend" label — revealed on toggle */}
           <motion.text
             x={exSvgX(0.82)}
-            y={exSvgY(EX_TRUE(0.85)) + 18}
+            y={exSvgY(EX_TRUE(0.85)) + 22}
             textAnchor="middle"
             fontSize={TXT.SM.fontSize}
             fontWeight={TXT.SM.fontWeight}

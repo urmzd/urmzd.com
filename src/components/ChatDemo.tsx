@@ -142,7 +142,13 @@ export default function ChatDemo() {
 
         {/* idle placeholder */}
         {!playing && visibleSteps === 0 && !done && (
-          <p className="text-muted-foreground text-xs">Press ▶ Run to step through the exchange.</p>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground/60">
+            <span className="h-2 w-2 rounded-full bg-chat-border animate-pulse" />
+            <span>
+              Press <span className="text-chat-text/70 font-semibold">▶ Run</span> to step through
+              the exchange.
+            </span>
+          </div>
         )}
       </div>
     </div>
