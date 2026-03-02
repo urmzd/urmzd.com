@@ -24,12 +24,12 @@ export const research: ResearchItem[] = [
   // ── Papers & Theses ──────────────────────────────────────────
   {
     slug: 'linear-gp-thesis',
-    title: 'Investigating Linear Genetic Programming with Q-Learning Integration',
-    tagline: 'Honours thesis on hybrid evolutionary and reinforcement learning',
+    title: 'Reinforced Linear Genetic Programming',
+    tagline: 'Using Q-Learning to automate register-action assignments in LGP',
     description:
-      'Honours thesis exploring hybrid Linear Genetic Programming and Q-Learning for reinforcement learning and classification tasks. Evaluates modular LGP architectures on CartPole, MountainCar, and Iris benchmarks with automated hyperparameter optimization via Optuna.',
+      'Proposes Reinforced Linear Genetic Programming (RLGP), a novel hybrid that layers Q-Learning on top of LGP to learn optimal register-action assignments — eliminating the need for manual mapping. Evaluated on OpenAI Gym CartPole-v1 and MountainCar-v0 benchmarks. LGP achieved a mean reward of 454 on CartPole; RLGP solved the task but plateaued early at 213, suggesting the Q-Learning exploration-exploitation balance needs further tuning.',
     category: 'paper',
-    year: 2024,
+    year: 2023,
     venue: 'Dalhousie University — Honours Thesis',
     tags: [
       'genetic programming',
@@ -107,10 +107,11 @@ export const research: ResearchItem[] = [
   },
   {
     slug: 'lepus-classifier',
-    title: 'Optimal CNN Architectures for Small-Dataset Image Classification',
-    tagline: 'Demonstrating data quantity as the bottleneck for deep learning',
+    title:
+      'The Lepus Classifier: Exploring Image Classification with Convolutional Neural Networks',
+    tagline: 'CNN image classification on a 85-image dataset of rabbits and hares',
     description:
-      'Research project examining whether CNN image classifiers can achieve good performance on very small datasets. Using only 85 images of two Lepus genus species, demonstrates that data quantity remains the fundamental bottleneck for deep learning — even with optimal architecture choices.',
+      'Examines methods to improve CNN performance without large datasets or specialized hardware. Trained on just 85 web-scraped images of Eastern cottontail rabbits and European hares, using Stratified K-Fold Cross Validation to handle the small, unbalanced dataset. Best configuration achieved 0.647 test accuracy (F1 0.575, precision 0.8, recall 0.625) with SGD+momentum and batch size 2. Demonstrates that even with optimal architecture choices and dropout regularization, data quantity remains the fundamental bottleneck.',
     category: 'paper',
     year: 2022,
     venue: 'Dalhousie University — Course Project',
@@ -121,28 +122,28 @@ export const research: ResearchItem[] = [
   },
   {
     slug: 'md-classifier',
-    title: 'Disease Classification from Patient-Described Symptoms',
-    tagline: 'Transformers and CNNs for medical self-diagnosis from natural language',
+    title: 'Classification of Ailments Given Description of Symptoms',
+    tagline: 'CNN-based medical condition prediction from natural language symptom descriptions',
     description:
-      'Deep learning system combining transformers and CNNs to classify diseases from natural language symptom descriptions. Compares One-Hot and FastText-based preprocessing pipelines, achieving 90% recall on medical condition prediction.',
+      'Addresses the challenge of preliminary medical self-diagnosis by developing a CNN that returns the most probable condition given a natural language symptom description. Compares two preprocessing pipelines — One-Hot Encoding (56x4210 word-stem matrix) and unsupervised FastText embeddings — on data sourced from UpToDate and Mayo Clinic. The One-Hot CNN achieved 90% recall, with perfect precision on migraines and tetanus; FastText underperformed due to semantic information loss during processing.',
     category: 'paper',
     year: 2022,
     venue: 'Dalhousie University — Course Project',
-    tags: ['NLP', 'medical diagnosis', 'transformers', 'CNN', 'disease classification'],
+    tags: ['NLP', 'medical diagnosis', 'CNN', 'disease classification'],
     githubUrl: 'https://github.com/urmzd/md-classifier',
-    tech: ['Python', 'Keras', 'NLTK', 'Transformers'],
+    tech: ['Python', 'Keras', 'NLTK'],
     hasDetailPage: false,
   },
 
   // ── Research Tooling ─────────────────────────────────────────
   {
     slug: 'linear-gp-framework',
-    title: 'Linear GP Framework',
-    tagline: 'Production-grade Rust framework for LGP research',
+    title: 'linear-gp',
+    tagline: 'Memory-safe Rust framework for LGP experimentation',
     description:
-      'Production-grade Rust framework for Linear Genetic Programming research. Features modular trait-based architecture, Rayon-powered parallel fitness evaluation, Optuna hyperparameter optimization, and Python CLI tools for batch experiments and visualization.',
+      'Open-source framework introduced alongside the RLGP thesis, written in memory-safe Rust for extensible LGP experimentation. Provides a modular trait-based architecture, Rayon-powered parallel fitness evaluation, Optuna hyperparameter optimization with PostgreSQL backend, and Python CLI tools for batch experiments, visualization, and analysis.',
     category: 'tooling',
-    year: 2024,
+    year: 2023,
     tags: ['framework', 'genetic programming', 'evolutionary algorithms', 'optimization'],
     githubUrl: 'https://github.com/urmzd/linear-gp',
     tech: ['Rust', 'Python', 'Docker'],
