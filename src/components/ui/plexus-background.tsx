@@ -23,6 +23,7 @@ interface Particle {
   layer: 'distant' | 'medium' | 'foreground';
   depth: number;
   colorTint: { r: number; g: number; b: number };
+  hexColor: string;
   shape: ParticleShape;
   life: number;
   maxLife: number;
@@ -75,6 +76,15 @@ type ParticleShape = 'circle' | 'diamond' | 'triangle' | 'square' | 'hexagon';
 
 type ShapeDrawFn = (ctx: CanvasRenderingContext2D, x: number, y: number, r: number) => void;
 
+// Step 1: Precomputed trig constants for triangle and hexagon
+const TRI_COS = Math.cos(Math.PI / 6);
+const TRI_SIN = Math.sin(Math.PI / 6);
+const HEX_VERTICES: Array<{ cos: number; sin: number }> = [];
+for (let i = 0; i < 6; i++) {
+  const angle = (Math.PI / 3) * i - Math.PI / 2;
+  HEX_VERTICES.push({ cos: Math.cos(angle), sin: Math.sin(angle) });
+}
+
 const SHAPE_DRAW: Record<ParticleShape, ShapeDrawFn> = {
   circle: (ctx, x, y, r) => {
     ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -88,8 +98,8 @@ const SHAPE_DRAW: Record<ParticleShape, ShapeDrawFn> = {
   },
   triangle: (ctx, x, y, r) => {
     ctx.moveTo(x, y - r);
-    ctx.lineTo(x + r * Math.cos(Math.PI / 6), y + r * Math.sin(Math.PI / 6));
-    ctx.lineTo(x - r * Math.cos(Math.PI / 6), y + r * Math.sin(Math.PI / 6));
+    ctx.lineTo(x + r * TRI_COS, y + r * TRI_SIN);
+    ctx.lineTo(x - r * TRI_COS, y + r * TRI_SIN);
     ctx.closePath();
   },
   square: (ctx, x, y, r) => {
@@ -97,12 +107,11 @@ const SHAPE_DRAW: Record<ParticleShape, ShapeDrawFn> = {
     ctx.rect(x - s, y - s, s * 2, s * 2);
   },
   hexagon: (ctx, x, y, r) => {
-    for (let i = 0; i < 6; i++) {
-      const angle = (Math.PI / 3) * i - Math.PI / 2;
-      const px = x + r * Math.cos(angle);
-      const py = y + r * Math.sin(angle);
-      if (i === 0) ctx.moveTo(px, py);
-      else ctx.lineTo(px, py);
+    const v0 = HEX_VERTICES[0];
+    ctx.moveTo(x + r * v0.cos, y + r * v0.sin);
+    for (let i = 1; i < 6; i++) {
+      const v = HEX_VERTICES[i];
+      ctx.lineTo(x + r * v.cos, y + r * v.sin);
     }
     ctx.closePath();
   },
@@ -127,32 +136,33 @@ function pickRandomShape(): ParticleShape {
 }
 
 // =============================================================================
-// Spatial Grid Partitioning
+// Spatial Grid Partitioning (Step 5: flat array grid)
 // =============================================================================
 
-type SpatialGrid = Map<string, Particle[]>;
+interface FlatSpatialGrid {
+  cells: (Particle[] | null)[];
+  cols: number;
+  rows: number;
+  cellSize: number;
+}
 
-const buildSpatialGrid = (particles: Particle[], cellSize: number): SpatialGrid => {
-  const grid: SpatialGrid = new Map();
+const buildSpatialGrid = (
+  particles: Particle[],
+  cellSize: number,
+  width: number,
+  height: number,
+): FlatSpatialGrid => {
+  const cols = Math.ceil(width / cellSize) + 2;
+  const rows = Math.ceil(height / cellSize) + 2;
+  const cells = new Array<Particle[] | null>(cols * rows).fill(null);
   for (const particle of particles) {
-    const cellX = Math.floor(particle.x / cellSize);
-    const cellY = Math.floor(particle.y / cellSize);
-    const key = `${cellX},${cellY}`;
-    if (!grid.has(key)) grid.set(key, []);
-    grid.get(key)!.push(particle);
+    const cx = Math.max(0, Math.min(Math.floor(particle.x / cellSize), cols - 1));
+    const cy = Math.max(0, Math.min(Math.floor(particle.y / cellSize), rows - 1));
+    const idx = cy * cols + cx;
+    if (cells[idx] === null) cells[idx] = [particle];
+    else cells[idx]!.push(particle);
   }
-  return grid;
-};
-
-const getNeighborParticles = (grid: SpatialGrid, cellX: number, cellY: number): Particle[] => {
-  const neighbors: Particle[] = [];
-  for (let dx = -1; dx <= 1; dx++) {
-    for (let dy = -1; dy <= 1; dy++) {
-      const cell = grid.get(`${cellX + dx},${cellY + dy}`);
-      if (cell) neighbors.push(...cell);
-    }
-  }
-  return neighbors;
+  return { cells, cols, rows, cellSize };
 };
 
 // =============================================================================
@@ -184,6 +194,13 @@ const SHAPE_ROTATION_SPEED_X = 0.15;
 const HINT_DELAY_MS = 12000;
 const HINT_PULSE_DURATION_MS = 400;
 const HINT_PULSE_STRENGTH = 0.015;
+
+// Step 9: Pre-computed squared radii
+const REPULSE_RADIUS = 60;
+const REPULSE_RADIUS_SQ = REPULSE_RADIUS * REPULSE_RADIUS;
+const REPULSE_STRENGTH = 0.002;
+const MOUSE_INTERACT_DIST = 200;
+const MOUSE_INTERACT_DIST_SQ = MOUSE_INTERACT_DIST * MOUSE_INTERACT_DIST;
 
 const EMITTER_CONFIGS = [
   {
@@ -272,43 +289,108 @@ function assignStarColorTint(isDark: boolean): { r: number; g: number; b: number
   return { r: 255, g: 220, b: 180 };
 }
 
-function computeWaveForce(
-  emitter: WaveEmitter,
-  px: number,
-  py: number,
+// Step 2: Convert color tint to hex string
+function colorTintToHex(c: { r: number; g: number; b: number }): string {
+  return '#' + ((1 << 24) | (c.r << 16) | (c.g << 8) | c.b).toString(16).slice(1);
+}
+
+// Step 8: Pre-computed per-emitter wave data (hoisted out of particle loop)
+interface PrecomputedWave {
+  x: number;
+  y: number;
+  k: number;
+  omegaTimeSec: number;
+  phase: number;
+  radialAmplitude: number;
+  tangentialAmplitude: number;
+  decayAlphaOverMaxDist: number;
+  envelope: number;
+}
+
+function precomputeWaveData(
+  emitters: WaveEmitter[],
   timeSec: number,
   maxDist: number,
-): { fx: number; fy: number } {
-  const dx = px - emitter.x;
-  const dy = py - emitter.y;
-  const dist = Math.sqrt(dx * dx + dy * dy);
-  if (dist < 1) return { fx: 0, fy: 0 };
+): PrecomputedWave[] {
+  const result: PrecomputedWave[] = [];
+  for (const e of emitters) {
+    const k = (2 * Math.PI) / e.wavelength;
+    const omega = (2 * Math.PI) / e.period;
+    const omegaFlare = (2 * Math.PI) / e.flarePeriod;
+    const halfSin = 0.5 + 0.5 * Math.sin(omegaFlare * timeSec + e.flarePhase);
+    const envelope = e.flareBaseLevel + e.flarePeakLevel * halfSin * halfSin;
+    result.push({
+      x: e.x,
+      y: e.y,
+      k,
+      omegaTimeSec: omega * timeSec,
+      phase: e.phase,
+      radialAmplitude: e.radialAmplitude,
+      tangentialAmplitude: e.tangentialAmplitude,
+      decayAlphaOverMaxDist: e.decayAlpha / maxDist,
+      envelope,
+    });
+  }
+  return result;
+}
 
+function computeWaveForcePrecomputed(
+  pw: PrecomputedWave,
+  px: number,
+  py: number,
+): { fx: number; fy: number } {
+  const dx = px - pw.x;
+  const dy = py - pw.y;
+  const distSq = dx * dx + dy * dy;
+  if (distSq < 1) return { fx: 0, fy: 0 };
+
+  const dist = Math.sqrt(distSq);
   const invDist = 1 / dist;
   const radialX = dx * invDist;
   const radialY = dy * invDist;
   const tangentialX = -dy * invDist;
   const tangentialY = dx * invDist;
 
-  const k = (2 * Math.PI) / emitter.wavelength;
-  const omega = (2 * Math.PI) / emitter.period;
-  const theta = k * dist - omega * timeSec + emitter.phase;
-  const decay = Math.exp((-emitter.decayAlpha * dist) / maxDist);
-
-  const omegaFlare = (2 * Math.PI) / emitter.flarePeriod;
-  const halfSin = 0.5 + 0.5 * Math.sin(omegaFlare * timeSec + emitter.flarePhase);
-  const envelope = emitter.flareBaseLevel + emitter.flarePeakLevel * halfSin * halfSin;
+  const theta = pw.k * dist - pw.omegaTimeSec + pw.phase;
+  const decay = Math.exp(-pw.decayAlphaOverMaxDist * dist);
 
   const sinTheta = Math.sin(theta);
   const cosTheta = Math.cos(theta);
 
-  const fr = emitter.radialAmplitude * envelope * sinTheta * decay;
-  const ft = emitter.tangentialAmplitude * envelope * cosTheta * decay;
+  const fr = pw.radialAmplitude * pw.envelope * sinTheta * decay;
+  const ft = pw.tangentialAmplitude * pw.envelope * cosTheta * decay;
 
   return {
     fx: fr * radialX + ft * tangentialX,
     fy: fr * radialY + ft * tangentialY,
   };
+}
+
+// Step 3: Glow sprite cache (one white, one black)
+let glowSpriteWhite: HTMLCanvasElement | null = null;
+let glowSpriteBlack: HTMLCanvasElement | null = null;
+
+function createGlowSprite(r: number, g: number, b: number): HTMLCanvasElement {
+  const size = 64;
+  const c = document.createElement('canvas');
+  c.width = size;
+  c.height = size;
+  const ctx = c.getContext('2d')!;
+  const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  grad.addColorStop(0, `rgba(${r},${g},${b},1)`);
+  grad.addColorStop(1, `rgba(${r},${g},${b},0)`);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, size, size);
+  return c;
+}
+
+function getGlowSprite(isDark: boolean): HTMLCanvasElement {
+  if (isDark) {
+    if (!glowSpriteWhite) glowSpriteWhite = createGlowSprite(255, 255, 255);
+    return glowSpriteWhite;
+  }
+  if (!glowSpriteBlack) glowSpriteBlack = createGlowSprite(0, 0, 0);
+  return glowSpriteBlack;
 }
 
 // =============================================================================
@@ -414,6 +496,7 @@ function updateAndDrawShootingStars(
     const tailX = star.x - nx * star.trailLength;
     const tailY = star.y - ny * star.trailLength;
 
+    // Keep shooting star gradients (only 0-3 active at once)
     const grad = ctx.createLinearGradient(tailX, tailY, star.x, star.y);
     const c = isDark ? '255,255,255' : '0,0,0';
     grad.addColorStop(0, `rgba(${c}, 0)`);
@@ -702,8 +785,6 @@ function generateShapePoints(shape: ShapeName, n: number, baseSize: number): Poi
       return generateHelixPoints(n, baseSize);
     case 'brain':
       return generateBrainPoints(n, baseSize);
-    case 'logo':
-      return []; // actual points generated via logoShapePointsRef in closure
   }
 }
 
@@ -755,7 +836,7 @@ function computeShapeTargets(
 }
 
 // =============================================================================
-// Connection Drawing
+// Connection Drawing (Steps 5-7: flat grid, unified grid, Uint8Array dedup)
 // =============================================================================
 
 function drawConnections(
@@ -763,36 +844,57 @@ function drawConnections(
   particles: Particle[],
   connDist: number,
   lineColor: string,
+  grid: FlatSpatialGrid,
+  dedupBuf: Uint8Array,
 ) {
   const connDistSq = connDist * connDist;
-  const grid = buildSpatialGrid(particles, connDist);
+  const { cells, cols, rows, cellSize } = grid;
 
   const batches: Array<Array<[Particle, Particle]>> = Array.from(
     { length: OPACITY_BANDS },
     () => [],
   );
-  const seen = new Set<string>();
+
+  // Step 7: Clear Uint8Array dedup buffer
+  dedupBuf.fill(0);
 
   for (let i = 0; i < particles.length; i++) {
     const p = particles[i];
-    const cx = Math.floor(p.x / connDist);
-    const cy = Math.floor(p.y / connDist);
+    const cx = Math.max(0, Math.min(Math.floor(p.x / cellSize), cols - 1));
+    const cy = Math.max(0, Math.min(Math.floor(p.y / cellSize), rows - 1));
 
-    for (const n of getNeighborParticles(grid, cx, cy)) {
-      if (p === n) continue;
-      const j = n.id;
-      const pId = p.id;
-      const key = pId < j ? `${pId}-${j}` : `${j}-${pId}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
+    // Step 5: Inline neighbor iteration (no temporary array allocation)
+    const minDx = Math.max(0, cx - 1);
+    const maxDx = Math.min(cols - 1, cx + 1);
+    const minDy = Math.max(0, cy - 1);
+    const maxDy = Math.min(rows - 1, cy + 1);
 
-      const dx = p.x - n.x;
-      const dy = p.y - n.y;
-      const dSq = dx * dx + dy * dy;
-      if (dSq < connDistSq) {
-        const d = Math.sqrt(dSq);
-        const opacity = (1 - d / connDist) * MAX_LINE_OPACITY;
-        batches[getOpacityBand(opacity)].push([p, n]);
+    for (let ny = minDy; ny <= maxDy; ny++) {
+      for (let nx = minDx; nx <= maxDx; nx++) {
+        const cell = cells[ny * cols + nx];
+        if (!cell) continue;
+        for (let ci = 0; ci < cell.length; ci++) {
+          const n = cell[ci];
+          if (p === n) continue;
+          const j = n.id;
+          const pId = p.id;
+
+          // Step 7: Uint8Array dedup instead of Set<string>
+          const lo = pId < j ? pId : j;
+          const hi = pId < j ? j : pId;
+          const dedupKey = lo * 512 + hi;
+          if (dedupBuf[dedupKey]) continue;
+          dedupBuf[dedupKey] = 1;
+
+          const dx = p.x - n.x;
+          const dy = p.y - n.y;
+          const dSq = dx * dx + dy * dy;
+          if (dSq < connDistSq) {
+            const d = Math.sqrt(dSq);
+            const opacity = (1 - d / connDist) * MAX_LINE_OPACITY;
+            batches[getOpacityBand(opacity)].push([p, n]);
+          }
+        }
       }
     }
   }
@@ -821,7 +923,6 @@ interface PlexusBackgroundProps {
   gravityStrength?: number;
   autoCollapseDelay?: number;
   onAutoCollapse?: () => void;
-  beatIntensityRef?: React.RefObject<number>;
   onShapeChange?: () => void;
   logoLightUrl?: string;
 }
@@ -833,7 +934,6 @@ export function PlexusBackground({
   gravityStrength = 800,
   autoCollapseDelay,
   onAutoCollapse,
-  beatIntensityRef,
   onShapeChange,
   logoLightUrl,
 }: PlexusBackgroundProps) {
@@ -887,8 +987,11 @@ export function PlexusBackground({
   // Bioluminescent ripples (light mode)
   const ripplesRef = useRef<Ripple[]>([]);
 
-  // Repulsion grid (rebuilt each drifting frame)
-  const repulsionGridRef = useRef<SpatialGrid | null>(null);
+  // Step 7: Uint8Array dedup buffer for connections
+  const dedupBufRef = useRef<Uint8Array>(new Uint8Array(512 * 512));
+
+  // Step 8: Cached maxDist (updated on resize)
+  const maxDistRef = useRef(0);
 
   // Gravitational pulse hint
   const hintFiredRef = useRef(false);
@@ -935,9 +1038,10 @@ export function PlexusBackground({
       isDarkRef.current = dark;
       channelRef.current = dark ? '255, 255, 255' : '0, 0, 0';
       lineColorRef.current = dark ? 'rgba(255, 255, 255,' : 'rgba(0, 0, 0,';
-      // Update particle color tints
+      // Update particle color tints + hex colors
       for (const p of particlesRef.current) {
         p.colorTint = assignStarColorTint(dark);
+        p.hexColor = colorTintToHex(p.colorTint);
       }
       // Clear theme-specific ambient effects
       shootingStarsRef.current = [];
@@ -1004,6 +1108,7 @@ export function PlexusBackground({
           velScale = 0.5;
         }
 
+        const tint = assignStarColorTint(isDark);
         particles.push({
           x: ((i % cols) + Math.random()) * cellW,
           y: (Math.floor(i / cols) + Math.random()) * cellH,
@@ -1020,7 +1125,8 @@ export function PlexusBackground({
           id: i,
           layer,
           depth,
-          colorTint: assignStarColorTint(isDark),
+          colorTint: tint,
+          hexColor: colorTintToHex(tint),
           shape: pickRandomShape(),
           life: Math.random() * 20000,
           maxLife: 15000 + Math.random() * 15000,
@@ -1080,17 +1186,18 @@ export function PlexusBackground({
     [],
   );
 
+  // Step 3: drawParticle with glow sprite + solid streaks + globalAlpha
   const drawParticle = useCallback(
     (
       ctx: CanvasRenderingContext2D,
       p: Particle,
       now: number,
       state: GalaxyState,
-      centerX: number,
-      centerY: number,
-      maxDim: number,
+      _centerX: number,
+      _centerY: number,
+      _maxDim: number,
+      beat: number,
     ) => {
-      const beat = beatIntensityRef?.current ?? 0;
       const t = Math.sin(now * 0.001 * p.twinkleSpeed + p.twinklePhase);
       const baseOpacity = p.twinkleMin + (t * 0.5 + 0.5) * (p.twinkleMax - p.twinkleMin);
       const lifeRatio = p.life / p.maxLife;
@@ -1103,11 +1210,11 @@ export function PlexusBackground({
               : 1
           : 1;
       const opacity = Math.min(baseOpacity * (1 + beat * 0.3), 1) * lifeFade;
-      const { r, g, b } = p.colorTint;
 
       const drawRadius = p.radius;
 
       // Warp streak rendering during collapsing/expanding
+      // Step 3: solid line + glow sprite instead of per-particle gradients
       if (state === 'collapsing' || state === 'expanding') {
         const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
         if (speed > 0.1) {
@@ -1117,32 +1224,40 @@ export function PlexusBackground({
           const tailX = p.x - nx * streakLen;
           const tailY = p.y - ny * streakLen;
 
-          const grad = ctx.createLinearGradient(tailX, tailY, p.x, p.y);
-          grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
-          grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${opacity})`);
-
-          ctx.strokeStyle = grad;
+          // Solid line at reduced opacity instead of gradient
+          ctx.globalAlpha = opacity * 0.4;
+          ctx.strokeStyle = p.hexColor;
           ctx.lineWidth = drawRadius;
           ctx.beginPath();
           ctx.moveTo(tailX, tailY);
           ctx.lineTo(p.x, p.y);
           ctx.stroke();
+          // Bright head
+          ctx.globalAlpha = opacity;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, drawRadius * 0.5, 0, Math.PI * 2);
+          ctx.fillStyle = p.hexColor;
+          ctx.fill();
 
           if (p.layer === 'foreground' && opacity > 0.5) {
             const glowRadius = drawRadius * (3 + beat * 2);
-            const grad2 = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
-            grad2.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 0.15})`);
-            grad2.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
-            ctx.fillStyle = grad2;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
-            ctx.fill();
+            const sprite = getGlowSprite(isDarkRef.current);
+            ctx.globalAlpha = opacity * 0.15;
+            ctx.drawImage(
+              sprite,
+              p.x - glowRadius,
+              p.y - glowRadius,
+              glowRadius * 2,
+              glowRadius * 2,
+            );
           }
+          ctx.globalAlpha = 1;
           return;
         }
       }
 
       // Drifting streaks for foreground particles
+      // Step 3: solid line instead of gradient
       if (state === 'drifting' && p.layer === 'foreground') {
         const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
         if (speed > 0.15) {
@@ -1152,40 +1267,39 @@ export function PlexusBackground({
           const tailX = p.x - nx * streakLen;
           const tailY = p.y - ny * streakLen;
 
-          const grad = ctx.createLinearGradient(tailX, tailY, p.x, p.y);
-          grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
-          grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, ${opacity * 0.6})`);
-
-          ctx.strokeStyle = grad;
+          ctx.globalAlpha = opacity * 0.4;
+          ctx.strokeStyle = p.hexColor;
           ctx.lineWidth = drawRadius * 0.7;
           ctx.beginPath();
           ctx.moveTo(tailX, tailY);
           ctx.lineTo(p.x, p.y);
           ctx.stroke();
+          ctx.globalAlpha = 1;
           // Fall through to normal dot rendering
         }
       }
 
       // Normal dot/shape rendering
+      // Step 3: glow sprite instead of per-particle radial gradient
       if (p.layer === 'foreground' && opacity > 0.5) {
         const glowRadius = drawRadius * (3 + beat * 2);
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
-        grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${opacity * 0.15})`);
-        grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
-        ctx.fillStyle = grad;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, glowRadius, 0, Math.PI * 2);
-        ctx.fill();
+        const sprite = getGlowSprite(isDarkRef.current);
+        ctx.globalAlpha = opacity * 0.15;
+        ctx.drawImage(sprite, p.x - glowRadius, p.y - glowRadius, glowRadius * 2, glowRadius * 2);
       }
 
+      // Step 2: globalAlpha + hexColor instead of rgba string
       ctx.beginPath();
       SHAPE_DRAW[p.shape](ctx, p.x, p.y, drawRadius);
-      ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+      ctx.globalAlpha = opacity;
+      ctx.fillStyle = p.hexColor;
       ctx.fill();
+      ctx.globalAlpha = 1;
     },
-    [beatIntensityRef],
+    [],
   );
 
+  // Steps 8-9: updateParticle with optimized wave/distance computations
   const updateParticle = useCallback(
     (
       particle: Particle,
@@ -1194,22 +1308,25 @@ export function PlexusBackground({
       now: number,
       centerX: number,
       centerY: number,
+      precomputedWaves: PrecomputedWave[] | null,
+      grid: FlatSpatialGrid | null,
+      beat: number,
     ) => {
       const state = stateRef.current;
       const elapsed = now - stateStartTimeRef.current;
       const depthResponse = 1 - particle.depth;
 
       if (state === 'drifting') {
-        const beat = beatIntensityRef?.current ?? 0;
-
-        // Mouse interaction (scaled by depth)
+        // Step 9: Mouse interaction — compare squared distance first
         const mouse = mouseRef.current;
         const mdx = mouse.x - particle.x;
         const mdy = mouse.y - particle.y;
-        const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-        if (mdist > 0 && mdist < 200) {
+        const mdistSq = mdx * mdx + mdy * mdy;
+        if (mdistSq > 0 && mdistSq < MOUSE_INTERACT_DIST_SQ) {
+          const mdist = Math.sqrt(mdistSq);
           if (isDarkRef.current) {
-            const force = (gravityStrength / 80000) * (1 - mdist / 200) * depthResponse;
+            const force =
+              (gravityStrength / 80000) * (1 - mdist / MOUSE_INTERACT_DIST) * depthResponse;
             particle.vx += (mdx / mdist) * force;
             particle.vy += (mdy / mdist) * force;
           } else {
@@ -1225,36 +1342,44 @@ export function PlexusBackground({
           }
         }
 
-        // Wave drift — reduced in dark mode for subtle organic wobble
-        const emitters = emittersRef.current;
-        const maxDist = Math.sqrt(width * width + height * height);
-        const timeSec = now * 0.001;
-        const waveMult = isDarkRef.current ? 0.15 : 1.0;
-        for (let e = 0; e < emitters.length; e++) {
-          const wf = computeWaveForce(emitters[e], particle.x, particle.y, timeSec, maxDist);
-          particle.vx += wf.fx * depthResponse * waveMult;
-          particle.vy += wf.fy * depthResponse * waveMult;
+        // Step 8: Wave drift — skip distant particles, use precomputed wave data
+        if (precomputedWaves && particle.layer !== 'distant') {
+          const waveMult = isDarkRef.current ? 0.15 : 1.0;
+          for (let e = 0; e < precomputedWaves.length; e++) {
+            const wf = computeWaveForcePrecomputed(precomputedWaves[e], particle.x, particle.y);
+            particle.vx += wf.fx * depthResponse * waveMult;
+            particle.vy += wf.fy * depthResponse * waveMult;
+          }
         }
 
-        // Repulsion — prevent clustering during drifting
-        const REPULSE_RADIUS = 60;
-        const REPULSE_STRENGTH = 0.002;
-        const repGrid = repulsionGridRef.current;
-        if (repGrid) {
-          const cellX = Math.floor(particle.x / REPULSE_RADIUS);
-          const cellY = Math.floor(particle.y / REPULSE_RADIUS);
-          const neighbors = getNeighborParticles(repGrid, cellX, cellY);
-          for (let n = 0; n < neighbors.length; n++) {
-            const other = neighbors[n];
-            if (other.id === particle.id) continue;
-            const dx = particle.x - other.x;
-            const dy = particle.y - other.y;
-            const distSq = dx * dx + dy * dy;
-            if (distSq < REPULSE_RADIUS * REPULSE_RADIUS && distSq > 1) {
-              const dist = Math.sqrt(distSq);
-              const force = REPULSE_STRENGTH * (1 - dist / REPULSE_RADIUS);
-              particle.vx += (dx / dist) * force;
-              particle.vy += (dy / dist) * force;
+        // Step 5/6: Repulsion using flat grid, inlined neighbor iteration
+        if (grid) {
+          const { cells, cols, rows, cellSize } = grid;
+          const cx = Math.max(0, Math.min(Math.floor(particle.x / cellSize), cols - 1));
+          const cy = Math.max(0, Math.min(Math.floor(particle.y / cellSize), rows - 1));
+          const minDx = Math.max(0, cx - 1);
+          const maxDx = Math.min(cols - 1, cx + 1);
+          const minDy = Math.max(0, cy - 1);
+          const maxDy = Math.min(rows - 1, cy + 1);
+
+          for (let ny = minDy; ny <= maxDy; ny++) {
+            for (let nx = minDx; nx <= maxDx; nx++) {
+              const cell = cells[ny * cols + nx];
+              if (!cell) continue;
+              for (let n = 0; n < cell.length; n++) {
+                const other = cell[n];
+                if (other.id === particle.id) continue;
+                const dx = particle.x - other.x;
+                const dy = particle.y - other.y;
+                const distSq = dx * dx + dy * dy;
+                // Step 9: compare squared distance, only sqrt when inside range
+                if (distSq < REPULSE_RADIUS_SQ && distSq > 1) {
+                  const dist = Math.sqrt(distSq);
+                  const force = REPULSE_STRENGTH * (1 - dist / REPULSE_RADIUS);
+                  particle.vx += (dx / dist) * force;
+                  particle.vy += (dy / dist) * force;
+                }
+              }
             }
           }
         }
@@ -1297,14 +1422,13 @@ export function PlexusBackground({
           particle.vx += (-dy / dist) * tangentialMult * ease;
           particle.vy += (dx / dist) * tangentialMult * ease;
         }
-        // Wave perturbations
-        const emitters = emittersRef.current;
-        const maxDist = Math.sqrt(width * width + height * height);
-        const timeSec = now * 0.001;
-        for (let e = 0; e < emitters.length; e++) {
-          const wf = computeWaveForce(emitters[e], particle.x, particle.y, timeSec, maxDist);
-          particle.vx += wf.fx * 0.5 * ease;
-          particle.vy += wf.fy * 0.5 * ease;
+        // Wave perturbations during collapse
+        if (precomputedWaves) {
+          for (let e = 0; e < precomputedWaves.length; e++) {
+            const wf = computeWaveForcePrecomputed(precomputedWaves[e], particle.x, particle.y);
+            particle.vx += wf.fx * 0.5 * ease;
+            particle.vy += wf.fy * 0.5 * ease;
+          }
         }
         particle.vx *= 0.98;
         particle.vy *= 0.98;
@@ -1381,9 +1505,10 @@ export function PlexusBackground({
     stateStartTimeRef.current = Date.now();
     lastFrameTimeRef.current = Date.now();
 
+    // Step 4: Cap DPR at 1.5
     const setupCanvas = () => {
       const rect = canvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       ctx.scale(dpr, dpr);
@@ -1394,6 +1519,8 @@ export function PlexusBackground({
 
     let { width, height } = setupCanvas();
     dimensionsRef.current = { width, height };
+    // Step 8: Cache maxDist
+    maxDistRef.current = Math.sqrt(width * width + height * height);
 
     // Scale connection distance with viewport so density feels consistent
     const refDiag = Math.sqrt(1920 * 1920 + 1080 * 1080);
@@ -1410,7 +1537,11 @@ export function PlexusBackground({
     shootingStarsRef.current = [];
     ripplesRef.current = [];
 
-    const generateLogoAwareShape = (shape: ShapeName, n: number, baseSize: number): Point3D[] => {
+    const generateLogoAwareShape = (
+      shape: ShapeName | 'logo',
+      n: number,
+      baseSize: number,
+    ): Point3D[] => {
       if (shape === 'logo') {
         const pts = logoShapePointsRef.current;
         if (!pts.length) return generateShapePoints('sphere', n, baseSize);
@@ -1455,6 +1586,8 @@ export function PlexusBackground({
         width = dims.width;
         height = dims.height;
         dimensionsRef.current = { width, height };
+        // Step 8: Update cached maxDist
+        maxDistRef.current = Math.sqrt(width * width + height * height);
         // Scale particle positions proportionally
         for (const p of particlesRef.current) {
           p.x = (p.x / oldWidth) * width;
@@ -1574,12 +1707,21 @@ export function PlexusBackground({
       const staticCY = height / 2;
       const staticMaxDim = Math.max(width, height);
       for (const p of distantRef.current)
-        drawParticle(ctx, p, now, 'drifting', staticCX, staticCY, staticMaxDim);
+        drawParticle(ctx, p, now, 'drifting', staticCX, staticCY, staticMaxDim, 0);
       for (const p of mediumRef.current)
-        drawParticle(ctx, p, now, 'drifting', staticCX, staticCY, staticMaxDim);
-      drawConnections(ctx, connectableRef.current, effectiveConnDist, lineColorRef.current);
+        drawParticle(ctx, p, now, 'drifting', staticCX, staticCY, staticMaxDim, 0);
+      // Build grid for static connections
+      const staticGrid = buildSpatialGrid(connectableRef.current, effectiveConnDist, width, height);
+      drawConnections(
+        ctx,
+        connectableRef.current,
+        effectiveConnDist,
+        lineColorRef.current,
+        staticGrid,
+        dedupBufRef.current,
+      );
       for (const p of foregroundRef.current)
-        drawParticle(ctx, p, now, 'drifting', staticCX, staticCY, staticMaxDim);
+        drawParticle(ctx, p, now, 'drifting', staticCX, staticCY, staticMaxDim, 0);
       return;
     }
 
@@ -1609,6 +1751,17 @@ export function PlexusBackground({
       const elapsed = now - stateStartTimeRef.current;
       const centerX = width / 2;
       const centerY = height / 2;
+
+      // Step 10: Inline pulse computation (replaces separate rAF loop)
+      const tSec = now * 0.001;
+      const TAU = Math.PI * 2;
+      const pulseRaw =
+        (Math.sin(tSec * 0.23 * TAU) +
+          Math.sin(tSec * 0.37 * TAU) +
+          Math.sin(tSec * 0.71 * TAU) +
+          3) /
+        6;
+      const beat = pulseRaw * pulseRaw;
 
       // State transitions
       if (stateRef.current === 'collapsing' && elapsed >= COLLAPSE_DURATION) {
@@ -1679,12 +1832,38 @@ export function PlexusBackground({
       const particles = particlesRef.current;
       const state = stateRef.current;
 
-      // Build repulsion grid for drifting state
-      repulsionGridRef.current = state === 'drifting' ? buildSpatialGrid(particles, 60) : null;
+      // Step 6: Build a single unified grid using connection distance as cell size
+      // (larger than repulsion radius, so all repulsion neighbors are still found)
+      const baseConnDist =
+        (isDarkRef.current ? effectiveConnDist : effectiveConnDist * 1.2) * (1 + beat * 0.3);
+      const connDist =
+        state === 'collapsing' || state === 'shape_forming'
+          ? baseConnDist * 0.6
+          : baseConnDist * 0.7;
+      const gridCellSize = Math.max(connDist, REPULSE_RADIUS);
+      const unifiedGrid =
+        state === 'drifting' ? buildSpatialGrid(particles, gridCellSize, width, height) : null;
+
+      // Step 8: Precompute wave data once per frame (hoisted out of particle loop)
+      const timeSec = now * 0.001;
+      const precomputedWaves =
+        state === 'drifting' || state === 'collapsing'
+          ? precomputeWaveData(emittersRef.current, timeSec, maxDistRef.current)
+          : null;
 
       // Update all particles
       for (let i = 0; i < particles.length; i++) {
-        updateParticle(particles[i], width, height, now, centerX, centerY);
+        updateParticle(
+          particles[i],
+          width,
+          height,
+          now,
+          centerX,
+          centerY,
+          precomputedWaves,
+          unifiedGrid,
+          beat,
+        );
       }
 
       // Clear hint after pulse duration
@@ -1723,15 +1902,14 @@ export function PlexusBackground({
 
       // Cosmic shape glow (drawn before particles for background effect)
       if (state === 'shape_forming') {
-        const shapeBeat = beatIntensityRef?.current ?? 0;
-        const glowRadius = Math.min(width, height) * (0.35 + shapeBeat * 0.1);
+        const glowRadius = Math.min(width, height) * (0.35 + beat * 0.1);
         const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, glowRadius);
         if (isDarkRef.current) {
-          const alpha = 0.06 + shapeBeat * 0.04;
+          const alpha = 0.06 + beat * 0.04;
           grad.addColorStop(0, `rgba(80, 60, 180, ${alpha})`);
           grad.addColorStop(1, 'rgba(80, 60, 180, 0)');
         } else {
-          const alpha = 0.04 + shapeBeat * 0.03;
+          const alpha = 0.04 + beat * 0.03;
           grad.addColorStop(0, `rgba(100, 120, 160, ${alpha})`);
           grad.addColorStop(1, 'rgba(100, 120, 160, 0)');
         }
@@ -1746,26 +1924,29 @@ export function PlexusBackground({
       const maxDim = Math.max(width, height);
 
       for (let i = 0; i < distant.length; i++)
-        drawParticle(ctx, distant[i], now, state, centerX, centerY, maxDim);
+        drawParticle(ctx, distant[i], now, state, centerX, centerY, maxDim, beat);
       for (let i = 0; i < medium.length; i++)
-        drawParticle(ctx, medium[i], now, state, centerX, centerY, maxDim);
+        drawParticle(ctx, medium[i], now, state, centerX, centerY, maxDim, beat);
 
-      // Connections (medium + foreground only) — light mode: 20% longer range
-      const beat = beatIntensityRef?.current ?? 0;
-      const baseConnDist =
-        (isDarkRef.current ? effectiveConnDist : effectiveConnDist * 1.2) * (1 + beat * 0.3);
-      const connDist =
-        state === 'collapsing' || state === 'shape_forming'
-          ? baseConnDist * 0.6
-          : baseConnDist * 0.7;
+      // Connections (medium + foreground only)
       let lineColor = lineColorRef.current;
       if (state === 'shape_forming' && isDarkRef.current) {
         lineColor = 'rgba(150, 170, 255,';
       }
-      drawConnections(ctx, connectableRef.current, connDist, lineColor);
+      // Step 6: Build connection grid (reuse unified grid if available, else build fresh)
+      const connGrid =
+        unifiedGrid ?? buildSpatialGrid(connectableRef.current, connDist, width, height);
+      drawConnections(
+        ctx,
+        connectableRef.current,
+        connDist,
+        lineColor,
+        connGrid,
+        dedupBufRef.current,
+      );
 
       for (let i = 0; i < foreground.length; i++)
-        drawParticle(ctx, foreground[i], now, state, centerX, centerY, maxDim);
+        drawParticle(ctx, foreground[i], now, state, centerX, centerY, maxDim, beat);
 
       // Ambient effects: dark = shooting stars, light = bioluminescent ripples
       if (isDarkRef.current) {
@@ -1841,7 +2022,6 @@ export function PlexusBackground({
     connectionDistance,
     autoCollapseDelay,
     onAutoCollapse,
-    beatIntensityRef,
   ]);
 
   return (
