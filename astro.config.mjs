@@ -10,6 +10,9 @@ import rehypeSlug from 'rehype-slug';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://urmzd.com',
+  redirects: {
+    '/blog/critical_thinking': '/blog/critical-thinking',
+  },
   i18n: {
     locales: ['en'],
     defaultLocale: 'en',
@@ -26,6 +29,9 @@ export default defineConfig({
     plugins: [
       tailwindcss()
     ],
+    resolve: {
+      dedupe: ['react', 'react-dom']
+    },
     optimizeDeps: {
       include: ['motion', 'motion/react']
     },
