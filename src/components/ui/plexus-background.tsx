@@ -10,7 +10,7 @@ interface Particle {
   id: number;
   x: number;
   y: number;
-  z: number; // actual depth: 0 = screen plane, positive = further away
+  z: number; // depth: 0 = screen plane, positive = further away (world space)
   vx: number;
   vy: number;
   vz: number;
@@ -69,8 +69,9 @@ const FRACTAL_SCALE = 0.35;
 const FRACTAL_SPIN_SPEED = 0.15;
 const MICRO_JITTER = 0.3;
 const Z_NEAR = 0;
-const Z_FAR = 400; // max depth
-const PERSPECTIVE = 800; // focal length — higher = flatter, lower = more 3D
+const Z_FAR = 500; // max depth
+const PERSPECTIVE = 600; // focal length — lower = more dramatic 3D
+const Z_CONNECTION_MAX = 150; // max z gap for connections (avoids cross-layer links)
 
 // --- Helpers ---
 
@@ -593,14 +594,15 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
     const particles: Particle[] = [];
     for (let i = 0; i < count; i++) {
       const z = Z_NEAR + Math.random() * Z_FAR;
+      // World-space coords centered at (0,0). 1.5× spread ensures coverage at all depths.
       particles.push({
         id: i,
-        x: Math.random() * w,
-        y: Math.random() * h,
+        x: (Math.random() - 0.5) * w * 1.5,
+        y: (Math.random() - 0.5) * h * 1.5,
         z,
         vx: (Math.random() - 0.5) * PARTICLE_SPEED * 2,
         vy: (Math.random() - 0.5) * PARTICLE_SPEED * 2,
-        vz: (Math.random() - 0.5) * 10, // slow drift in z
+        vz: (Math.random() - 0.5) * 10,
         radius: PARTICLE_RADIUS_MIN + Math.random() * (PARTICLE_RADIUS_MAX - PARTICLE_RADIUS_MIN),
       });
     }
@@ -705,30 +707,36 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
     // -- Click --
     const onClick = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      const cx = e.clientX - rect.left;
-      const cy = e.clientY - rect.top;
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+      const halfW = width / 2;
+      const halfH = height / 2;
 
-      // Add ripple
+      // Add ripple (screen space)
       if (ripplesRef.current.length < MAX_RIPPLES) {
         ripplesRef.current.push({
-          x: cx,
-          y: cy,
+          x: clickX,
+          y: clickY,
           radius: 0,
           maxRadius: RIPPLE_MAX_RADIUS,
           life: 1,
         });
       }
 
-      // Scatter nearby particles
+      // Scatter nearby particles (compare in projected screen space)
       for (const p of particlesRef.current) {
-        const dx = p.x - cx;
-        const dy = p.y - cy;
+        const scale = PERSPECTIVE / (PERSPECTIVE + p.z);
+        const sx = halfW + p.x * scale;
+        const sy = halfH + p.y * scale;
+        const dx = sx - clickX;
+        const dy = sy - clickY;
         const distSq = dx * dx + dy * dy;
         if (distSq < RIPPLE_SCATTER_RADIUS * RIPPLE_SCATTER_RADIUS && distSq > 0) {
           const dist = Math.sqrt(distSq);
           const force = RIPPLE_SCATTER_FORCE * (1 - dist / RIPPLE_SCATTER_RADIUS);
-          p.vx += (dx / dist) * force;
-          p.vy += (dy / dist) * force;
+          // Apply force in world space (divide by scale so far particles move enough)
+          p.vx += ((dx / dist) * force) / scale;
+          p.vy += ((dy / dist) * force) / scale;
         }
       }
 
@@ -739,6 +747,8 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
 
     // -- Animation loop --
     let drewStaticFrame = false;
+    // Projection cache: screen coords + scale for each particle
+    const proj: { sx: number; sy: number; scale: number }[] = [];
 
     const frame = (now: number) => {
       rafRef.current = requestAnimationFrame(frame);
@@ -762,6 +772,8 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
       const ch = channelRef.current;
       const dt = lastTime === 0 ? 1 / 60 : Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
+      const halfW = width / 2;
+      const halfH = height / 2;
 
       // Auto-advance fractal
       fractalTimer += dt;
@@ -771,18 +783,22 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
 
       ctx.clearRect(0, 0, width, height);
 
-      // --- Update particles ---
+      // --- Update particles (world space) ---
       if (!reducedMotion) {
         for (const p of particles) {
-          // Mouse repulsion
-          const dmx = p.x - mx;
-          const dmy = p.y - my;
+          // Mouse repulsion: project particle to screen, compare with mouse
+          const pScale = PERSPECTIVE / (PERSPECTIVE + p.z);
+          const sx = halfW + p.x * pScale;
+          const sy = halfH + p.y * pScale;
+          const dmx = sx - mx;
+          const dmy = sy - my;
           const mdSq = dmx * dmx + dmy * dmy;
           if (mdSq < MOUSE_REPULSE_RADIUS_SQ && mdSq > 0) {
             const md = Math.sqrt(mdSq);
             const force = MOUSE_REPULSE_FORCE * (1 - md / MOUSE_REPULSE_RADIUS);
-            p.vx += (dmx / md) * force;
-            p.vy += (dmy / md) * force;
+            // Apply in world space (divide by scale so far particles move enough)
+            p.vx += ((dmx / md) * force) / pScale;
+            p.vy += ((dmy / md) * force) / pScale;
           }
 
           // Damping
@@ -805,32 +821,30 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
         }
       }
 
-      // --- Fractal formation ---
+      // --- Fractal formation (world space — projection handles depth) ---
       if (!reducedMotion && fractalTargets.length > 0) {
         rotationAngle += FRACTAL_SPIN_SPEED * dt;
         const cosA = Math.cos(rotationAngle);
         const sinA = Math.sin(rotationAngle);
         const sc = Math.min(width, height) * FRACTAL_SCALE;
-        const cx = width / 2;
-        const cy = height / 2;
         const t = 1 - Math.exp(-FRACTAL_LERP_SPEED * dt);
 
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
           const tgt = fractalTargets[p.id % fractalTargets.length];
-          // Perspective scale: closer particles appear larger/further from center
-          const pScale = PERSPECTIVE / (PERSPECTIVE + p.z);
-          // Rotate target around center
+          // Rotate target around origin (world space)
           const rx = tgt.x * cosA - tgt.y * sinA;
           const ry = tgt.x * sinA + tgt.y * cosA;
-          // Per-particle micro-jitter (deterministic wobble from id + time)
+          // Per-particle micro-jitter
           const phase = p.id * 2.399 + now * 0.002;
           const jx = Math.sin(phase) * MICRO_JITTER;
           const jy = Math.cos(phase * 1.37) * MICRO_JITTER;
-          p.x += (cx + rx * sc * pScale + jx - p.x) * t;
-          p.y += (cy + ry * sc * pScale + jy - p.y) * t;
-          // Gently lerp z towards a target depth band based on particle id
-          const targetZ = (((p.id * 137) % 400) / 400) * Z_FAR;
+          // Target in world space (centered at 0,0). NO pScale here —
+          // the perspective projection at render time handles the 3D effect.
+          p.x += (rx * sc + jx - p.x) * t;
+          p.y += (ry * sc + jy - p.y) * t;
+          // Lerp z towards a deterministic depth band
+          const targetZ = (((p.id * 137) % 1000) / 1000) * Z_FAR;
           p.z += (targetZ - p.z) * t * 0.3;
           p.vx *= 0.9;
           p.vy *= 0.9;
@@ -838,22 +852,35 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
         }
       }
 
-      // --- Draw connections ---
-      // Batch by opacity band for fewer state changes
+      // --- Project all particles: world → screen ---
+      proj.length = particles.length;
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        const scale = PERSPECTIVE / (PERSPECTIVE + p.z);
+        proj[i] = {
+          sx: halfW + p.x * scale,
+          sy: halfH + p.y * scale,
+          scale,
+        };
+      }
+
+      // --- Draw connections (projected screen positions + z proximity) ---
       const bands: [number, number][][] = [[], [], []];
       for (let i = 0; i < particles.length; i++) {
-        const a = particles[i];
+        const pa = proj[i];
+        const za = particles[i].z;
         for (let j = i + 1; j < particles.length; j++) {
-          const b = particles[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
+          // Skip if too far apart in depth
+          const dz = Math.abs(za - particles[j].z);
+          if (dz > Z_CONNECTION_MAX) continue;
+          const pb = proj[j];
+          const dx = pa.sx - pb.sx;
+          const dy = pa.sy - pb.sy;
           const dSq = dx * dx + dy * dy;
           if (dSq < CONNECTION_DIST_SQ) {
             const ratio = 1 - Math.sqrt(dSq) / CONNECTION_DIST;
-            // Far connections (high z) appear dimmer via perspective
-            const avgZ = (a.z + b.z) / 2;
-            const depthMod = PERSPECTIVE / (PERSPECTIVE + avgZ);
-            const adjusted = ratio * depthMod;
+            const avgScale = (pa.scale + pb.scale) / 2;
+            const adjusted = ratio * avgScale;
             const band = adjusted < 0.1 ? 0 : adjusted < 0.3 ? 1 : 2;
             bands[band].push([i, j]);
           }
@@ -868,39 +895,42 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
         ctx.strokeStyle = `rgba(${ch} ${bandAlphas[b]})`;
         ctx.lineWidth = 0.5;
         for (const [i, j] of lines) {
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.moveTo(proj[i].sx, proj[i].sy);
+          ctx.lineTo(proj[j].sx, proj[j].sy);
         }
         ctx.stroke();
       }
 
-      // --- Draw particle glow (z-scaled) ---
-      for (const p of particles) {
-        const pScale = PERSPECTIVE / (PERSPECTIVE + p.z);
-        const gr = (4 + 5 * pScale) * pScale; // near: ~9, far: ~3
-        const glowAlpha = 0.15 + pScale * 0.25;
+      // --- Draw particle glow (projected) ---
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        const { sx, sy, scale } = proj[i];
+        const gr = (4 + 5 * scale) * scale;
+        const glowAlpha = 0.15 + scale * 0.25;
         const color = p.id % 2 === 0 ? '59, 130, 246' : '245, 158, 11';
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, gr);
+        const grad = ctx.createRadialGradient(sx, sy, 0, sx, sy, gr);
         grad.addColorStop(0, `rgba(${color}, ${glowAlpha})`);
         grad.addColorStop(1, `rgba(${color}, 0)`);
         ctx.fillStyle = grad;
-        ctx.fillRect(p.x - gr, p.y - gr, gr * 2, gr * 2);
+        ctx.fillRect(sx - gr, sy - gr, gr * 2, gr * 2);
       }
 
-      // --- Draw particles (z-scaled) ---
-      // Sort back-to-front (high z = far = draw first)
-      const sorted = [...particles].sort((a, b) => b.z - a.z);
-      for (const p of sorted) {
-        const pScale = PERSPECTIVE / (PERSPECTIVE + p.z);
-        const alpha = 0.2 + pScale * 0.6; // near: ~0.8, far: ~0.2
-        const r = p.radius * pScale;
+      // --- Draw particles (sorted back-to-front, projected) ---
+      const sortedIdx = Array.from({ length: particles.length }, (_, i) => i).sort(
+        (a, b) => particles[b].z - particles[a].z,
+      );
+      for (const i of sortedIdx) {
+        const p = particles[i];
+        const { sx, sy, scale } = proj[i];
+        const alpha = 0.2 + scale * 0.6;
+        const r = p.radius * scale;
         ctx.fillStyle = `rgba(${ch} ${alpha})`;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.arc(sx, sy, r, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // --- Draw & update ripples ---
+      // --- Draw & update ripples (screen space) ---
       if (!reducedMotion) {
         for (let i = ripples.length - 1; i >= 0; i--) {
           const r = ripples[i];
