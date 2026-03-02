@@ -2,6 +2,7 @@
 
 import { MotionConfig, motion } from 'motion/react';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+import { MobileMenu } from './MobileMenu';
 import { ModeToggle } from './ModeToggle';
 import NavigationMenuDemo from './NavigationMenuDemo';
 
@@ -20,8 +21,21 @@ export default function AutoHideHeader() {
           <a href="/" className="text-sm font-semibold tracking-tight text-foreground">
             urmzd
           </a>
-          <NavigationMenuDemo />
-          <ModeToggle />
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex md:items-center md:gap-2">
+            <NavigationMenuDemo />
+          </div>
+
+          {/* Desktop theme toggle */}
+          <div className="hidden md:block">
+            <ModeToggle />
+          </div>
+
+          {/* Mobile hamburger */}
+          <div className="md:hidden">
+            <MobileMenu />
+          </div>
         </div>
       </motion.header>
     </MotionConfig>
