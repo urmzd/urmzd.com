@@ -185,7 +185,7 @@ export default function ShareButton({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full z-50 mt-2 min-w-[160px] overflow-hidden rounded-lg border border-border bg-background shadow-lg"
+              className="absolute right-0 top-full z-dropdown mt-2 min-w-[160px] overflow-hidden rounded-lg border border-border bg-background shadow-lg"
             >
               {shareOptions.map((option) => (
                 <motion.button

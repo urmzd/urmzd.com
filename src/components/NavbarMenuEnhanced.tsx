@@ -8,7 +8,7 @@ export default function NavbarMenuEnhanced({ className }: { className?: string }
   const [active, setActive] = useState<string | null>(null);
 
   return (
-    <div className={cn('relative z-50', className)}>
+    <div className={cn('relative z-header', className)}>
       <Menu setActive={setActive}>
         <HoveredLink href="/">Home</HoveredLink>
         <MenuItem setActive={setActive} active={active} item="Blog">

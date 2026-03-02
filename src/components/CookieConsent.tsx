@@ -57,7 +57,7 @@ export default function CookieConsent() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 24 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="fixed bottom-4 right-4 z-50 w-80 rounded-xl border border-border/50 bg-background/70 p-4 shadow-lg backdrop-blur-xl"
+          className="fixed bottom-4 right-4 z-modal w-80 rounded-xl border border-border/50 bg-background/70 p-4 shadow-lg backdrop-blur-xl"
         >
           <div className="mb-3 flex items-center gap-2 text-sm font-medium">
             <Cookie className="size-4 text-muted-foreground" />

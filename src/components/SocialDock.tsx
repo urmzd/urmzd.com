@@ -6,13 +6,13 @@ import { FloatingDock } from '@/components/ui/floating-dock';
 import { type SocialLink, socialLinks } from '@/data/socialLinks';
 
 const iconMap: Record<SocialLink['icon'], React.ReactNode> = {
-  github: <SiGithub className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-  linkedin: <IconBrandLinkedin className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-  x: <SiX className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-  email: <IconMail className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-  behance: <SiBehance className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-  arxiv: <SiArxiv className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
-  rss: <IconRss className="h-full w-full text-neutral-500 dark:text-neutral-300" />,
+  github: <SiGithub className="h-full w-full text-muted-foreground" />,
+  linkedin: <IconBrandLinkedin className="h-full w-full text-muted-foreground" />,
+  x: <SiX className="h-full w-full text-muted-foreground" />,
+  email: <IconMail className="h-full w-full text-muted-foreground" />,
+  behance: <SiBehance className="h-full w-full text-muted-foreground" />,
+  arxiv: <SiArxiv className="h-full w-full text-muted-foreground" />,
+  rss: <IconRss className="h-full w-full text-muted-foreground" />,
 };
 
 const dockItems = socialLinks.map((link) => ({
@@ -31,8 +31,12 @@ export default function SocialDock({
   return (
     <FloatingDock
       items={dockItems}
-      desktopClassName={desktopClassName ?? 'fixed bottom-16 left-1/2 -translate-x-1/2 z-40'}
-      mobileClassName={mobileClassName ?? 'fixed bottom-4 left-1/2 -translate-x-1/2 z-40'}
+      desktopClassName={
+        desktopClassName ?? 'fixed bottom-16 left-1/2 -translate-x-1/2 z-floating-dock'
+      }
+      mobileClassName={
+        mobileClassName ?? 'fixed bottom-4 left-1/2 -translate-x-1/2 z-floating-dock'
+      }
     />
   );
 }

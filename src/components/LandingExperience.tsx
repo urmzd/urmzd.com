@@ -73,7 +73,6 @@ export default function LandingExperience() {
         className="pointer-events-auto"
         beatIntensityRef={beatIntensityRef}
         onShapeChange={handleShapeChange}
-        logoLightUrl="/logo-mark.svg"
       />
 
       <motion.div
