@@ -61,8 +61,18 @@ export function useTextScramble(text: string, options?: { speed?: number; reveal
       setDisplayText(buf.join(''));
     }
 
-    // Continuous cycling of scrambled positions
-    const tickId = setInterval(render, speed);
+    // Use RAF-throttled loop instead of setInterval to sync with paint cycle
+    let rafId = 0;
+    let lastTickTime = 0;
+    function tick(timestamp: number) {
+      if (cancelled) return;
+      if (timestamp - lastTickTime >= speed) {
+        lastTickTime = timestamp;
+        render();
+      }
+      rafId = requestAnimationFrame(tick);
+    }
+    rafId = requestAnimationFrame(tick);
 
     // Phase 1 — Encrypt: scramble old text from edges inward
     function encrypt() {
@@ -95,7 +105,7 @@ export function useTextScramble(text: string, options?: { speed?: number; reveal
     function decrypt() {
       if (cancelled) return;
       if (decrypted.size >= targetLen) {
-        clearInterval(tickId);
+        cancelAnimationFrame(rafId);
         setDisplayText(target);
         return;
       }
@@ -114,7 +124,7 @@ export function useTextScramble(text: string, options?: { speed?: number; reveal
 
     const cancel = () => {
       cancelled = true;
-      clearInterval(tickId);
+      cancelAnimationFrame(rafId);
     };
     cancelRef.current = cancel;
     return cancel;
