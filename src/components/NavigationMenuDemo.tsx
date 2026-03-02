@@ -8,7 +8,7 @@ import {
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
 
-const navItems = [
+export const navItems = [
   { href: '/', label: 'Home' },
   { href: '/blog', label: 'Blog' },
   { href: '/research', label: 'Research' },
