@@ -4,7 +4,6 @@ import { MotionConfig, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import SocialDock from '@/components/SocialDock';
 import { PlexusBackground } from '@/components/ui/plexus-background';
-import { useSimulatedPulse } from '@/hooks/useSimulatedPulse';
 import { useTextScramble } from '@/hooks/useTextScramble';
 
 const NAME_CHARS = 'URMZD MUKHAMMADNAIM'.split('');
@@ -37,11 +36,8 @@ export default function LandingExperience() {
   const [hasClicked, setHasClicked] = useState(false);
   const [quotes] = useState(() => shuffleArray(QUOTES));
   const [quoteIndex, setQuoteIndex] = useState(-1);
-  const beatIntensityRef = useRef(0);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const [nameWidth, setNameWidth] = useState<number | undefined>(undefined);
-
-  useSimulatedPulse(beatIntensityRef);
 
   const targetText = quoteIndex < 0 ? '/ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/' : quotes[quoteIndex];
   const displayText = useTextScramble(targetText);
@@ -70,11 +66,7 @@ export default function LandingExperience() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="landing-root" onClick={handleClick}>
-        <PlexusBackground
-          className="pointer-events-auto"
-          beatIntensityRef={beatIntensityRef}
-          onShapeChange={handleShapeChange}
-        />
+        <PlexusBackground className="pointer-events-auto" onShapeChange={handleShapeChange} />
 
         <motion.div
           className="final-card-container pointer-events-none"
