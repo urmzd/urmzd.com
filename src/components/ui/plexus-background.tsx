@@ -172,7 +172,7 @@ const getOpacityBand = (opacity: number): number =>
 const COLLAPSE_DURATION = 1500;
 const EXPAND_DURATION = 1200;
 
-const SHAPE_NAMES = ['sphere', 'cube', 'pyramid', 'torus', 'helix', 'brain', 'logo'] as const;
+const SHAPE_NAMES = ['sphere', 'cube', 'pyramid', 'torus', 'helix', 'brain'] as const;
 type ShapeName = (typeof SHAPE_NAMES)[number];
 const SHAPE_CYCLE_DURATION = 8000;
 const SHAPE_TRANSITION_DURATION = 2000;

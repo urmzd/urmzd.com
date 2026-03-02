@@ -70,7 +70,7 @@ const TimelineSegment = ({
           WebkitMaskImage: maskStyle,
         }),
       }}
-      className={`absolute z-0 overflow-hidden w-[2px] bg-neutral-200/50 dark:bg-neutral-700/50 pointer-events-none ${
+      className={`absolute z-0 overflow-hidden w-[2px] bg-border pointer-events-none ${
         isMobile ? 'md:hidden left-[84px]' : 'hidden md:block left-1/2 -translate-x-1/2'
       }`}
     >
@@ -80,7 +80,7 @@ const TimelineSegment = ({
           opacity: opacityTransform,
         }}
         transition={{ type: 'spring', stiffness: 100, damping: 30 }}
-        className="absolute inset-x-0 top-0 w-[2px] bg-gradient-to-b from-purple-500 to-blue-500 rounded-full will-change-transform"
+        className="absolute inset-x-0 top-0 w-[2px] bg-gradient-to-b from-brand to-brand-secondary rounded-full will-change-transform"
       />
     </div>
   );
@@ -185,11 +185,11 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
 
     if (intensity > 0.1) {
       return {
-        className: `${baseClasses} bg-purple-400 dark:bg-purple-500 border border-purple-400 dark:border-purple-500`,
+        className: `${baseClasses} bg-brand border border-brand`,
       };
     }
     return {
-      className: `${baseClasses} bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700`,
+      className: `${baseClasses} bg-muted border border-border`,
     };
   };
 
@@ -202,9 +202,7 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
         <div className="max-w-7xl mx-auto py-20 px-4 md:px-8 lg:px-10">
           {title && <h2 className="text-lg md:text-4xl mb-4 text-foreground max-w-4xl">{title}</h2>}
           {description && (
-            <p className="text-neutral-700 dark:text-neutral-300 text-sm md:text-base max-w-sm">
-              {description}
-            </p>
+            <p className="text-muted-foreground text-sm md:text-base max-w-sm">{description}</p>
           )}
         </div>
       )}
@@ -217,13 +215,8 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
             <>
               {item.content?.()}
               {item.subsections?.map((sub, i) => (
-                <div
-                  key={i}
-                  className={
-                    i > 0 ? 'mt-6 pt-6 border-t border-neutral-200 dark:border-neutral-800' : ''
-                  }
-                >
-                  <span className="text-xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400 font-medium">
+                <div key={i} className={i > 0 ? 'mt-6 pt-6 border-t border-border' : ''}>
+                  <span className="text-xs uppercase tracking-wide text-muted-foreground font-medium">
                     {sub.label}
                   </span>
                   <div className="mt-2">{sub.content()}</div>
@@ -236,12 +229,7 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
             <>
               {item.content?.()}
               {item.subsections?.map((sub, i) => (
-                <div
-                  key={i}
-                  className={
-                    i > 0 ? 'mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-800' : ''
-                  }
-                >
+                <div key={i} className={i > 0 ? 'mt-4 pt-4 border-t border-border' : ''}>
                   {sub.content()}
                 </div>
               ))}
@@ -258,9 +246,7 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
               <div className="flex md:hidden">
                 {/* Date column - left side */}
                 <div className="w-16 flex-shrink-0 text-right pr-2">
-                  <h3 className="text-lg font-bold text-neutral-500 dark:text-neutral-500">
-                    {item.title}
-                  </h3>
+                  <h3 className="text-lg font-bold text-muted-foreground">{item.title}</h3>
                 </div>
 
                 {/* Dot column - center */}
@@ -318,7 +304,7 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
                     <div
                       className={`sticky top-40 flex items-center h-10 ${isEven ? 'justify-start' : 'justify-end'}`}
                     >
-                      <h3 className="text-xl md:text-3xl font-bold text-neutral-500 dark:text-neutral-500 whitespace-nowrap">
+                      <h3 className="text-xl md:text-3xl font-bold text-muted-foreground whitespace-nowrap">
                         {item.title}
                       </h3>
                     </div>
@@ -357,7 +343,7 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
                     <div
                       className={`sticky top-40 flex items-center h-10 ${isEven ? 'justify-start' : 'justify-end'}`}
                     >
-                      <h3 className="text-xl md:text-3xl font-bold text-neutral-500 dark:text-neutral-500 whitespace-nowrap">
+                      <h3 className="text-xl md:text-3xl font-bold text-muted-foreground whitespace-nowrap">
                         {item.title}
                       </h3>
                     </div>
