@@ -2,6 +2,7 @@
 
 import { SiArxiv, SiBehance, SiGithub, SiX } from '@icons-pack/react-simple-icons';
 import { IconBrandLinkedin, IconMail, IconRss } from '@tabler/icons-react';
+import { MotionConfig } from 'motion/react';
 import { FloatingDock } from '@/components/ui/floating-dock';
 import { type SocialLink, socialLinks } from '@/data/socialLinks';
 
@@ -29,14 +30,16 @@ export default function SocialDock({
   mobileClassName?: string;
 } = {}) {
   return (
-    <FloatingDock
-      items={dockItems}
-      desktopClassName={
-        desktopClassName ?? 'fixed bottom-16 left-1/2 -translate-x-1/2 z-floating-dock'
-      }
-      mobileClassName={
-        mobileClassName ?? 'fixed bottom-4 left-1/2 -translate-x-1/2 z-floating-dock'
-      }
-    />
+    <MotionConfig reducedMotion="user">
+      <FloatingDock
+        items={dockItems}
+        desktopClassName={
+          desktopClassName ?? 'fixed bottom-16 left-1/2 -translate-x-1/2 z-floating-dock'
+        }
+        mobileClassName={
+          mobileClassName ?? 'fixed bottom-4 left-1/2 -translate-x-1/2 z-floating-dock'
+        }
+      />
+    </MotionConfig>
   );
 }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useReducedMotion } from './useReducedMotion';
 
 const SEED_CHARS = 'ʊəˈːˌɑɪ/MNDZKHPLABCEFGIJOQRSTUVWXY0123456789!@#$%';
 
@@ -12,8 +13,15 @@ export function useTextScramble(text: string, options?: { speed?: number; reveal
   const cancelRef = useRef<(() => void) | null>(null);
   const isFirstRender = useRef(true);
   const prevTextRef = useRef(text);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
+    if (reducedMotion) {
+      setDisplayText(text);
+      prevTextRef.current = text;
+      return;
+    }
+
     if (isFirstRender.current) {
       isFirstRender.current = false;
       setDisplayText(text);
@@ -110,7 +118,7 @@ export function useTextScramble(text: string, options?: { speed?: number; reveal
     };
     cancelRef.current = cancel;
     return cancel;
-  }, [text, speed, revealDelay]);
+  }, [text, speed, revealDelay, reducedMotion]);
 
   return displayText;
 }

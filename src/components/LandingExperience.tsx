@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'motion/react';
+import { MotionConfig, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import SocialDock from '@/components/SocialDock';
 import { PlexusBackground } from '@/components/ui/plexus-background';
@@ -68,75 +68,77 @@ export default function LandingExperience() {
   };
 
   return (
-    <div className="landing-root" onClick={handleClick}>
-      <PlexusBackground
-        className="pointer-events-auto"
-        beatIntensityRef={beatIntensityRef}
-        onShapeChange={handleShapeChange}
-      />
+    <MotionConfig reducedMotion="user">
+      <div className="landing-root" onClick={handleClick}>
+        <PlexusBackground
+          className="pointer-events-auto"
+          beatIntensityRef={beatIntensityRef}
+          onShapeChange={handleShapeChange}
+        />
 
-      <motion.div
-        className="final-card-container pointer-events-none"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-      >
-        <div className="relative flex flex-col items-center">
-          <div className="px-4 sm:px-0">
-            <div className="landing-hero pointer-events-auto">
-              <h1 ref={nameRef} className="landing-hero-name" aria-label="Urmzd Mukhammadnaim">
-                {NAME_CHARS.map((char, i) =>
-                  char === ' ' ? (
-                    <motion.span
-                      key={i}
-                      className="w-full"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ duration: 0.5, delay: 0.6 + i * 0.04 }}
-                    />
-                  ) : (
-                    <motion.span
-                      key={i}
-                      className="landing-hero-char"
-                      initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-                      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                      transition={{
-                        duration: 0.5,
-                        delay: 0.6 + i * 0.04,
-                        ease: [0.25, 0.46, 0.45, 0.94],
-                      }}
-                    >
-                      {char}
-                    </motion.span>
-                  ),
-                )}
-              </h1>
+        <motion.div
+          className="final-card-container pointer-events-none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+        >
+          <div className="relative flex flex-col items-center">
+            <div className="px-4 sm:px-0">
+              <div className="landing-hero pointer-events-auto">
+                <h1 ref={nameRef} className="landing-hero-name" aria-label="Urmzd Mukhammadnaim">
+                  {NAME_CHARS.map((char, i) =>
+                    char === ' ' ? (
+                      <motion.span
+                        key={i}
+                        className="w-full"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.6 + i * 0.04 }}
+                      />
+                    ) : (
+                      <motion.span
+                        key={i}
+                        className="landing-hero-char"
+                        initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
+                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                        transition={{
+                          duration: 0.5,
+                          delay: 0.6 + i * 0.04,
+                          ease: [0.25, 0.46, 0.45, 0.94],
+                        }}
+                      >
+                        {char}
+                      </motion.span>
+                    ),
+                  )}
+                </h1>
 
-              <motion.p
-                className={`landing-hero-sub ${hasClicked ? 'tracking-[0.25em]' : ''}`}
-                style={nameWidth ? { maxWidth: nameWidth } : undefined}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 1.4 }}
-              >
-                {displayText}
-              </motion.p>
+                <motion.p
+                  className={`landing-hero-sub ${hasClicked ? 'tracking-[0.25em]' : ''}`}
+                  style={nameWidth ? { maxWidth: nameWidth } : undefined}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 1.4 }}
+                >
+                  {displayText}
+                </motion.p>
+              </div>
             </div>
-          </div>
 
-          <motion.div
-            className="pointer-events-auto flex flex-col items-center gap-3 mt-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 1.6 }}
-          >
-            <SocialDock
-              mobileClassName="z-40"
-              desktopClassName="fixed bottom-16 left-1/2 -translate-x-1/2 z-40"
-            />
-          </motion.div>
-        </div>
-      </motion.div>
-    </div>
+            <motion.div
+              className="pointer-events-auto flex flex-col items-center gap-3 mt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 1.6 }}
+            >
+              <SocialDock
+                mobileClassName="z-40"
+                desktopClassName="fixed bottom-16 left-1/2 -translate-x-1/2 z-40"
+              />
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
+    </MotionConfig>
   );
 }

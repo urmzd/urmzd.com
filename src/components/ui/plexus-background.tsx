@@ -842,6 +842,15 @@ export function PlexusBackground({
   const mouseRef = useRef({ x: -1000, y: -1000 });
   const animationFrameRef = useRef<number>(0);
   const resizeTimeoutRef = useRef<number>(0);
+  const pausedRef = useRef(false);
+  const lastRenderTimeRef = useRef(0);
+  const targetFpsRef = useRef(
+    typeof navigator !== 'undefined' &&
+      ((navigator as Record<string, unknown>).hardwareConcurrency as number | undefined) != null &&
+      ((navigator as Record<string, unknown>).hardwareConcurrency as number) <= 4
+      ? 24
+      : 30,
+  );
   const channelRef = useRef('255, 255, 255');
   const lineColorRef = useRef('rgba(255, 255, 255,');
   const isDarkRef = useRef(true);
@@ -1575,7 +1584,19 @@ export function PlexusBackground({
     }
 
     const animate = () => {
+      if (pausedRef.current) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
       const now = Date.now();
+      const frameBudget = 1000 / targetFpsRef.current;
+      if (now - lastRenderTimeRef.current < frameBudget) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+      lastRenderTimeRef.current = now;
+
       const dtSec = Math.min((now - lastFrameTimeRef.current) / 1000, 0.1);
       lastFrameTimeRef.current = now;
       ctx.clearRect(0, 0, width, height);
@@ -1768,6 +1789,26 @@ export function PlexusBackground({
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
+    // Visibility pausing — stop rAF when tab is hidden
+    const handleVisibility = () => {
+      pausedRef.current = document.hidden;
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    // IntersectionObserver — pause when canvas is off-screen
+    let observer: IntersectionObserver | null = null;
+    if (typeof IntersectionObserver !== 'undefined') {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!document.hidden) {
+            pausedRef.current = !entry.isIntersecting;
+          }
+        },
+        { threshold: 0 },
+      );
+      observer.observe(canvas);
+    }
+
     window.addEventListener('resize', handleResize);
     canvas.addEventListener('mousemove', handleMouseMove);
     canvas.addEventListener('mouseleave', handleMouseLeave);
@@ -1777,6 +1818,8 @@ export function PlexusBackground({
     animate();
 
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      observer?.disconnect();
       window.removeEventListener('resize', handleResize);
       canvas.removeEventListener('mousemove', handleMouseMove);
       canvas.removeEventListener('mouseleave', handleMouseLeave);

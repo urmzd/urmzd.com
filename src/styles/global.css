@@ -379,15 +379,18 @@
 @keyframes pulse-focus {
   0%,
   80% {
-    box-shadow: 0 0 0 0 oklch(from var(--brand) l c h / 0%);
+    transform: scale(1);
+    opacity: 0;
   }
 
   90% {
-    box-shadow: 0 0 0 12px oklch(from var(--brand) l c h / 15%);
+    transform: scale(1.15);
+    opacity: 0.15;
   }
 
   100% {
-    box-shadow: 0 0 0 0 oklch(from var(--brand) l c h / 0%);
+    transform: scale(1);
+    opacity: 0;
   }
 }
 
@@ -437,6 +440,7 @@
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.6);
     pointer-events: none;
+    will-change: transform, opacity;
   }
 
   .splash-boom .splash-burst {
@@ -459,18 +463,21 @@
       );
     filter: blur(20px);
     animation: aurora 40s linear infinite;
+    will-change: background-position;
   }
 
   .splash-tile {
     @apply h-24 w-full rounded-xl bg-cover bg-center opacity-60;
     animation: drift 18s ease-out infinite;
     filter: grayscale(35%) contrast(95%);
+    will-change: transform;
   }
 
   .splash-letter {
     @apply inline-block;
     animation: splash-letter 0.6s ease-out forwards;
     opacity: 0;
+    will-change: transform, opacity;
   }
 
   .name-script {
@@ -480,6 +487,7 @@
 
   .name-float {
     animation: float-slow 10s ease-out infinite;
+    will-change: transform;
   }
 
   .splash-stage {
@@ -499,6 +507,7 @@
     stroke-dasharray: 12 14;
     fill: none;
     animation: path-flow 12s linear infinite;
+    will-change: stroke-dashoffset;
   }
 
   .splash-node {
@@ -579,6 +588,7 @@
   .splash-flow-label {
     @apply text-xs uppercase tracking-[0.3em] text-foreground/70 sm:text-sm;
     animation: float-slow 8s ease-out infinite;
+    will-change: transform;
   }
 
   .splash-textile {
@@ -625,12 +635,14 @@
     perspective: 800px;
     transform-style: preserve-3d;
     animation: orbit 22s linear infinite;
+    will-change: transform;
   }
 
   .splash-focus-card {
     @apply absolute left-1/2 top-1/2 h-16 w-20 -translate-x-1/2 -translate-y-1/2 rounded-xl bg-cover bg-center opacity-75 shadow-xl;
     transform-style: preserve-3d;
     animation: orbit-card 18s linear infinite;
+    will-change: transform;
   }
 
   .splash-focus:hover {
@@ -660,12 +672,14 @@
         transparent 65%
       );
     animation: aurora 50s linear infinite;
+    will-change: background-position;
   }
 
   .hero-tile {
     @apply rounded-2xl bg-cover bg-center opacity-20 shadow-xl;
     animation: float-slow 14s ease-out infinite;
     filter: grayscale(40%);
+    will-change: transform;
   }
 
   .landing-shell {
@@ -1086,6 +1100,8 @@
   .project-card {
     @apply rounded-xl border border-border bg-background p-6 transition-all;
     box-shadow: 0 2px 12px oklch(0 0 0 / 3%);
+    content-visibility: auto;
+    contain-intrinsic-size: auto 200px;
   }
 
   .project-card:hover {
@@ -1122,12 +1138,14 @@
     background: var(--status-active);
     box-shadow: 0 0 6px oklch(from var(--status-active) l c h / 50%);
     animation: status-pulse 2s ease-in-out infinite;
+    will-change: opacity;
   }
 
   .status-dot-wip {
     background: var(--status-wip);
     box-shadow: 0 0 6px oklch(from var(--status-wip) l c h / 50%);
     animation: status-pulse 2s ease-in-out infinite;
+    will-change: opacity;
   }
 
   .status-dot-archived {
@@ -1258,6 +1276,7 @@
     height: 28px;
     color: var(--foreground);
     animation: bounce-hint 1.2s ease-in-out infinite;
+    will-change: transform;
   }
 
   .click-hint-text {
@@ -1281,8 +1300,20 @@
   .splash-focus-card,
   .click-hint-hand,
   .landing-hero,
-  .landing-hero-name {
+  .landing-hero-name,
+  .splash-texture,
+  .splash-tile,
+  .splash-letter,
+  .hero-texture,
+  .hero-tile,
+  .name-float,
+  .status-dot-active,
+  .status-dot-wip {
     animation: none;
+  }
+
+  .splash-letter {
+    opacity: 1;
   }
 }
 

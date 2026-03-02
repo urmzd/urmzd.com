@@ -59,7 +59,7 @@ export const LinkPreview = ({
     <>
       {isMounted ? (
         <span className="hidden">
-          <img src={src} width={width} height={height} loading="lazy" alt="hidden image" />
+          <img src={src} width={width} height={height} loading="lazy" alt="" />
         </span>
       ) : null}
 
@@ -108,7 +108,7 @@ export const LinkPreview = ({
                     height={height}
                     loading="lazy"
                     className="rounded-lg"
-                    alt="preview image"
+                    alt={`Preview of ${url}`}
                   />
                 </a>
               </motion.div>
