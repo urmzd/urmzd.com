@@ -8,7 +8,7 @@ import {
   IconLink,
   IconShare,
 } from '@tabler/icons-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { mdxToMarkdown, type PostFrontmatter } from '../lib/mdxToMarkdown';
 
@@ -163,44 +163,49 @@ export default function ShareButton({
   const supportsNativeShare = typeof navigator !== 'undefined' && navigator.share;
 
   return (
-    <div className="relative" ref={menuRef}>
-      <motion.button
-        onClick={handleNativeShare}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className={`flex items-center gap-2 rounded-lg border border-border bg-background/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground ${
-          variant === 'icon' ? 'p-2' : ''
-        }`}
-        aria-label="Share"
-      >
-        <IconShare size={18} />
-        {variant === 'button' && <span>Share</span>}
-      </motion.button>
+    <MotionConfig reducedMotion="user">
+      <div className="relative" ref={menuRef}>
+        <motion.button
+          onClick={handleNativeShare}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className={`flex items-center gap-2 rounded-lg border border-border bg-background/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground ${
+            variant === 'icon' ? 'p-2' : ''
+          }`}
+          aria-label="Share"
+        >
+          <IconShare size={18} />
+          {variant === 'button' && <span>Share</span>}
+        </motion.button>
+        <output className="sr-only" aria-live="polite">
+          {copied ? 'Copied to clipboard' : ''}
+        </output>
 
-      {!supportsNativeShare && (
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full z-dropdown mt-2 min-w-[160px] overflow-hidden rounded-lg border border-border bg-background shadow-lg"
-            >
-              {shareOptions.map((option) => (
-                <motion.button
-                  key={option.name}
-                  onClick={option.action}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-muted-foreground transition-colors hover:text-foreground hover:bg-accent"
-                >
-                  {option.icon}
-                  <span>{option.name}</span>
-                </motion.button>
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      )}
-    </div>
+        {!supportsNativeShare && (
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 top-full z-dropdown mt-2 min-w-[160px] overflow-hidden rounded-lg border border-border bg-background shadow-lg"
+              >
+                {shareOptions.map((option) => (
+                  <motion.button
+                    key={option.name}
+                    onClick={option.action}
+                    className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-muted-foreground transition-colors hover:text-foreground hover:bg-accent"
+                  >
+                    {option.icon}
+                    <span>{option.name}</span>
+                  </motion.button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
+      </div>
+    </MotionConfig>
   );
 }

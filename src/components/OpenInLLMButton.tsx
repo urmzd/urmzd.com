@@ -1,6 +1,6 @@
 'use client';
 import { SiAnthropic, SiGooglegemini } from '@icons-pack/react-simple-icons';
-import { IconSparkles } from '@tabler/icons-react';
+import { IconCheck, IconSparkles } from '@tabler/icons-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { mdxToMarkdown, type PostFrontmatter } from '../lib/mdxToMarkdown';
@@ -13,11 +13,12 @@ interface OpenInLLMButtonProps {
 interface LLMOption {
   name: string;
   icon: React.ReactNode;
-  getUrl: (content: string) => string;
+  url: string;
 }
 
 export default function OpenInLLMButton({ postBody, postFrontmatter }: OpenInLLMButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [copiedTo, setCopiedTo] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -36,21 +37,23 @@ export default function OpenInLLMButton({ postBody, postFrontmatter }: OpenInLLM
     {
       name: 'Claude',
       icon: <SiAnthropic size={18} />,
-      getUrl: (content: string) =>
-        `https://claude.ai/new?q=${encodeURIComponent(`Discuss this article:\n\n${content}`)}`,
+      url: 'https://claude.ai/new',
     },
     {
       name: 'Gemini',
       icon: <SiGooglegemini size={18} />,
-      getUrl: (content: string) =>
-        `https://gemini.google.com/app?q=${encodeURIComponent(`Discuss this article:\n\n${content}`)}`,
+      url: 'https://gemini.google.com/app',
     },
   ];
 
-  const handleOpen = (option: LLMOption) => {
+  const handleOpen = async (option: LLMOption) => {
     const markdown = getMarkdown();
-    window.open(option.getUrl(markdown), '_blank', 'noopener,noreferrer');
+    const prompt = `Discuss this article:\n\n${markdown}`;
+    await navigator.clipboard.writeText(prompt);
+    window.open(option.url, '_blank', 'noopener,noreferrer');
+    setCopiedTo(option.name);
     setIsOpen(false);
+    setTimeout(() => setCopiedTo(null), 3000);
   };
 
   return (
@@ -59,12 +62,12 @@ export default function OpenInLLMButton({ postBody, postFrontmatter }: OpenInLLM
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="flex items-center gap-2 rounded-lg border border-border bg-background/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
+        className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-border bg-background/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
         aria-label="Open in LLM"
         title="Open in LLM"
       >
-        <IconSparkles size={18} />
-        <span>Ask LLM</span>
+        {copiedTo ? <IconCheck size={18} /> : <IconSparkles size={18} />}
+        <span>{copiedTo ? `Copied! Paste in ${copiedTo}` : 'Ask LLM'}</span>
       </motion.button>
 
       <AnimatePresence>

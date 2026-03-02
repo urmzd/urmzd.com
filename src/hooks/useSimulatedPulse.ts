@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useReducedMotion } from './useReducedMotion';
 
 /**
  * Writes a synthetic pulse value (0–1) to beatIntensityRef at ~60fps.
@@ -7,7 +8,14 @@ import { useEffect } from 'react';
  * with brief peaks — mimicking real beat intensity.
  */
 export function useSimulatedPulse(beatIntensityRef: React.MutableRefObject<number>) {
+  const reducedMotion = useReducedMotion();
+
   useEffect(() => {
+    if (reducedMotion) {
+      beatIntensityRef.current = 0.25;
+      return;
+    }
+
     let rafId: number;
 
     const tick = () => {
@@ -25,5 +33,5 @@ export function useSimulatedPulse(beatIntensityRef: React.MutableRefObject<numbe
 
     rafId = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(rafId);
-  }, [beatIntensityRef]);
+  }, [beatIntensityRef, reducedMotion]);
 }

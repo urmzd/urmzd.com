@@ -5,7 +5,7 @@ declare global {
 }
 
 import { Cookie } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -50,32 +50,37 @@ export default function CookieConsent() {
   }
 
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 24 }}
-          transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="fixed bottom-4 right-4 z-modal w-80 rounded-xl border border-border/50 bg-background/70 p-4 shadow-lg backdrop-blur-xl"
-        >
-          <div className="mb-3 flex items-center gap-2 text-sm font-medium">
-            <Cookie className="size-4 text-muted-foreground" />
-            <span>Cookie Consent</span>
-          </div>
-          <p className="mb-4 text-sm text-muted-foreground">
-            This site uses cookies for analytics.
-          </p>
-          <div className="flex gap-2">
-            <Button size="sm" onClick={accept}>
-              Accept
-            </Button>
-            <Button size="sm" variant="outline" onClick={decline}>
-              Decline
-            </Button>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <MotionConfig reducedMotion="user">
+      <AnimatePresence>
+        {visible && (
+          <motion.div
+            role="dialog"
+            aria-label="Cookie consent"
+            aria-describedby="cookie-consent-desc"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 24 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="fixed bottom-4 right-4 z-modal w-80 rounded-xl border border-border/50 bg-background/70 p-4 shadow-lg backdrop-blur-xl"
+          >
+            <div className="mb-3 flex items-center gap-2 text-sm font-medium">
+              <Cookie className="size-4 text-muted-foreground" aria-hidden="true" />
+              <span>Cookie Consent</span>
+            </div>
+            <p id="cookie-consent-desc" className="mb-4 text-sm text-muted-foreground">
+              This site uses cookies for analytics.
+            </p>
+            <div className="flex gap-2">
+              <Button size="sm" onClick={accept}>
+                Accept
+              </Button>
+              <Button size="sm" variant="outline" onClick={decline}>
+                Decline
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </MotionConfig>
   );
 }

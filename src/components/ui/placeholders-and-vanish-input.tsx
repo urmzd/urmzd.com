@@ -11,10 +11,12 @@ export function PlaceholdersAndVanishInput({
   placeholders,
   onChange,
   onSubmit,
+  ariaLabel,
 }: {
   placeholders: string[];
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  ariaLabel?: string;
 }) {
   const [currentPlaceholder, setCurrentPlaceholder] = useState(0);
 
@@ -194,6 +196,7 @@ export function PlaceholdersAndVanishInput({
         ref={inputRef}
         value={value}
         type="text"
+        aria-label={ariaLabel}
         className={cn(
           'w-full relative text-sm sm:text-base z-50 border-none dark:text-white bg-transparent text-black h-full rounded-full focus:outline-none focus:ring-0 pl-4 sm:pl-10 pr-20',
           animating && 'text-transparent dark:text-transparent',
@@ -203,6 +206,7 @@ export function PlaceholdersAndVanishInput({
       <button
         disabled={!value}
         type="submit"
+        aria-label="Submit search"
         className="absolute right-2 top-1/2 z-50 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-muted bg-foreground dark:disabled:bg-muted transition duration-200 flex items-center justify-center"
       >
         <motion.svg

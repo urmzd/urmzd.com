@@ -30,6 +30,8 @@ const FloatingDockMobile = ({
 }) => {
   return (
     <div
+      role="toolbar"
+      aria-label="Social links"
       className={cn(
         'mx-auto flex flex-nowrap items-center justify-center gap-1.5 rounded-2xl px-2.5 py-2 md:hidden',
         className,
@@ -39,7 +41,7 @@ const FloatingDockMobile = ({
         <a
           key={item.title}
           href={item.href}
-          title={item.title}
+          aria-label={item.title}
           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-background/60 backdrop-blur-sm transition-colors hover:bg-accent/50"
         >
           <div className="h-4 w-4">{item.icon}</div>
@@ -59,6 +61,8 @@ const FloatingDockDesktop = ({
   const mouseX = useMotionValue(Infinity);
   return (
     <motion.div
+      role="toolbar"
+      aria-label="Social links"
       onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn('mx-auto hidden h-16 items-end gap-4 rounded-2xl px-4 pb-3 md:flex', className)}
@@ -120,12 +124,14 @@ function IconContainer({
   const [hovered, setHovered] = useState(false);
 
   return (
-    <a href={href}>
+    <a href={href} aria-label={title}>
       <motion.div
         ref={ref}
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
+        onFocus={() => setHovered(true)}
+        onBlur={() => setHovered(false)}
         className="relative flex aspect-square items-center justify-center rounded-full bg-background/60 backdrop-blur-sm"
       >
         <AnimatePresence>

@@ -79,10 +79,36 @@ export function mdxToMarkdown(body: string, frontmatter: PostFrontmatter): strin
     (_match, label: string, content: string) => `**${label}**\n\n${content.trim()}`,
   );
 
-  // 11. Strip remaining client:load / client:idle directives
-  md = md.replace(/\s+client:(load|idle)/g, '');
+  // 11. Interactive visuals → descriptive placeholders
+  const visuals: Record<string, string> = {
+    CriticalThinkingLoop:
+      '*[Interactive diagram: Question → Research → Validate → Reflect → Repeat]*',
+    FirstPrinciplesVisual:
+      '*[Interactive visual: stripping assumptions to reveal foundational truths]*',
+    ConfirmationBiasVisual:
+      '*[Interactive visual: evidence cards showing how confirmation bias filters contradicting data]*',
+    ExtrapolationVisual:
+      '*[Interactive chart: linear regression overshooting a nonlinear trend when projected beyond observed data]*',
+    ConsilienceVisual:
+      '*[Interactive visual: independent sources converging on the same conclusion]*',
+    SearchLandscapeVisual:
+      '*[Interactive visual: navigating a solution landscape with local and global optima]*',
+    GPEvolutionVisualizer:
+      '*[Interactive simulation: genetic evolution across generations with selection, crossover, and mutation]*',
+    ChatDemo:
+      '*[Interactive demo: a chatbot exchange showing system prompt, user message, and model response]*',
+  };
+  for (const [tag, placeholder] of Object.entries(visuals)) {
+    md = md.replace(new RegExp(`<${tag}[^>]*\\/?>`, 'g'), placeholder);
+  }
 
-  // 12. Collapse 3+ consecutive blank lines to 2
+  // 12. Strip remaining self-closing JSX components not already handled
+  md = md.replace(/<[A-Z]\w+[^>]*\/>/g, '');
+
+  // 13. Strip remaining client:load / client:idle / client:visible directives
+  md = md.replace(/\s+client:(load|idle|visible)/g, '');
+
+  // 14. Collapse 3+ consecutive blank lines to 2
   md = md.replace(/\n{3,}/g, '\n\n');
 
   // Build frontmatter YAML
