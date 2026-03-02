@@ -16,6 +16,7 @@ interface ShareButtonProps {
   url: string;
   title: string;
   description?: string;
+  shareText?: string;
   variant?: 'icon' | 'button';
   postBody?: string;
   postFrontmatter?: PostFrontmatter;
@@ -32,6 +33,7 @@ export default function ShareButton({
   url,
   title,
   description = '',
+  shareText,
   variant = 'button',
   postBody,
   postFrontmatter,
@@ -52,12 +54,14 @@ export default function ShareButton({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const shareMessage = shareText || description;
+
   const handleNativeShare = async () => {
     if (navigator.share) {
       try {
         await navigator.share({
           title,
-          text: description,
+          text: shareMessage,
           url,
         });
       } catch {
@@ -113,7 +117,7 @@ export default function ShareButton({
       icon: <IconBrandX size={18} />,
       action: () => {
         window.open(
-          `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`,
+          `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareMessage)}&via=urmzd_`,
           '_blank',
           'noopener,noreferrer',
         );
@@ -125,7 +129,7 @@ export default function ShareButton({
       icon: <IconBrandLinkedin size={18} />,
       action: () => {
         window.open(
-          `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
+          `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(shareMessage)}&source=urmzd.com`,
           '_blank',
           'noopener,noreferrer',
         );
