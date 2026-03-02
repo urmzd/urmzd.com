@@ -48,7 +48,7 @@ export default function OpenInLLMButton({ postBody, postFrontmatter }: OpenInLLM
 
   const handleOpen = async (option: LLMOption) => {
     const markdown = getMarkdown();
-    const prompt = `Discuss this article:\n\n${markdown}`;
+    const prompt = `Summarize this article:\n\n${markdown}`;
     await navigator.clipboard.writeText(prompt);
     window.open(option.url, '_blank', 'noopener,noreferrer');
     setCopiedTo(option.name);
@@ -63,11 +63,11 @@ export default function OpenInLLMButton({ postBody, postFrontmatter }: OpenInLLM
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-border bg-background/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-        aria-label="Open in LLM"
-        title="Open in LLM"
+        aria-label="Summarize with LLM"
+        title="Summarize with LLM"
       >
         {copiedTo ? <IconCheck size={18} /> : <IconSparkles size={18} />}
-        <span>{copiedTo ? `Copied! Paste in ${copiedTo}` : 'Ask LLM'}</span>
+        <span>{copiedTo ? `Copied! Paste in ${copiedTo}` : 'Summarize'}</span>
       </motion.button>
 
       <AnimatePresence>
