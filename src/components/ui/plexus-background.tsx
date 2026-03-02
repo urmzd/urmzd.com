@@ -10,8 +10,10 @@ interface Particle {
   id: number;
   x: number;
   y: number;
+  z: number; // actual depth: 0 = screen plane, positive = further away
   vx: number;
   vy: number;
+  vz: number;
   radius: number;
 }
 
@@ -37,14 +39,14 @@ interface PlexusBackgroundProps {
 // Constants
 // =============================================================================
 
-const CONNECTION_DIST = 150;
+const CONNECTION_DIST = 120;
 const CONNECTION_DIST_SQ = CONNECTION_DIST * CONNECTION_DIST;
 const MOUSE_REPULSE_RADIUS = 120;
 const MOUSE_REPULSE_RADIUS_SQ = MOUSE_REPULSE_RADIUS * MOUSE_REPULSE_RADIUS;
 const MOUSE_REPULSE_FORCE = 2;
 const PARTICLE_SPEED = 0.3;
-const PARTICLE_RADIUS_MIN = 1;
-const PARTICLE_RADIUS_MAX = 2;
+const PARTICLE_RADIUS_MIN = 0.5;
+const PARTICLE_RADIUS_MAX = 2.5;
 const RIPPLE_SPEED = 3;
 const RIPPLE_MAX_RADIUS = 150;
 const RIPPLE_SCATTER_RADIUS = 120;
@@ -55,7 +57,7 @@ const MAX_RIPPLES = 3;
 function particleCount(w: number, h: number): number {
   const area = w * h;
   const refArea = 1920 * 1080;
-  return Math.round(Math.min(150, Math.max(60, 120 * (area / refArea))));
+  return Math.round(Math.min(300, Math.max(100, 250 * (area / refArea))));
 }
 
 // =============================================================================
@@ -66,6 +68,9 @@ const FRACTAL_LERP_SPEED = 3.0;
 const FRACTAL_SCALE = 0.35;
 const FRACTAL_SPIN_SPEED = 0.15;
 const MICRO_JITTER = 0.3;
+const Z_NEAR = 0;
+const Z_FAR = 400; // max depth
+const PERSPECTIVE = 800; // focal length — higher = flatter, lower = more 3D
 
 // --- Helpers ---
 
@@ -587,12 +592,15 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
     const count = particleCount(w, h);
     const particles: Particle[] = [];
     for (let i = 0; i < count; i++) {
+      const z = Z_NEAR + Math.random() * Z_FAR;
       particles.push({
         id: i,
         x: Math.random() * w,
         y: Math.random() * h,
+        z,
         vx: (Math.random() - 0.5) * PARTICLE_SPEED * 2,
         vy: (Math.random() - 0.5) * PARTICLE_SPEED * 2,
+        vz: (Math.random() - 0.5) * 10, // slow drift in z
         radius: PARTICLE_RADIUS_MIN + Math.random() * (PARTICLE_RADIUS_MAX - PARTICLE_RADIUS_MIN),
       });
     }
@@ -780,9 +788,20 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
           // Damping
           p.vx *= 0.98;
           p.vy *= 0.98;
+          p.vz *= 0.98;
 
           p.x += p.vx;
           p.y += p.vy;
+          p.z += p.vz;
+
+          // Clamp z and bounce
+          if (p.z < Z_NEAR) {
+            p.z = Z_NEAR;
+            p.vz = Math.abs(p.vz) * 0.5;
+          } else if (p.z > Z_FAR) {
+            p.z = Z_FAR;
+            p.vz = -Math.abs(p.vz) * 0.5;
+          }
         }
       }
 
@@ -799,6 +818,8 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
         for (let i = 0; i < particles.length; i++) {
           const p = particles[i];
           const tgt = fractalTargets[p.id % fractalTargets.length];
+          // Perspective scale: closer particles appear larger/further from center
+          const pScale = PERSPECTIVE / (PERSPECTIVE + p.z);
           // Rotate target around center
           const rx = tgt.x * cosA - tgt.y * sinA;
           const ry = tgt.x * sinA + tgt.y * cosA;
@@ -806,10 +827,14 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
           const phase = p.id * 2.399 + now * 0.002;
           const jx = Math.sin(phase) * MICRO_JITTER;
           const jy = Math.cos(phase * 1.37) * MICRO_JITTER;
-          p.x += (cx + rx * sc + jx - p.x) * t;
-          p.y += (cy + ry * sc + jy - p.y) * t;
+          p.x += (cx + rx * sc * pScale + jx - p.x) * t;
+          p.y += (cy + ry * sc * pScale + jy - p.y) * t;
+          // Gently lerp z towards a target depth band based on particle id
+          const targetZ = (((p.id * 137) % 400) / 400) * Z_FAR;
+          p.z += (targetZ - p.z) * t * 0.3;
           p.vx *= 0.9;
           p.vy *= 0.9;
+          p.vz *= 0.9;
         }
       }
 
@@ -825,14 +850,17 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
           const dSq = dx * dx + dy * dy;
           if (dSq < CONNECTION_DIST_SQ) {
             const ratio = 1 - Math.sqrt(dSq) / CONNECTION_DIST;
-            // 3 bands: faint (<0.15), medium (0.15-0.4), strong (>0.4)
-            const band = ratio < 0.15 ? 0 : ratio < 0.4 ? 1 : 2;
+            // Far connections (high z) appear dimmer via perspective
+            const avgZ = (a.z + b.z) / 2;
+            const depthMod = PERSPECTIVE / (PERSPECTIVE + avgZ);
+            const adjusted = ratio * depthMod;
+            const band = adjusted < 0.1 ? 0 : adjusted < 0.3 ? 1 : 2;
             bands[band].push([i, j]);
           }
         }
       }
 
-      const bandAlphas = [0.06, 0.15, 0.3];
+      const bandAlphas = [0.05, 0.12, 0.25];
       for (let b = 0; b < 3; b++) {
         const lines = bands[b];
         if (lines.length === 0) continue;
@@ -846,25 +874,31 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
         ctx.stroke();
       }
 
-      // --- Draw particle glow ---
-      const glowRadius = 6;
+      // --- Draw particle glow (z-scaled) ---
       for (const p of particles) {
-        const color = p.id % 2 === 0 ? '59, 130, 246' : '245, 158, 11'; // blue / amber
-        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glowRadius);
-        grad.addColorStop(0, `rgba(${color}, 0.35)`);
+        const pScale = PERSPECTIVE / (PERSPECTIVE + p.z);
+        const gr = (4 + 5 * pScale) * pScale; // near: ~9, far: ~3
+        const glowAlpha = 0.15 + pScale * 0.25;
+        const color = p.id % 2 === 0 ? '59, 130, 246' : '245, 158, 11';
+        const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, gr);
+        grad.addColorStop(0, `rgba(${color}, ${glowAlpha})`);
         grad.addColorStop(1, `rgba(${color}, 0)`);
         ctx.fillStyle = grad;
-        ctx.fillRect(p.x - glowRadius, p.y - glowRadius, glowRadius * 2, glowRadius * 2);
+        ctx.fillRect(p.x - gr, p.y - gr, gr * 2, gr * 2);
       }
 
-      // --- Draw particles ---
-      ctx.fillStyle = `rgba(${ch} 0.6)`;
-      ctx.beginPath();
-      for (const p of particles) {
-        ctx.moveTo(p.x + p.radius, p.y);
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      // --- Draw particles (z-scaled) ---
+      // Sort back-to-front (high z = far = draw first)
+      const sorted = [...particles].sort((a, b) => b.z - a.z);
+      for (const p of sorted) {
+        const pScale = PERSPECTIVE / (PERSPECTIVE + p.z);
+        const alpha = 0.2 + pScale * 0.6; // near: ~0.8, far: ~0.2
+        const r = p.radius * pScale;
+        ctx.fillStyle = `rgba(${ch} ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fill();
       }
-      ctx.fill();
 
       // --- Draw & update ripples ---
       if (!reducedMotion) {
