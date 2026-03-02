@@ -846,8 +846,8 @@ export function PlexusBackground({
   const lastRenderTimeRef = useRef(0);
   const targetFpsRef = useRef(
     typeof navigator !== 'undefined' &&
-      ((navigator as Record<string, unknown>).hardwareConcurrency as number | undefined) != null &&
-      ((navigator as Record<string, unknown>).hardwareConcurrency as number) <= 4
+      navigator.hardwareConcurrency != null &&
+      navigator.hardwareConcurrency <= 4
       ? 24
       : 30,
   );
