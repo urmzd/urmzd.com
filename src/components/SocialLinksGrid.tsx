@@ -23,7 +23,7 @@ export default function SocialLinksGrid() {
           href={link.href}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 rounded-lg border border-neutral-200 px-4 py-2 text-neutral-600 transition-colors hover:border-neutral-400 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-neutral-500 dark:hover:text-neutral-100"
+          className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
         >
           {iconMap[link.icon]}
           <span>{link.title}</span>
