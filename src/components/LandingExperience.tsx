@@ -2,6 +2,7 @@
 
 import { MotionConfig, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+
 import SocialDock from '@/components/SocialDock';
 import { PlexusBackground } from '@/components/ui/plexus-background';
 import { useTextScramble } from '@/hooks/useTextScramble';
@@ -33,7 +34,6 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 export default function LandingExperience() {
-  const [hasClicked, setHasClicked] = useState(false);
   const [quotes] = useState(() => shuffleArray(QUOTES));
   const [quoteIndex, setQuoteIndex] = useState(-1);
   const nameRef = useRef<HTMLHeadingElement>(null);
@@ -42,7 +42,7 @@ export default function LandingExperience() {
   const targetText = quoteIndex < 0 ? '/ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/' : quotes[quoteIndex];
   const displayText = useTextScramble(targetText);
 
-  const handleShapeChange = useCallback(() => {
+  const handleQuoteChange = useCallback(() => {
     setQuoteIndex((prev) => (prev + 1) % quotes.length);
   }, [quotes]);
 
@@ -57,16 +57,10 @@ export default function LandingExperience() {
     return () => ro.disconnect();
   }, []);
 
-  const handleClick = () => {
-    if (!hasClicked) {
-      setHasClicked(true);
-    }
-  };
-
   return (
     <MotionConfig reducedMotion="user">
-      <div className="landing-root" onClick={handleClick}>
-        <PlexusBackground className="pointer-events-auto" onShapeChange={handleShapeChange} />
+      <div className="landing-root">
+        <PlexusBackground className="pointer-events-auto" onQuoteChange={handleQuoteChange} />
 
         <motion.div
           className="final-card-container pointer-events-none"
@@ -106,7 +100,7 @@ export default function LandingExperience() {
                 </h1>
 
                 <motion.p
-                  className={`landing-hero-sub ${hasClicked ? 'tracking-[0.25em]' : ''}`}
+                  className="landing-hero-sub"
                   style={nameWidth ? { maxWidth: nameWidth } : undefined}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
