@@ -31,6 +31,21 @@ const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDa
                     timeZone: 'UTC',
                   })}
                 </time>
+                {
+                  post.data.updatedDate && (
+                    <>
+                      <span>|</span>
+                      <span>
+                        Updated: <time>{post.data.updatedDate.toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          timeZone: 'UTC',
+                        })}</time>
+                      </span>
+                    </>
+                  )
+                }
                 <span>|</span>
                 <span>{calculateReadTime(post.body || '').text}</span>
               </div>
