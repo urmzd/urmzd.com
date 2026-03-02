@@ -97,9 +97,7 @@ export const ProductItem = ({
       />
       <div>
         <h4 className="text-xl font-bold mb-1 text-foreground">{title}</h4>
-        <p className="text-neutral-700 text-sm max-w-[10rem] dark:text-neutral-300">
-          {description}
-        </p>
+        <p className="text-muted-foreground text-sm max-w-[10rem]">{description}</p>
       </div>
     </a>
   );
