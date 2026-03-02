@@ -1,18 +1,29 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import Phonetic from '@/components/Phonetic';
 import SocialLinksGrid from '@/components/SocialLinksGrid';
 ---
 
 <BaseLayout title="About - urmzd">
   <main class="container mx-auto px-4 pt-24 pb-16">
-    <div class="mb-8 flex flex-col items-center gap-4">
-      <img src="/logo-mark.svg" alt="urmzd logo" class="h-24 w-24 dark:invert" />
-      <h1 class="text-4xl font-bold">About Me</h1>
+    <div class="mb-10">
+      <h1 class="text-4xl font-bold">Urmzd Mukhammadnaim</h1>
+      <Phonetic ipa="ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm" className="mt-1 block" client:load />
     </div>
 
     <div class="prose prose-neutral dark:prose-invert max-w-none">
       <p>
-        For a full introduction, check out my <a href="/blog/welcome">welcome post</a>.
+        <strong>Urmzd</strong> derives from <em>Ahura Mazda</em> — the Avestan name meaning
+        "Lord of Wisdom." It's a name rooted in Zoroastrian tradition, carried across
+        Central Asia into Tajik and Persian cultures where my family originates.
+      </p>
+
+      <p>
+        I'm a software engineer based in Austin, Texas. I build tools that turn structured
+        thinking into working software — from developer utilities and machine learning
+        pipelines to interactive web experiences like this site. When I'm not writing code,
+        I'm likely on the mats training Brazilian Jiu-Jitsu or exploring a new city.
+        For the full story, check out my <a href="/blog/welcome">welcome post</a>.
       </p>
 
       <h2>Get in Touch</h2>

@@ -6,6 +6,7 @@ import CodeBlockEnhancer from '@/components/CodeBlockEnhancer';
 import HeadingLinkEnhancer from '@/components/HeadingLinkEnhancer';
 import ShareButton from '@/components/ShareButton';
 import CopyMarkdownButton from '@/components/CopyMarkdownButton';
+import OpenInLLMButton from '@/components/OpenInLLMButton';
 import TableOfContents from '@/components/TableOfContents';
 import MobileTOC from '@/components/MobileTOC';
 
@@ -53,6 +54,18 @@ const showTOC = tocHeadings.length >= 3;
               tags: post.data.tags,
             }}
             slug={post.id}
+          />
+          <OpenInLLMButton
+            client:load
+            postBody={post.body}
+            postFrontmatter={{
+              title: post.data.title,
+              description: post.data.description,
+              pubDate: post.data.pubDate.toISOString().split('T')[0],
+              updatedDate: post.data.updatedDate?.toISOString().split('T')[0],
+              heroImage: post.data.heroImage,
+              tags: post.data.tags,
+            }}
           />
           <ShareButton
             client:load
