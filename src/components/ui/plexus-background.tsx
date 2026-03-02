@@ -59,13 +59,15 @@ function particleCount(w: number, h: number): number {
 }
 
 // =============================================================================
-// Fractal generators (pre-computed at init, not per-frame)
+// Pattern generators (pre-computed at init, not per-frame)
 // =============================================================================
 
 const FRACTAL_LERP_SPEED = 3.0;
 const FRACTAL_SCALE = 0.35;
-const FRACTAL_SPIN_SPEED = 0.15; // radians/sec — slow continuous rotation
-const MICRO_JITTER = 0.3; // px amplitude of per-particle noise
+const FRACTAL_SPIN_SPEED = 0.15;
+const MICRO_JITTER = 0.3;
+
+// --- Helpers ---
 
 function normalize(pts: Point2D[]): Point2D[] {
   let minX = Infinity,
@@ -83,6 +85,68 @@ function normalize(pts: Point2D[]): Point2D[] {
   const span = Math.max(maxX - minX, maxY - minY) || 1;
   return pts.map((p) => ({ x: ((p.x - cx) / span) * 2, y: ((p.y - cy) / span) * 2 }));
 }
+
+function sampleAlongPath(path: Point2D[], n: number): Point2D[] {
+  if (path.length < 2 || n <= 0) return [];
+  const segLens: number[] = [];
+  let total = 0;
+  for (let i = 1; i < path.length; i++) {
+    const dx = path[i].x - path[i - 1].x;
+    const dy = path[i].y - path[i - 1].y;
+    const len = Math.sqrt(dx * dx + dy * dy);
+    segLens.push(len);
+    total += len;
+  }
+  if (total === 0) return Array.from({ length: n }, () => ({ ...path[0] }));
+  const pts: Point2D[] = [];
+  for (let i = 0; i < n; i++) {
+    const d = (i / n) * total;
+    let acc = 0;
+    for (let j = 0; j < segLens.length; j++) {
+      if (acc + segLens[j] >= d || j === segLens.length - 1) {
+        const t = segLens[j] > 0 ? (d - acc) / segLens[j] : 0;
+        pts.push({
+          x: path[j].x + (path[j + 1].x - path[j].x) * t,
+          y: path[j].y + (path[j + 1].y - path[j].y) * t,
+        });
+        break;
+      }
+      acc += segLens[j];
+    }
+  }
+  return pts;
+}
+
+function sampleMultiPath(paths: Point2D[][], n: number): Point2D[] {
+  const lens: number[] = [];
+  let total = 0;
+  for (const path of paths) {
+    let len = 0;
+    for (let i = 1; i < path.length; i++) {
+      const dx = path[i].x - path[i - 1].x;
+      const dy = path[i].y - path[i - 1].y;
+      len += Math.sqrt(dx * dx + dy * dy);
+    }
+    lens.push(len);
+    total += len;
+  }
+  if (total === 0) return [];
+  const pts: Point2D[] = [];
+  let remaining = n;
+  for (let i = 0; i < paths.length; i++) {
+    const count =
+      i === paths.length - 1 ? remaining : Math.max(2, Math.round((n * lens[i]) / total));
+    const actual = Math.min(count, remaining);
+    if (actual > 0) {
+      pts.push(...sampleAlongPath(paths[i], actual));
+      remaining -= actual;
+    }
+    if (remaining <= 0) break;
+  }
+  return pts;
+}
+
+// --- Fractals ---
 
 function generateSierpinski(n: number): Point2D[] {
   const verts: Point2D[] = [
@@ -166,18 +230,15 @@ function generateKochSnowflake(n: number): Point2D[] {
       b = tri[(i + 1) % 3];
     subdivide(a.x, a.y, b.x, b.y, 4, curve);
   }
-  // Evenly sample n points from the curve
   const pts: Point2D[] = [];
   const total = curve.length;
   for (let i = 0; i < n; i++) {
-    const idx = Math.floor((i / n) * total) % total;
-    pts.push(curve[idx]);
+    pts.push(curve[Math.floor((i / n) * total) % total]);
   }
   return normalize(pts);
 }
 
 function generateDragonCurve(n: number): Point2D[] {
-  // Build turn sequence iteratively
   const turns: number[] = [];
   for (let iter = 0; iter < 14; iter++) {
     const prev = [...turns];
@@ -186,7 +247,6 @@ function generateDragonCurve(n: number): Point2D[] {
       turns.push(prev[i] === 1 ? -1 : 1);
     }
   }
-  // Walk the path
   const dirs = [
     [1, 0],
     [0, 1],
@@ -203,21 +263,307 @@ function generateDragonCurve(n: number): Point2D[] {
     y += dirs[dir][1];
     path.push({ x, y });
   }
-  // Evenly sample n points
   const pts: Point2D[] = [];
   const total = path.length;
   for (let i = 0; i < n; i++) {
-    const idx = Math.floor((i / n) * total) % total;
-    pts.push(path[idx]);
+    pts.push(path[Math.floor((i / n) * total) % total]);
   }
   return normalize(pts);
 }
+
+// --- Tribal: Spiral ---
+
+function generateSpiral(n: number): Point2D[] {
+  const pts: Point2D[] = [];
+  const turns = 3;
+  for (let i = 0; i < n; i++) {
+    const t = (i / n) * turns * Math.PI * 2;
+    const r = 0.05 + 0.95 * (t / (turns * Math.PI * 2));
+    pts.push({ x: r * Math.cos(t), y: r * Math.sin(t) });
+  }
+  return normalize(pts);
+}
+
+// --- Tribal: Sun Wheel ---
+
+function generateSunWheel(n: number): Point2D[] {
+  const paths: Point2D[][] = [];
+  const ring: Point2D[] = [];
+  for (let i = 0; i <= 50; i++) {
+    const a = (i / 50) * Math.PI * 2;
+    ring.push({ x: 0.9 * Math.cos(a), y: 0.9 * Math.sin(a) });
+  }
+  paths.push(ring);
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2;
+    paths.push([
+      { x: 0.15 * Math.cos(a), y: 0.15 * Math.sin(a) },
+      { x: 0.85 * Math.cos(a), y: 0.85 * Math.sin(a) },
+    ]);
+  }
+  return normalize(sampleMultiPath(paths, n));
+}
+
+// --- Mesopotamian: Star of Ishtar (8-pointed star) ---
+
+function generateIshtarStar(n: number): Point2D[] {
+  const path: Point2D[] = [];
+  for (let i = 0; i <= 16; i++) {
+    const angle = (i / 16) * Math.PI * 2 - Math.PI / 2;
+    const r = i % 2 === 0 ? 1.0 : 0.38;
+    path.push({ x: r * Math.cos(angle), y: r * Math.sin(angle) });
+  }
+  return normalize(sampleAlongPath(path, n));
+}
+
+// --- Egyptian: Ankh ---
+
+function generateAnkh(n: number): Point2D[] {
+  const loop: Point2D[] = [];
+  for (let i = 0; i <= 40; i++) {
+    const a = (i / 40) * Math.PI * 2;
+    loop.push({ x: 0.3 * Math.cos(a), y: -0.55 + 0.35 * Math.sin(a) });
+  }
+  const stem: Point2D[] = [
+    { x: 0, y: -0.2 },
+    { x: 0, y: 1.0 },
+  ];
+  const cross: Point2D[] = [
+    { x: -0.4, y: 0.1 },
+    { x: 0.4, y: 0.1 },
+  ];
+  return normalize(sampleMultiPath([loop, stem, cross], n));
+}
+
+// --- Zoroastrian: Faravahar (winged sun disc) ---
+
+function generateFaravahar(n: number): Point2D[] {
+  const paths: Point2D[][] = [];
+  const disc: Point2D[] = [];
+  for (let i = 0; i <= 30; i++) {
+    const a = (i / 30) * Math.PI * 2;
+    disc.push({ x: 0.12 * Math.cos(a), y: 0.12 * Math.sin(a) });
+  }
+  paths.push(disc);
+  for (let layer = 0; layer < 3; layer++) {
+    const r = 0.35 + layer * 0.22;
+    const sweep = 0.7 + layer * 0.2;
+    const yOff = layer * 0.06;
+    const left: Point2D[] = [];
+    const right: Point2D[] = [];
+    for (let i = 0; i <= 25; i++) {
+      const t = i / 25;
+      const a = Math.PI - sweep + t * sweep;
+      left.push({ x: -0.15 + r * Math.cos(a), y: yOff + r * Math.sin(a) * 0.35 });
+      const a2 = sweep - t * sweep;
+      right.push({ x: 0.15 + r * Math.cos(a2), y: yOff + r * Math.sin(a2) * 0.35 });
+    }
+    paths.push(left, right);
+  }
+  paths.push(
+    [
+      { x: 0, y: -0.15 },
+      { x: 0, y: -0.6 },
+    ],
+    [
+      { x: -0.05, y: -0.15 },
+      { x: -0.2, y: -0.55 },
+    ],
+    [
+      { x: 0.05, y: -0.15 },
+      { x: 0.2, y: -0.55 },
+    ],
+  );
+  return normalize(sampleMultiPath(paths, n));
+}
+
+// --- Music: Treble Clef ---
+
+function generateTrebleClef(n: number): Point2D[] {
+  const path: Point2D[] = [];
+  const steps = 200;
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    let x: number, y: number;
+    if (t < 0.2) {
+      const a = (t / 0.2) * Math.PI * 1.5 + Math.PI * 0.5;
+      x = 0.2 * Math.cos(a);
+      y = 0.65 + 0.18 * Math.sin(a);
+    } else if (t < 0.6) {
+      const s = (t - 0.2) / 0.4;
+      x = 0.18 * Math.sin(s * Math.PI);
+      y = 0.65 - s * 1.5;
+    } else if (t < 0.8) {
+      const a = ((t - 0.6) / 0.2) * Math.PI * 1.5;
+      x = -0.22 * Math.sin(a);
+      y = -0.85 + 0.18 * (1 - Math.cos(a));
+    } else {
+      const s = (t - 0.8) / 0.2;
+      x = -0.1 * (1 - s);
+      y = -0.5 + s * 0.3;
+    }
+    path.push({ x, y });
+  }
+  return normalize(sampleAlongPath(path, n));
+}
+
+// --- Music: Eighth Notes ---
+
+function generateEighthNotes(n: number): Point2D[] {
+  const paths: Point2D[][] = [];
+  for (const sx of [-0.3, 0.3]) {
+    const head: Point2D[] = [];
+    for (let i = 0; i <= 20; i++) {
+      const a = (i / 20) * Math.PI * 2;
+      head.push({ x: sx + 0.15 * Math.cos(a) * 1.3, y: 0.7 + 0.1 * Math.sin(a) });
+    }
+    paths.push(head);
+    paths.push([
+      { x: sx + 0.18, y: 0.7 },
+      { x: sx + 0.18, y: -0.5 },
+    ]);
+  }
+  paths.push([
+    { x: -0.12, y: -0.5 },
+    { x: 0.48, y: -0.7 },
+  ]);
+  return normalize(sampleMultiPath(paths, n));
+}
+
+// --- Greek: Phi (φ) ---
+
+function generatePhi(n: number): Point2D[] {
+  const line: Point2D[] = [
+    { x: 0, y: -1 },
+    { x: 0, y: 1 },
+  ];
+  const oval: Point2D[] = [];
+  for (let i = 0; i <= 50; i++) {
+    const a = (i / 50) * Math.PI * 2;
+    oval.push({ x: 0.55 * Math.cos(a), y: 0.35 * Math.sin(a) });
+  }
+  return normalize(sampleMultiPath([line, oval], n));
+}
+
+// --- Greek: Omega (Ω) ---
+
+function generateOmega(n: number): Point2D[] {
+  const arc: Point2D[] = [];
+  for (let i = 0; i <= 60; i++) {
+    const a = Math.PI * 0.15 + (i / 60) * Math.PI * 1.7;
+    arc.push({ x: 0.6 * Math.cos(a), y: -0.5 * Math.sin(a) });
+  }
+  const lFoot: Point2D[] = [arc[0], { x: arc[0].x - 0.25, y: arc[0].y }];
+  const last = arc[arc.length - 1];
+  const rFoot: Point2D[] = [last, { x: last.x + 0.25, y: last.y }];
+  return normalize(sampleMultiPath([lFoot, arc, rFoot], n));
+}
+
+// --- Eastern: Yin-Yang ---
+
+function generateYinYang(n: number): Point2D[] {
+  const paths: Point2D[][] = [];
+  const outer: Point2D[] = [];
+  for (let i = 0; i <= 60; i++) {
+    const a = (i / 60) * Math.PI * 2;
+    outer.push({ x: Math.cos(a), y: Math.sin(a) });
+  }
+  paths.push(outer);
+  const upper: Point2D[] = [];
+  for (let i = 0; i <= 30; i++) {
+    const a = Math.PI / 2 + (i / 30) * Math.PI;
+    upper.push({ x: 0.5 * Math.cos(a), y: 0.5 + 0.5 * Math.sin(a) });
+  }
+  paths.push(upper);
+  const lower: Point2D[] = [];
+  for (let i = 0; i <= 30; i++) {
+    const a = -Math.PI / 2 + (i / 30) * Math.PI;
+    lower.push({ x: 0.5 * Math.cos(a), y: -0.5 + 0.5 * Math.sin(a) });
+  }
+  paths.push(lower);
+  for (const cy of [0.5, -0.5]) {
+    const dot: Point2D[] = [];
+    for (let i = 0; i <= 12; i++) {
+      const a = (i / 12) * Math.PI * 2;
+      dot.push({ x: 0.12 * Math.cos(a), y: cy + 0.12 * Math.sin(a) });
+    }
+    paths.push(dot);
+  }
+  return normalize(sampleMultiPath(paths, n));
+}
+
+// --- Celtic: Triquetra (Trinity Knot) ---
+
+function generateTriquetra(n: number): Point2D[] {
+  const paths: Point2D[][] = [];
+  const r = 0.6;
+  for (let k = 0; k < 3; k++) {
+    const ca = (k / 3) * Math.PI * 2 - Math.PI / 2;
+    const cx = r * 0.35 * Math.cos(ca);
+    const cy = r * 0.35 * Math.sin(ca);
+    const arc: Point2D[] = [];
+    for (let i = 0; i <= 40; i++) {
+      const a = (i / 40) * Math.PI * 2;
+      arc.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) });
+    }
+    paths.push(arc);
+  }
+  return normalize(sampleMultiPath(paths, n));
+}
+
+// --- Pythagorean: Pentagram ---
+
+function generatePentagram(n: number): Point2D[] {
+  const verts: Point2D[] = [];
+  for (let i = 0; i < 5; i++) {
+    const a = (i / 5) * Math.PI * 2 - Math.PI / 2;
+    verts.push({ x: Math.cos(a), y: Math.sin(a) });
+  }
+  const path = [verts[0], verts[2], verts[4], verts[1], verts[3], verts[0]];
+  return normalize(sampleAlongPath(path, n));
+}
+
+// --- Sacred Geometry: Flower of Life ---
+
+function generateFlowerOfLife(n: number): Point2D[] {
+  const paths: Point2D[][] = [];
+  const r = 0.35;
+  const makeCircle = (cx: number, cy: number): Point2D[] => {
+    const c: Point2D[] = [];
+    for (let i = 0; i <= 30; i++) {
+      const a = (i / 30) * Math.PI * 2;
+      c.push({ x: cx + r * Math.cos(a), y: cy + r * Math.sin(a) });
+    }
+    return c;
+  };
+  paths.push(makeCircle(0, 0));
+  for (let k = 0; k < 6; k++) {
+    const a = (k / 6) * Math.PI * 2;
+    paths.push(makeCircle(r * Math.cos(a), r * Math.sin(a)));
+  }
+  return normalize(sampleMultiPath(paths, n));
+}
+
+// --- All patterns ---
 
 const FRACTALS = [
   generateSierpinski,
   generateBarnsleyFern,
   generateKochSnowflake,
   generateDragonCurve,
+  generateSpiral,
+  generateSunWheel,
+  generateIshtarStar,
+  generateAnkh,
+  generateFaravahar,
+  generateTrebleClef,
+  generateEighthNotes,
+  generatePhi,
+  generateOmega,
+  generateYinYang,
+  generateTriquetra,
+  generatePentagram,
+  generateFlowerOfLife,
 ];
 
 // =============================================================================
@@ -272,7 +618,7 @@ export function PlexusBackground({ className = '', onQuoteChange }: PlexusBackgr
     let rotationAngle = 0;
     let lastTime = 0;
 
-    const FRACTAL_INTERVAL = 8.0; // seconds between auto-transitions
+    const FRACTAL_INTERVAL = 8.0;
 
     const advanceFractal = () => {
       fractalIndex = (fractalIndex + 1) % FRACTALS.length;
