@@ -1,11 +1,16 @@
 'use client';
 
 import {
+  SiDocker,
   SiGithubactions,
   SiGo,
   SiGooglechrome,
+  SiKeras,
   SiNodedotjs,
+  SiOpencv,
+  SiPostgresql,
   SiPython,
+  SiPytorch,
   SiReact,
   SiRust,
   SiSqlite,
@@ -27,7 +32,13 @@ const iconMap: Record<string, React.ReactNode> = {
   nodedotjs: <SiNodedotjs className="h-8 w-8" />,
   sqlite: <SiSqlite className="h-8 w-8" />,
   githubactions: <SiGithubactions className="h-8 w-8" />,
+  pytorch: <SiPytorch className="h-8 w-8" />,
+  opencv: <SiOpencv className="h-8 w-8" />,
+  keras: <SiKeras className="h-8 w-8" />,
+  docker: <SiDocker className="h-8 w-8" />,
+  postgresql: <SiPostgresql className="h-8 w-8" />,
   wails: <span className="text-2xl font-bold">W</span>,
+  nltk: <span className="text-2xl font-bold">N</span>,
 };
 
 interface TechStackGridProps {

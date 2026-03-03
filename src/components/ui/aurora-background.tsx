@@ -26,7 +26,7 @@ export const AuroraBackground = ({
         style={
           {
             '--aurora':
-              'repeating-linear-gradient(100deg,#3b82f6_10%,#a5b4fc_15%,#93c5fd_20%,#ddd6fe_25%,#60a5fa_30%)',
+              'repeating-linear-gradient(100deg,#006600_10%,#339933_15%,#F8C300_20%,#fce588_25%,#228B22_30%)',
             '--dark-gradient':
               'repeating-linear-gradient(100deg,#000_0%,#000_7%,transparent_10%,transparent_12%,#000_16%)',
             '--white-gradient':

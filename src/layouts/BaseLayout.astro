@@ -3,6 +3,7 @@ import '@/styles/global.css';
 import AutoHideHeader from '@/components/AutoHideHeader';
 import SocialDock from '@/components/SocialDock';
 import CookieConsent from '@/components/CookieConsent';
+import PushSubscription from '@/components/PushSubscription';
 import Footer from '@/components/Footer.astro';
 import SEOMeta from '@/components/SEOMeta.astro';
 
@@ -57,6 +58,9 @@ const {
       rel="stylesheet"
     />
     <link rel="stylesheet" href="https://use.typekit.net/qyu8tlw.css" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <link rel="apple-touch-icon" href="/icons/icon-180x180.png" />
     <title>{title}</title>
     <script is:inline>
       const getThemePreference = () => {
@@ -89,5 +93,13 @@ const {
     <Footer />
     {showSocialDock && <SocialDock client:visible />}
     <CookieConsent client:load />
+    <PushSubscription client:idle />
+    <script is:inline>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
   </body>
 </html>

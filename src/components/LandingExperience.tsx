@@ -1,50 +1,33 @@
 'use client';
 
 import { MotionConfig, motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import SocialDock from '@/components/SocialDock';
-import { PlexusBackground } from '@/components/ui/plexus-background';
+import { CODEX } from '@/components/ui/plexus-shapes';
 import { useTextScramble } from '@/hooks/useTextScramble';
 
 const NAME_CHARS = 'URMZD MUKHAMMADNAIM'.split('');
 
-const QUOTES = [
-  '"THE HAPPINESS OF YOUR LIFE DEPENDS UPON THE QUALITY OF YOUR THOUGHTS" — MARCUS AURELIUS',
-  '"LIBERTY MEANS RESPONSIBILITY" — GEORGE BERNARD SHAW',
-  '"THE SECRET OF HAPPINESS IS FREEDOM, AND THE SECRET OF FREEDOM IS COURAGE" — THUCYDIDES',
-  '"PEOPLE DEMAND FREEDOM OF SPEECH AS A COMPENSATION FOR THE FREEDOM OF THOUGHT WHICH THEY SELDOM USE" — KIERKEGAARD',
-  '"THE ONLY WAY TO DEAL WITH AN UNFREE WORLD IS TO BECOME SO ABSOLUTELY FREE THAT YOUR VERY EXISTENCE IS AN ACT OF REBELLION" — CAMUS',
-  '"I DON\'T WANT COMFORT. I WANT POETRY, I WANT REAL DANGER, I WANT FREEDOM" — ALDOUS HUXLEY',
-  '"TO THINE OWN SELF BE TRUE" — SHAKESPEARE',
-  '"THE UNEXAMINED LIFE IS NOT WORTH LIVING" — SOCRATES',
-  '"MAN IS BORN FREE, AND EVERYWHERE HE IS IN CHAINS" — ROUSSEAU',
-  '"IN THE MIDDLE OF DIFFICULTY LIES OPPORTUNITY" — EINSTEIN',
-  '"NO MAN IS FREE WHO IS NOT MASTER OF HIMSELF" — EPICTETUS',
-  '"THE MIND IS ITS OWN PLACE, AND IN ITSELF CAN MAKE A HEAVEN OF HELL" — MILTON',
-];
-
-function shuffleArray<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
-
 export default function LandingExperience() {
-  const [quotes] = useState(() => shuffleArray(QUOTES));
-  const [quoteIndex, setQuoteIndex] = useState(-1);
   const nameRef = useRef<HTMLHeadingElement>(null);
   const [nameWidth, setNameWidth] = useState<number | undefined>(undefined);
+  const [codexIndex, setCodexIndex] = useState(0);
 
-  const targetText = quoteIndex < 0 ? '/ʊərˈmuːzd mʊˌhɑːmɑdˈnaɪm/' : quotes[quoteIndex];
-  const displayText = useTextScramble(targetText);
+  const displayText = useTextScramble(CODEX[codexIndex].quote);
 
-  const handleQuoteChange = useCallback(() => {
-    setQuoteIndex((prev) => (prev + 1) % quotes.length);
-  }, [quotes]);
+  // Cycle through codex quotes
+  useEffect(() => {
+    const advance = () => {
+      setCodexIndex((prev) => {
+        const next = (prev + 1) % CODEX.length;
+        timer = setTimeout(advance, CODEX[next].holdMs);
+        return next;
+      });
+    };
+    let timer = setTimeout(advance, CODEX[0].holdMs);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Track name element width via ResizeObserver
   useEffect(() => {
@@ -60,8 +43,6 @@ export default function LandingExperience() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="landing-root">
-        <PlexusBackground className="pointer-events-auto" onQuoteChange={handleQuoteChange} />
-
         <motion.div
           className="final-card-container pointer-events-none"
           initial={{ opacity: 0 }}
@@ -70,7 +51,7 @@ export default function LandingExperience() {
         >
           <div className="relative flex flex-col items-center">
             <div className="px-4 sm:px-0">
-              <div className="landing-hero pointer-events-auto">
+              <div className="landing-hero">
                 <h1 ref={nameRef} className="landing-hero-name" aria-label="Urmzd Mukhammadnaim">
                   {NAME_CHARS.map((char, i) =>
                     char === ' ' ? (

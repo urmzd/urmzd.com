@@ -1,6 +1,6 @@
 import type { DemoConfig, ProjectFeature, ProjectTech } from './projects';
 
-export type ResearchCategory = 'paper' | 'tooling';
+export type ResearchCategory = 'paper';
 
 export interface ResearchItem {
   slug: string;
@@ -21,7 +21,6 @@ export interface ResearchItem {
 }
 
 export const research: ResearchItem[] = [
-  // ── Papers & Theses ──────────────────────────────────────────
   {
     slug: 'linear-gp-thesis',
     title: 'Reinforced Linear Genetic Programming',
@@ -117,8 +116,52 @@ export const research: ResearchItem[] = [
     venue: 'Dalhousie University — Course Project',
     tags: ['computer vision', 'CNN', 'small-dataset learning', 'image classification'],
     githubUrl: 'https://github.com/urmzd/lepus-classifier',
+    paperUrl:
+      'https://github.com/urmzd/lepus-classifier/blob/main/docs/report-docs/lepus-classifier-report.pdf',
     tech: ['Python', 'PyTorch', 'OpenCV'],
-    hasDetailPage: false,
+    hasDetailPage: true,
+    detailTech: [
+      { name: 'Python', icon: 'python' },
+      { name: 'PyTorch', icon: 'pytorch' },
+      { name: 'OpenCV', icon: 'opencv' },
+    ],
+    features: [
+      {
+        title: 'CNN Architecture',
+        description:
+          'Convolutional neural network designed for binary image classification of rabbits vs hares.',
+        icon: 'Layers',
+      },
+      {
+        title: 'Small-Dataset Learning',
+        description:
+          'Techniques for training on just 85 web-scraped images without specialized hardware.',
+        icon: 'Image',
+      },
+      {
+        title: 'Stratified K-Fold CV',
+        description:
+          'Stratified K-Fold Cross Validation to reliably evaluate models on small, unbalanced data.',
+        icon: 'Shuffle',
+      },
+      {
+        title: 'Web Scraping Pipeline',
+        description:
+          'Automated collection of training images of Eastern cottontail rabbits and European hares.',
+        icon: 'Globe',
+      },
+      {
+        title: 'Dropout Regularization',
+        description: 'Dropout layers to combat overfitting on the limited training set.',
+        icon: 'Shield',
+      },
+      {
+        title: 'Hyperparameter Tuning',
+        description:
+          'Systematic exploration of optimizers, batch sizes, and architectures for peak accuracy.',
+        icon: 'Settings',
+      },
+    ],
   },
   {
     slug: 'md-classifier',
@@ -131,23 +174,52 @@ export const research: ResearchItem[] = [
     venue: 'Dalhousie University — Course Project',
     tags: ['NLP', 'medical diagnosis', 'CNN', 'disease classification'],
     githubUrl: 'https://github.com/urmzd/md-classifier',
+    paperUrl: 'https://github.com/urmzd/md-classifier/blob/main/p1.pdf',
     tech: ['Python', 'Keras', 'NLTK'],
-    hasDetailPage: false,
-  },
-
-  // ── Research Tooling ─────────────────────────────────────────
-  {
-    slug: 'linear-gp-framework',
-    title: 'linear-gp',
-    tagline: 'Memory-safe Rust framework for LGP experimentation',
-    description:
-      'Open-source framework introduced alongside the RLGP thesis, written in memory-safe Rust for extensible LGP experimentation. Provides a modular trait-based architecture, Rayon-powered parallel fitness evaluation, Optuna hyperparameter optimization with PostgreSQL backend, and Python CLI tools for batch experiments, visualization, and analysis.',
-    category: 'tooling',
-    year: 2023,
-    tags: ['framework', 'genetic programming', 'evolutionary algorithms', 'optimization'],
-    githubUrl: 'https://github.com/urmzd/linear-gp',
-    tech: ['Rust', 'Python', 'Docker'],
-    hasDetailPage: false,
+    hasDetailPage: true,
+    detailTech: [
+      { name: 'Python', icon: 'python' },
+      { name: 'Keras', icon: 'keras' },
+      { name: 'NLTK', icon: 'nltk' },
+    ],
+    features: [
+      {
+        title: 'Symptom-to-Diagnosis CNN',
+        description:
+          'CNN that predicts the most probable medical condition from natural language symptom descriptions.',
+        icon: 'Brain',
+      },
+      {
+        title: 'One-Hot Encoding',
+        description:
+          'Word-stem matrix (56x4210) preprocessing pipeline achieving 90% recall with perfect precision on select conditions.',
+        icon: 'Code',
+      },
+      {
+        title: 'FastText Embeddings',
+        description:
+          'Unsupervised FastText word embeddings as an alternative preprocessing pipeline for semantic representation.',
+        icon: 'FileText',
+      },
+      {
+        title: 'Medical Data Sources',
+        description:
+          'Training data sourced from UpToDate and Mayo Clinic for reliable symptom-condition mappings.',
+        icon: 'FlaskConical',
+      },
+      {
+        title: 'Multi-Class Classification',
+        description:
+          'Classifies across multiple medical conditions including migraines, tetanus, and more.',
+        icon: 'BarChart3',
+      },
+      {
+        title: 'Pipeline Comparison',
+        description:
+          'Side-by-side evaluation of One-Hot vs FastText pipelines to identify optimal preprocessing.',
+        icon: 'Activity',
+      },
+    ],
   },
 ];
 
