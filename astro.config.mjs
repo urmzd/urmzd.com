@@ -30,10 +30,10 @@ i18n: {
       dedupe: ['react', 'react-dom']
     },
     optimizeDeps: {
-      include: ['motion', 'motion/react', 'three', '@react-three/fiber']
+      include: ['motion', 'motion/react']
     },
     ssr: {
-      noExternal: ['motion', 'three', '@react-three/fiber']
+      noExternal: ['motion']
     }
   }
 });
