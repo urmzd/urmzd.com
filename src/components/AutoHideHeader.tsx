@@ -32,8 +32,9 @@ export default function AutoHideHeader() {
             <ModeToggle />
           </div>
 
-          {/* Mobile hamburger */}
-          <div className="md:hidden">
+          {/* Mobile hamburger + theme toggle */}
+          <div className="flex items-center gap-2 md:hidden">
+            <ModeToggle />
             <MobileMenu />
           </div>
         </div>
