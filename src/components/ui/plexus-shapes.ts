@@ -26,6 +26,7 @@ export interface ShapeConfig {
 export interface CodexEntry {
   shape: ShapeConfig;
   quote: string;
+  author?: string;
   holdMs: number;
 }
 
@@ -494,37 +495,44 @@ const galaxyShape: ShapeConfig = {
 export const CODEX: CodexEntry[] = [
   {
     shape: faravaharShape,
-    quote: '\u201CGOOD THOUGHTS, GOOD WORDS, GOOD DEEDS\u201D \u2014 ZARATHUSTRA',
+    quote: '\u201CGOOD THOUGHTS, GOOD WORDS, GOOD DEEDS\u201D',
+    author: 'ZARATHUSTRA',
     holdMs: 10_000,
   },
   {
     shape: heptagramShape,
-    quote: '\u201CTHE WOUND IS THE PLACE WHERE THE LIGHT ENTERS YOU\u201D \u2014 RUMI',
+    quote: '\u201CTHE WOUND IS THE PLACE WHERE THE LIGHT ENTERS YOU\u201D',
+    author: 'RUMI',
     holdMs: 10_000,
   },
   {
     shape: girihDecagonShape,
-    quote: '\u201CWHERE THERE IS RUIN, THERE IS HOPE FOR A TREASURE\u201D \u2014 RUMI',
+    quote: '\u201CWHERE THERE IS RUIN, THERE IS HOPE FOR A TREASURE\u201D',
+    author: 'RUMI',
     holdMs: 10_000,
   },
   {
     shape: flowerOfLifeShape,
-    quote: '\u201CMUSIC IS THE UNIVERSAL LANGUAGE OF MANKIND\u201D \u2014 LONGFELLOW',
+    quote: '\u201CMUSIC IS THE UNIVERSAL LANGUAGE OF MANKIND\u201D',
+    author: 'LONGFELLOW',
     holdMs: 10_000,
   },
   {
     shape: sierpinskiShape,
-    quote: '\u201CTHE UNIVERSE IS WRITTEN IN THE LANGUAGE OF MATHEMATICS\u201D \u2014 GALILEO',
+    quote: '\u201CTHE UNIVERSE IS WRITTEN IN THE LANGUAGE OF MATHEMATICS\u201D',
+    author: 'GALILEO',
     holdMs: 10_000,
   },
   {
     shape: lorenzShape,
-    quote: '\u201CTHE UNEXAMINED LIFE IS NOT WORTH LIVING\u201D \u2014 SOCRATES',
+    quote: '\u201CTHE UNEXAMINED LIFE IS NOT WORTH LIVING\u201D',
+    author: 'SOCRATES',
     holdMs: 10_000,
   },
   {
     shape: goldenSpiralShape,
-    quote: '\u201CNO MAN IS FREE WHO IS NOT MASTER OF HIMSELF\u201D \u2014 EPICTETUS',
+    quote: '\u201CNO MAN IS FREE WHO IS NOT MASTER OF HIMSELF\u201D',
+    author: 'EPICTETUS',
     holdMs: 10_000,
   },
   {

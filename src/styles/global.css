@@ -250,6 +250,10 @@
     font-family: "elza-text", sans-serif;
   }
 
+  body.mobile-menu-open {
+    overflow: hidden;
+  }
+
   /* Scroll margin for anchor navigation */
   h1[id],
   h2[id],
@@ -1006,25 +1010,23 @@
     letter-spacing: 0.06em;
     line-height: 1.15;
     text-transform: uppercase;
-    color: oklch(from var(--foreground) l c h / 60%);
+    color: var(--foreground);
+    animation: ember-glow 10s ease-in-out 2.5s infinite;
   }
 
   .landing-hero-char {
     position: relative;
     display: inline-block;
-    will-change: transform, opacity, filter;
+    will-change: transform, opacity, color;
+    transition:
+      color 0.8s ease,
+      text-shadow 0.8s ease;
   }
 
-  .landing-hero-char::before {
-    content: "";
-    position: absolute;
-    inset: -4px -2px;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-radius: 4px;
-    z-index: -1;
-    mask: radial-gradient(ellipse, black 40%, transparent 70%);
-    -webkit-mask: radial-gradient(ellipse, black 40%, transparent 70%);
+  .landing-hero-char:hover {
+    text-shadow:
+      0 0 8px oklch(from var(--brand) l c h / 60%),
+      0 0 24px oklch(from var(--brand) l c h / 25%);
   }
 
   .landing-hero-space {
@@ -1032,26 +1034,50 @@
   }
 
   .landing-hero-sub {
-    @apply text-xs;
     position: relative;
     font-family: "elza-text", sans-serif;
     letter-spacing: 0.04em;
     line-height: 1.5;
-    color: oklch(from var(--foreground) l c h / 40%);
     overflow-wrap: break-word;
     min-height: 3.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
   }
 
-  .landing-hero-sub::before {
+  /* Ornamental gradient line below quote */
+  .landing-hero-sub::after {
     content: "";
-    position: absolute;
-    inset: -4px -6px;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border-radius: 4px;
-    z-index: -1;
-    mask: radial-gradient(ellipse, black 30%, transparent 70%);
-    -webkit-mask: radial-gradient(ellipse, black 30%, transparent 70%);
+    display: block;
+    width: 4rem;
+    height: 1px;
+    margin-top: 0.25rem;
+    background: linear-gradient(90deg, transparent, var(--brand), transparent);
+    opacity: 0.35;
+  }
+
+  /* Quote body — serif italic for literary quality */
+  .landing-hero-quote {
+    display: block;
+    font-family: "ogg-text", serif;
+    font-style: italic;
+    font-size: 0.8rem;
+    color: oklch(from var(--foreground) l c h / 75%);
+  }
+
+  /* Author attribution — small caps, gold tint */
+  .landing-hero-author {
+    display: block;
+    font-family: "elza-text", sans-serif;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: oklch(from var(--brand) l c h / 70%);
+  }
+
+  .landing-hero-author::before {
+    content: "\2014\00a0";
   }
 
   .final-card-pronunciation {
@@ -1285,6 +1311,17 @@
   }
 }
 
+@keyframes ember-glow {
+  0%,
+  100% {
+    text-shadow: 0 0 0 transparent;
+  }
+
+  50% {
+    text-shadow: 0 0 18px oklch(from var(--brand) l c h / 20%);
+  }
+}
+
 @layer components {
   .click-hint {
     display: flex;
@@ -1338,6 +1375,14 @@
   .splash-letter {
     opacity: 1;
   }
+
+  .landing-hero-char {
+    transition: none !important;
+  }
+
+  .landing-hero-char:hover {
+    text-shadow: none;
+  }
 }
 
 @media (min-width: 640px) {
@@ -1349,5 +1394,9 @@
     letter-spacing: 0.08em;
     line-height: 1.2;
     min-height: auto;
+  }
+
+  .landing-hero-quote {
+    font-size: 0.85rem;
   }
 }

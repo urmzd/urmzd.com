@@ -7,14 +7,11 @@ interface BlockQuoteProps {
 export default function BlockQuote({ children, author, source }: BlockQuoteProps) {
   return (
     <figure className="not-prose my-8">
-      <span
-        className="select-none text-5xl leading-none text-muted-foreground/20"
-        aria-hidden="true"
-      >
+      <span className="select-none text-5xl leading-none text-brand/20" aria-hidden="true">
         &ldquo;
       </span>
       <blockquote className="-mt-6 pl-4 text-lg italic text-foreground/85">{children}</blockquote>
-      <figcaption className="mt-3 pl-4 text-sm text-muted-foreground">
+      <figcaption className="mt-3 pl-4 text-xs uppercase tracking-widest text-brand/70">
         &mdash;&nbsp;{author}
         {source && <cite className="not-italic">, {source}</cite>}
       </figcaption>

@@ -2,6 +2,7 @@ import { useFrame, useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 import { CODEX, type Point3D, type ShapeConfig } from '../plexus-shapes';
+import type { CursorState } from './PlexusScene';
 import { particleFragmentShader, particleVertexShader } from './shaders';
 import type { PlexusTheme } from './usePlexusTheme';
 
@@ -9,16 +10,22 @@ import type { PlexusTheme } from './usePlexusTheme';
 // Constants
 // =============================================================================
 
-const FRACTAL_LERP_SPEED = 2.5;
+const FRACTAL_LERP_SPEED = 1.2;
 const FRACTAL_SCALE = 0.35;
-const MICRO_JITTER = 0.3;
+const MICRO_JITTER = 0.15;
 const Z_MID = 0;
 const Z_RANGE = 8;
+
+const CURSOR_STRENGTH = 8.0;
+const CURSOR_RADIUS = 4.0;
+const CURSOR_SOFTENING = 0.5;
+const CURSOR_MAX_FORCE = 2.0;
 
 interface ParticleFieldProps {
   count: number;
   theme: PlexusTheme;
   positionsBufferRef: React.MutableRefObject<Float32Array | null>;
+  cursorRef: React.MutableRefObject<CursorState>;
   reducedMotion: boolean;
   onCodexChange?: (index: number) => void;
 }
@@ -27,6 +34,7 @@ export function ParticleField({
   count,
   theme,
   positionsBufferRef,
+  cursorRef,
   reducedMotion,
   onCodexChange,
 }: ParticleFieldProps) {
@@ -37,9 +45,9 @@ export function ParticleField({
   const velocities = useMemo(() => {
     const v = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      v[i * 3] = (Math.random() - 0.5) * 0.02;
-      v[i * 3 + 1] = (Math.random() - 0.5) * 0.02;
-      v[i * 3 + 2] = (Math.random() - 0.5) * 0.02;
+      v[i * 3] = (Math.random() - 0.5) * 0.008;
+      v[i * 3 + 1] = (Math.random() - 0.5) * 0.008;
+      v[i * 3 + 2] = (Math.random() - 0.5) * 0.008;
     }
     return v;
   }, [count]);
@@ -179,6 +187,15 @@ export function ParticleField({
     const shapeDamp = 0.9 ** (dt * 60);
     const time = uniforms.uTime.value;
 
+    // Cursor state (hoisted before loop)
+    const cursor = cursorRef.current;
+    const cursorActive = cursor.active;
+    const cursorX = cursor.x;
+    const cursorY = cursor.y;
+    const cursorMode = cursor.mode;
+    const radiusSq = CURSOR_RADIUS * CURSOR_RADIUS;
+    const softeningSq = CURSOR_SOFTENING * CURSOR_SOFTENING;
+
     for (let i = 0; i < count; i++) {
       const i3 = i * 3;
       let px = posArray[i3];
@@ -217,6 +234,25 @@ export function ParticleField({
         vx *= shapeDamp;
         vy *= shapeDamp;
         vz *= shapeDamp;
+      }
+
+      // Cursor gravitational force
+      if (cursorActive) {
+        const dx = cursorX - px;
+        const dy = cursorY - py;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < radiusSq) {
+          const dist = Math.sqrt(distSq);
+          const falloff = 1 - distSq / radiusSq;
+          const force =
+            Math.min(CURSOR_STRENGTH / (distSq + softeningSq), CURSOR_MAX_FORCE) *
+            falloff *
+            cursorMode *
+            dt;
+          const invDist = dist > 0.001 ? 1 / dist : 0;
+          vx += dx * invDist * force;
+          vy += dy * invDist * force;
+        }
       }
 
       // Z boundary springs

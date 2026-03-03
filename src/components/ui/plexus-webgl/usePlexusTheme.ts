@@ -29,10 +29,10 @@ const DARK_THEME: PlexusTheme = {
 
 const LIGHT_THEME: PlexusTheme = {
   isDark: false,
-  // Dark emerald — high contrast on white backgrounds
-  color0: new THREE.Color(0.0, 0.22, 0.05),
-  color1: new THREE.Color(0.05, 0.32, 0.1),
-  lineColor: new THREE.Color(0.0, 0.2, 0.05),
+  // Dark grey/black — high contrast on white backgrounds
+  color0: new THREE.Color(0.15, 0.15, 0.15),
+  color1: new THREE.Color(0.25, 0.25, 0.25),
+  lineColor: new THREE.Color(0.12, 0.12, 0.12),
   hdrIntensity: 0.25,
   bloom: { strength: 0.15, radius: 0.3, threshold: 0.5 },
   blending: THREE.NormalBlending,
