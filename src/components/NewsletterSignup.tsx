@@ -1,3 +1,4 @@
+'use client';
 import { Mail } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
