@@ -292,6 +292,85 @@ export const projects: Project[] = [
       ],
     },
   },
+  {
+    slug: 'linear-gp',
+    title: 'Linear Genetic Programming Framework',
+    tagline: 'Memory-safe Rust framework for linear genetic programming',
+    description:
+      'An extensible framework for linear genetic programming experimentation, written in Rust for performance and memory safety. Features a modular trait-based architecture that lets researchers swap genetic operators, fitness functions, and selection strategies. Includes Rayon-powered parallel fitness evaluation, Optuna hyperparameter optimization backed by PostgreSQL, and Python CLI tools for batch experiments, visualization, and statistical analysis.',
+    status: 'active',
+    githubUrl: 'https://github.com/urmzd/linear-gp',
+    tech: [
+      { name: 'Rust', icon: 'rust' },
+      { name: 'Python', icon: 'python' },
+      { name: 'Docker', icon: 'docker' },
+      { name: 'PostgreSQL', icon: 'postgresql' },
+    ],
+    features: [
+      {
+        title: 'Trait-Based Architecture',
+        description:
+          'Modular design using Rust traits — swap genetic operators, fitness functions, and selection strategies without changing core logic.',
+        icon: 'Layers',
+      },
+      {
+        title: 'Parallel Evaluation',
+        description:
+          'Rayon-powered parallel fitness evaluation for fast population processing across all available cores.',
+        icon: 'Cpu',
+      },
+      {
+        title: 'Hyperparameter Optimization',
+        description:
+          'Optuna integration with PostgreSQL backend for systematic hyperparameter search across experiments.',
+        icon: 'Settings',
+      },
+      {
+        title: 'Genetic Operators',
+        description:
+          'Built-in crossover, mutation, and tournament selection operators ready for LGP experimentation.',
+        icon: 'Dna',
+      },
+      {
+        title: 'Experiment Visualization',
+        description:
+          'Python CLI tools for generating plots of fitness, diversity, and convergence across generations.',
+        icon: 'BarChart3',
+      },
+      {
+        title: 'Dockerized Workflows',
+        description:
+          'Docker Compose setup for reproducible experiments with PostgreSQL and batch processing out of the box.',
+        icon: 'Server',
+      },
+    ],
+    hasDetailPage: true,
+    demo: {
+      kind: 'image',
+      images: [
+        {
+          src: '/projects/linear-gp/iris_baseline.png',
+          alt: 'Iris baseline experiment results',
+          caption: 'Baseline',
+        },
+        {
+          src: '/projects/linear-gp/iris_crossover.png',
+          alt: 'Iris crossover experiment results',
+          caption: 'Crossover',
+        },
+        {
+          src: '/projects/linear-gp/iris_mutation.png',
+          alt: 'Iris mutation experiment results',
+          caption: 'Mutation',
+        },
+        {
+          src: '/projects/linear-gp/iris_full.png',
+          alt: 'Iris full experiment results',
+          caption: 'Full Pipeline',
+        },
+      ],
+    },
+  },
 ];
 
 export function getProject(slug: string): Project | undefined {

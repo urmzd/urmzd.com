@@ -58,8 +58,8 @@ const BRAND_HEX = {
   bg: '#1a1a1e',
   text: '#fafafa',
   muted: '#a1a1aa',
-  brand: '#d4a855',
-  brandSecondary: '#5b9bd5',
+  brand: '#F8C300',
+  brandSecondary: '#339933',
 } as const;
 
 function OGImage({ title, description, pubDate, readTime }: OGImageProps) {

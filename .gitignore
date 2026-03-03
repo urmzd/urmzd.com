@@ -1,5 +1,7 @@
 # build output
 dist/
+.next/
+next-env.d.ts
 # generated types
 .astro/
 

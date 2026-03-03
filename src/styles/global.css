@@ -84,9 +84,10 @@
 /*
  * ─── Brand System ───────────────────────────────────────────────
  *
- * Colors
- *   --brand          warm amber  (hue ~80)  — primary accent, prompts, warnings
- *   --brand-secondary cool blue  (hue ~220) — secondary accent, info, active states
+ * Colors  (Tajik flag palette: red #CC0000, white, green #006600, gold #F8C300)
+ *   --brand          Tajik gold  (hue ~87)  — primary accent, prompts, warnings
+ *   --brand-secondary Tajik green (hue ~145) — secondary accent, info, active states
+ *   --destructive    Tajik red   (hue ~29)  — errors, destructive actions
  *   Achromatic grays (0 chroma) for all neutral surfaces.
  *
  * Fonts
@@ -132,19 +133,19 @@
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: oklch(0.5 0.23 29);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
 
-  /* Brand accents */
-  --brand: oklch(0.82 0.08 80);
-  --brand-foreground: oklch(0.2 0.02 80);
-  --brand-secondary: oklch(0.7 0.12 220);
-  --brand-secondary-foreground: oklch(0.98 0.01 220);
+  /* Brand accents — Tajik flag */
+  --brand: oklch(0.84 0.18 87);
+  --brand-foreground: oklch(0.2 0.04 87);
+  --brand-secondary: oklch(0.5 0.15 145);
+  --brand-secondary-foreground: oklch(0.98 0.01 145);
 
   /* Semantic */
-  --success: oklch(0.72 0.19 145);
+  --success: oklch(0.5 0.15 145);
   --warning: var(--brand);
   --info: var(--brand-secondary);
 
@@ -171,13 +172,13 @@
   --chat-border: oklch(0.3 0 0);
   --chat-text: oklch(0.82 0 0);
 
-  /* Charts */
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --chart-6: oklch(0.68 0.14 180);
+  /* Charts — Tajik flag palette */
+  --chart-1: oklch(0.5 0.23 29);
+  --chart-2: oklch(0.5 0.15 145);
+  --chart-3: oklch(0.84 0.18 87);
+  --chart-4: oklch(0.4 0.18 29);
+  --chart-5: oklch(0.75 0.15 87);
+  --chart-6: oklch(0.4 0.12 145);
 
   /* Sidebar */
   --sidebar: oklch(0.985 0 0);
@@ -205,33 +206,33 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  --destructive: oklch(0.6 0.22 29);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
 
-  /* Brand accents */
-  --brand: oklch(0.88 0.1 80);
-  --brand-foreground: oklch(0.15 0.02 80);
-  --brand-secondary: oklch(0.78 0.14 220);
-  --brand-secondary-foreground: oklch(0.12 0.02 220);
+  /* Brand accents — Tajik flag */
+  --brand: oklch(0.86 0.18 87);
+  --brand-foreground: oklch(0.15 0.04 87);
+  --brand-secondary: oklch(0.62 0.17 145);
+  --brand-secondary-foreground: oklch(0.12 0.02 145);
 
   /* Semantic */
-  --success: oklch(0.72 0.19 145);
+  --success: oklch(0.62 0.17 145);
   --warning: var(--brand);
   --info: var(--brand-secondary);
 
-  /* Charts */
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --chart-6: oklch(0.72 0.16 180);
+  /* Charts — Tajik flag palette */
+  --chart-1: oklch(0.6 0.22 29);
+  --chart-2: oklch(0.62 0.17 145);
+  --chart-3: oklch(0.84 0.18 87);
+  --chart-4: oklch(0.5 0.2 29);
+  --chart-5: oklch(0.75 0.15 87);
+  --chart-6: oklch(0.5 0.14 145);
 
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: oklch(0.62 0.17 145);
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
@@ -1005,12 +1006,25 @@
     letter-spacing: 0.06em;
     line-height: 1.15;
     text-transform: uppercase;
-    color: var(--foreground);
+    color: oklch(from var(--foreground) l c h / 60%);
   }
 
   .landing-hero-char {
+    position: relative;
     display: inline-block;
     will-change: transform, opacity, filter;
+  }
+
+  .landing-hero-char::before {
+    content: "";
+    position: absolute;
+    inset: -4px -2px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 4px;
+    z-index: -1;
+    mask: radial-gradient(ellipse, black 40%, transparent 70%);
+    -webkit-mask: radial-gradient(ellipse, black 40%, transparent 70%);
   }
 
   .landing-hero-space {
@@ -1019,16 +1033,25 @@
 
   .landing-hero-sub {
     @apply text-xs;
+    position: relative;
     font-family: "elza-text", sans-serif;
     letter-spacing: 0.04em;
     line-height: 1.5;
-    color: oklch(from var(--brand-secondary) 0.3 0.02 h / 65%);
+    color: oklch(from var(--foreground) l c h / 40%);
     overflow-wrap: break-word;
     min-height: 3.75rem;
   }
 
-  .dark .landing-hero-sub {
-    color: oklch(from var(--brand-secondary) 0.9 0.02 h / 60%);
+  .landing-hero-sub::before {
+    content: "";
+    position: absolute;
+    inset: -4px -6px;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    border-radius: 4px;
+    z-index: -1;
+    mask: radial-gradient(ellipse, black 30%, transparent 70%);
+    -webkit-mask: radial-gradient(ellipse, black 30%, transparent 70%);
   }
 
   .final-card-pronunciation {

@@ -14,6 +14,7 @@ import {
   FlaskConical,
   GitBranch,
   Github,
+  Globe,
   Image,
   Layers,
   Layout,
@@ -22,6 +23,7 @@ import {
   Server,
   Settings,
   Shield,
+  Shuffle,
   Tag,
   Terminal,
   Zap,
@@ -55,6 +57,8 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Server,
   RefreshCw,
   Image,
+  Globe,
+  Shuffle,
 };
 
 interface FeatureGridProps {
