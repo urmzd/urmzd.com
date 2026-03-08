@@ -63,8 +63,8 @@ function StageBox({
 }) {
   return (
     <motion.g
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.4, delay }}
     >
       <foreignObject x={x} y={y} width={w} height={h}>
@@ -447,20 +447,45 @@ function VerticalDiagram({ isInView }: { isInView: boolean }) {
 
 const RESUME_YAML = `contact:
   name: Jane Doe
-  email: example@email.com
-  location:
-    city: Techville
-    state: Academia
+  email: jane@example.com
+  phone: (555) 123-4567
+  location: { city: San Francisco, state: CA }
+  links:
+    - url: github.com/janedoe
+    - url: linkedin.com/in/janedoe
 
-skills:
-  categories:
-    - category: Programming
-      items: [Python, Java, C++]
+education:
+  degrees:
+    - institution: MIT
+      area: Computer Science
+      degree: M.S.
+      date: May 2020
+    - institution: UC Berkeley
+      area: Computer Science
+      degree: B.S.
+      date: May 2018
 
 experience:
   positions:
-    - company: Tech Innovations
-      title: Software Developer`;
+    - company: Stripe
+      title: Senior Software Engineer
+      date: Jun 2022 - Present
+      highlights:
+        - Led payments infra migration
+        - Reduced latency by 40%
+    - company: Google
+      title: Software Engineer
+      date: Jul 2020 - May 2022
+      highlights:
+        - Built real-time ML pipeline
+        - Mentored 3 junior engineers
+
+skills:
+  categories:
+    - category: Languages
+      items: [Go, Python, TypeScript]
+    - category: Tools
+      items: [Kubernetes, Terraform]`;
 
 function TypingYaml() {
   const [displayedLen, setDisplayedLen] = useState(0);
@@ -468,8 +493,8 @@ function TypingYaml() {
   React.useEffect(() => {
     if (displayedLen >= RESUME_YAML.length) return;
     const timeout = setTimeout(
-      () => setDisplayedLen((l) => Math.min(l + 2, RESUME_YAML.length)),
-      12,
+      () => setDisplayedLen((l) => Math.min(l + 3, RESUME_YAML.length)),
+      8,
     );
     return () => clearTimeout(timeout);
   }, [displayedLen]);
@@ -539,28 +564,33 @@ function PipelineShowcase() {
 
       {/* Outputs */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="overflow-hidden rounded-xl border border-border shadow-lg dark:border-foreground/10">
-          <img
-            src="/images/resume-generator/modern-html.png"
-            alt="Resume output rendered as HTML"
-            loading="lazy"
-            className="w-full"
-          />
-          <div className="border-t border-border bg-muted/50 px-3 py-1 text-center text-[10px] font-medium text-muted-foreground">
-            HTML
+        {[
+          {
+            src: '/images/resume-generator/modern-html.png',
+            alt: 'Resume output rendered as HTML',
+            label: 'HTML',
+          },
+          {
+            src: '/images/resume-generator/modern-latex.png',
+            alt: 'Resume output rendered as LaTeX',
+            label: 'LaTeX',
+          },
+        ].map((item) => (
+          <div
+            key={item.label}
+            className="overflow-hidden rounded-xl border border-border shadow-lg dark:border-foreground/10"
+          >
+            <img
+              src={item.src}
+              alt={item.alt}
+              loading="lazy"
+              className="aspect-[3/4] w-full object-cover object-top"
+            />
+            <div className="border-t border-border bg-muted/50 px-3 py-1 text-center text-[10px] font-medium text-muted-foreground">
+              {item.label}
+            </div>
           </div>
-        </div>
-        <div className="overflow-hidden rounded-xl border border-border shadow-lg dark:border-foreground/10">
-          <img
-            src="/images/resume-generator/modern-latex.png"
-            alt="Resume output rendered as LaTeX"
-            loading="lazy"
-            className="w-full"
-          />
-          <div className="border-t border-border bg-muted/50 px-3 py-1 text-center text-[10px] font-medium text-muted-foreground">
-            LaTeX
-          </div>
-        </div>
+        ))}
       </div>
       <p className="mt-2 text-center text-xs font-medium text-muted-foreground">Outputs</p>
     </div>
@@ -574,7 +604,7 @@ export default function ArchitectureFlow() {
     <section ref={ref} className="container mx-auto px-4 py-12">
       <h2 className="mb-8 text-2xl font-bold">Architecture</h2>
 
-      <div className="mb-10 overflow-hidden rounded-xl border border-border bg-background p-4 sm:p-6">
+      <div className="mb-10 rounded-xl border border-border bg-background p-4 sm:p-6">
         <HorizontalDiagram isInView={isInView} />
         <VerticalDiagram isInView={isInView} />
       </div>
