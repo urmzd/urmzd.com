@@ -15,4 +15,15 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { blog };
+const standards = defineCollection({
+  loader: glob({ pattern: ['**/*.md', '**/*.mdx'], base: './src/standards' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    domain: z.enum(['software']).default('software'),
+    category: z.enum(['ai', 'development', 'cli', 'visual']),
+    order: z.number().default(0),
+  }),
+});
+
+export const collections = { blog, standards };
