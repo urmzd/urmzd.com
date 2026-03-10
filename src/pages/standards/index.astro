@@ -1,0 +1,87 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import StandardsCard from '@/components/StandardsCard';
+
+const entries = await getCollection('standards');
+
+const domainLabels: Record<string, string> = {
+  software: 'Software Engineering',
+};
+
+const categoryOrder = ['ai', 'development', 'cli', 'visual'];
+
+const categoryLabels: Record<string, string> = {
+  ai: 'AI',
+  development: 'Development',
+  cli: 'CLI',
+  visual: 'Visual',
+};
+
+// Group by domain, then by category
+const domains = Object.keys(domainLabels);
+const groupedByDomain = domains
+  .map((domain) => {
+    const domainEntries = entries.filter((e) => (e.data.domain ?? 'software') === domain);
+    const categories = categoryOrder
+      .map((cat) => ({
+        category: cat,
+        label: categoryLabels[cat] || cat,
+        items: domainEntries
+          .filter((e) => e.data.category === cat)
+          .sort((a, b) => a.data.order - b.data.order),
+      }))
+      .filter((g) => g.items.length > 0);
+
+    return { domain, label: domainLabels[domain], categories };
+  })
+  .filter((d) => d.categories.length > 0);
+---
+
+<BaseLayout title="Standards - urmzd" description="Shared development standards, tools, and conventions.">
+  <main class="container mx-auto px-4 pt-24 pb-16">
+    <header class="mb-12">
+      <h1 class="mb-2 text-4xl font-bold">Standards</h1>
+      <p class="max-w-xl text-muted-foreground">
+        Shared, project-agnostic reference material — tools, conventions, and workflows I follow across all work.
+      </p>
+    </header>
+
+    {groupedByDomain.map((domainGroup) => (
+      <section class="mb-16 last:mb-0">
+        {groupedByDomain.length > 1 && (
+          <h2 class="mb-8 text-2xl font-semibold">{domainGroup.label}</h2>
+        )}
+
+        {domainGroup.categories.map((group) => {
+          // Calculate running index offset for stagger animation
+          const prevCategories = domainGroup.categories.slice(
+            0,
+            domainGroup.categories.indexOf(group),
+          );
+          const offset = prevCategories.reduce((sum, c) => sum + c.items.length, 0);
+
+          return (
+            <div class="mb-10 last:mb-0">
+              <h3 class="mb-4 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                {group.label}
+              </h3>
+              <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {group.items.map((entry, i) => (
+                  <StandardsCard
+                    client:visible
+                    id={entry.id}
+                    title={entry.data.title}
+                    description={entry.data.description}
+                    category={entry.data.category}
+                    index={offset + i}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </section>
+    ))}
+  </main>
+</BaseLayout>

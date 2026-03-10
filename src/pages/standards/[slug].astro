@@ -1,0 +1,80 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+import CodeBlockEnhancer from '@/components/CodeBlockEnhancer';
+import HeadingLinkEnhancer from '@/components/HeadingLinkEnhancer';
+import TableOfContents from '@/components/TableOfContents';
+import MobileTOC from '@/components/MobileTOC';
+import StandardsSidebar from '@/components/StandardsSidebar';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('standards');
+  return entries.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+
+const categoryLabels: Record<string, string> = {
+  ai: 'AI',
+  development: 'Development',
+  cli: 'CLI',
+  visual: 'Visual',
+};
+
+const allEntries = await getCollection('standards');
+const sidebarEntries = allEntries
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((e) => ({ id: e.id, title: e.data.title, category: e.data.category }));
+
+const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+const showTOC = tocHeadings.length >= 3;
+---
+
+<BaseLayout
+  title={`${entry.data.title} - Standards - urmzd`}
+  description={entry.data.description}
+>
+  <div class="container mx-auto px-4 pt-24 pb-16">
+    <div class="lg:grid lg:grid-cols-[220px_1fr_250px] lg:gap-8">
+      <aside class="hidden lg:block">
+        <StandardsSidebar client:load entries={sidebarEntries} currentId={entry.id} />
+      </aside>
+
+      <article>
+        <header class="mb-8">
+          <nav class="mb-4 flex items-center gap-1.5 text-sm text-muted-foreground" aria-label="Breadcrumb">
+            <a href="/standards" class="transition-colors hover:text-foreground">Standards</a>
+            <span aria-hidden="true">/</span>
+            <span class="text-foreground">{categoryLabels[entry.data.category] ?? entry.data.category}</span>
+          </nav>
+          <h1 class="text-4xl font-bold">{entry.data.title}</h1>
+          <p class="mt-2 text-muted-foreground">{entry.data.description}</p>
+        </header>
+
+        {showTOC && (
+          <div class="lg:hidden">
+            <MobileTOC client:load headings={tocHeadings} />
+          </div>
+        )}
+
+        <div class="prose prose-neutral dark:prose-invert max-w-none">
+          <Content />
+        </div>
+      </article>
+
+      {showTOC ? (
+        <aside class="hidden lg:block">
+          <TableOfContents client:load headings={tocHeadings} />
+        </aside>
+      ) : (
+        <div class="hidden lg:block" />
+      )}
+    </div>
+  </div>
+  <CodeBlockEnhancer client:idle />
+  <HeadingLinkEnhancer client:load />
+</BaseLayout>
