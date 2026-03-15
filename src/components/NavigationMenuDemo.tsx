@@ -13,7 +13,7 @@ export const navItems = [
   { href: '/blog', label: 'Blog' },
   { href: '/research', label: 'Research' },
   { href: '/projects', label: 'Projects' },
-  { href: '/standards', label: 'Standards' },
+
   { href: '/about', label: 'About' },
 ];
 
