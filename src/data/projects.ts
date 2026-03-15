@@ -44,27 +44,74 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    slug: 'dotfiles',
+    title: 'Dotfiles',
+    tagline: 'Cross-platform dev environment via chezmoi + Nix',
+    description:
+      'A portable, reproducible development environment managed by chezmoi and Nix flakes. Includes 13 composable dev shells, agent skills for AI tools (Claude Code, Codex, Gemini, Copilot), terminal configuration, and automated bootstrap for macOS and Linux.',
+    status: 'active',
+    githubUrl: 'https://github.com/urmzd/dotfiles',
+    tech: [
+      { name: 'Nix', icon: 'nixos' },
+      { name: 'Lua', icon: 'lua' },
+      { name: 'Shell', icon: 'gnubash' },
+    ],
+    features: [
+      {
+        title: 'Nix Dev Shells',
+        description:
+          '13 composable, reproducible development shells — one per language, all shareable via flakes.',
+        icon: 'Boxes',
+      },
+      {
+        title: 'Agent Skills',
+        description:
+          'Portable standards distributed to Claude Code, Codex, Gemini, and Copilot via npx skills.',
+        icon: 'Brain',
+      },
+      {
+        title: 'Cross-Platform',
+        description:
+          'chezmoi templates adapt to macOS and Linux with platform-specific guards and feature flags.',
+        icon: 'Monitor',
+      },
+      {
+        title: 'One-Command Bootstrap',
+        description:
+          'Single script installs Nix, chezmoi, and applies the full environment from scratch.',
+        icon: 'Terminal',
+      },
+      {
+        title: 'Neovim Config',
+        description: 'Full Lua-based Neovim setup with LSP, tree-sitter, and plugin management.',
+        icon: 'Code',
+      },
+      {
+        title: 'Automated Maintenance',
+        description:
+          'chezmoi hooks auto-install packages, generate completions, and check flake freshness.',
+        icon: 'RefreshCw',
+      },
+    ],
+    hasDetailPage: true,
+  },
+  {
     slug: 'resume-generator',
     title: 'Resume Generator',
-    tagline: 'Multi-format resumes from structured data',
+    tagline: 'Data-driven resumes with AI assessment',
     description:
-      'A desktop and CLI application that transforms YAML, JSON, TOML, or Markdown resume definitions into beautifully formatted PDF, HTML, DOCX, LaTeX, and Markdown output. Built with Go for the processing pipeline and React for the desktop GUI.',
+      'A data-driven CLI tool that converts YAML, JSON, or TOML resume data into polished PDFs, DOCX, HTML, LaTeX, and Markdown — with multi-agent AI assessment via Ollama for automated resume feedback and scoring.',
     status: 'active',
     githubUrl: 'https://github.com/urmzd/resume-generator',
     tech: [
       { name: 'Go', icon: 'go' },
-      { name: 'React 19', icon: 'react' },
-      { name: 'TypeScript', icon: 'typescript' },
-      { name: 'Wails v2', icon: 'wails' },
-      { name: 'Tailwind CSS', icon: 'tailwindcss' },
       { name: 'Cobra', icon: 'go' },
-      { name: 'Rod', icon: 'googlechrome' },
+      { name: 'Ollama', icon: 'ollama' },
     ],
     features: [
       {
         title: 'Multi-Format Input',
-        description:
-          'Define your resume in YAML, JSON, TOML, or Markdown — whichever fits your workflow.',
+        description: 'Define your resume in YAML, JSON, or TOML — whichever fits your workflow.',
         icon: 'FileInput',
       },
       {
@@ -73,10 +120,10 @@ export const projects: Project[] = [
         icon: 'FileOutput',
       },
       {
-        title: 'Desktop GUI',
+        title: 'AI Assessment',
         description:
-          'Native desktop app built with Wails and React for a seamless editing experience.',
-        icon: 'Monitor',
+          'Multi-agent AI evaluation via Ollama provides automated feedback and scoring on your resume.',
+        icon: 'Brain',
       },
       {
         title: 'CLI First',
@@ -90,9 +137,9 @@ export const projects: Project[] = [
         icon: 'Layout',
       },
       {
-        title: 'Live Preview',
-        description: 'Headless Chrome rendering via Rod for pixel-perfect PDF generation.',
-        icon: 'Eye',
+        title: 'Agent Skill',
+        description: 'Usable as an agent skill for integration into AI-powered workflows.',
+        icon: 'Zap',
       },
     ],
     hasDetailPage: true,
@@ -100,9 +147,9 @@ export const projects: Project[] = [
   {
     slug: 'semantic-release',
     title: 'Semantic Release',
-    tagline: 'Automated versioning and changelog generation',
+    tagline: 'Trunk-based semantic versioning CLI',
     description:
-      'A Rust-based tool for automated semantic versioning and changelog generation based on conventional commits. Analyzes your git history, determines the next version bump, and generates changelogs — all without leaving the terminal.',
+      'A configurable trunk-based semantic release CLI for Rust — analyzes conventional commits, determines version bumps, generates changelogs, creates git tags, and publishes GitHub releases.',
     status: 'active',
     githubUrl: 'https://github.com/urmzd/semantic-release',
     tech: [{ name: 'Rust', icon: 'rust' }],
@@ -236,33 +283,31 @@ export const projects: Project[] = [
   {
     slug: 'openapi-generator',
     title: 'OpenAPI Generator',
-    tagline: 'Generate clients and servers from OpenAPI specs',
+    tagline: 'OpenAPI 3.x to TypeScript & React code generator',
     description:
-      'A code generator that produces typed clients and server stubs from OpenAPI specifications, with backends for multiple languages. Point it at a spec and get production-ready, type-safe code.',
+      'A Rust-powered code generator that turns OpenAPI 3.x specs into zero-dependency TypeScript clients, SWR hooks, and SSE streaming utilities for React applications.',
     status: 'active',
     githubUrl: 'https://github.com/urmzd/openapi-generator',
     tech: [
       { name: 'Rust', icon: 'rust' },
       { name: 'TypeScript', icon: 'typescript' },
       { name: 'React', icon: 'react' },
-      { name: 'Python', icon: 'python' },
     ],
     features: [
       {
-        title: 'Multi-Language Output',
-        description:
-          'Generate typed clients for TypeScript, Python, Rust, and more from a single spec.',
+        title: 'Zero-Dependency Clients',
+        description: 'Generates fully typed TypeScript clients with no runtime dependencies.',
         icon: 'Code',
       },
       {
-        title: 'Type Safety',
-        description: 'Produces fully typed code with proper interfaces and validation.',
-        icon: 'Shield',
+        title: 'SWR Hooks',
+        description: 'Auto-generates React SWR hooks for data fetching from your API spec.',
+        icon: 'RefreshCw',
       },
       {
-        title: 'Server Stubs',
-        description: 'Generate server scaffolding alongside client code for rapid API development.',
-        icon: 'Server',
+        title: 'SSE Streaming',
+        description: 'Built-in support for server-sent events streaming in generated code.',
+        icon: 'Radio',
       },
       {
         title: 'OpenAPI 3.x',
@@ -270,9 +315,9 @@ export const projects: Project[] = [
         icon: 'FileText',
       },
       {
-        title: 'Customizable Templates',
-        description: 'Override code generation templates to match your project conventions.',
-        icon: 'Settings',
+        title: 'Type Safety',
+        description: 'Produces fully typed code with proper interfaces and validation.',
+        icon: 'Shield',
       },
       {
         title: 'Fast Generation',
@@ -295,9 +340,9 @@ export const projects: Project[] = [
   {
     slug: 'linear-gp',
     title: 'Linear Genetic Programming Framework',
-    tagline: 'Memory-safe Rust framework for linear genetic programming',
+    tagline: 'Production-grade Rust framework for LGP research',
     description:
-      'An extensible framework for linear genetic programming experimentation, written in Rust for performance and memory safety. Features a modular trait-based architecture that lets researchers swap genetic operators, fitness functions, and selection strategies. Includes Rayon-powered parallel fitness evaluation, Optuna hyperparameter optimization backed by PostgreSQL, and Python CLI tools for batch experiments, visualization, and statistical analysis.',
+      'A production-grade Rust framework for linear genetic programming research, featuring modular architecture, Q-Learning integration, automated hyperparameter optimization, and support for reinforcement learning and classification tasks. Includes Rayon-powered parallel fitness evaluation, Optuna optimization backed by PostgreSQL, and Python CLI tools for batch experiments, visualization, and statistical analysis.',
     status: 'active',
     githubUrl: 'https://github.com/urmzd/linear-gp',
     tech: [
@@ -326,10 +371,10 @@ export const projects: Project[] = [
         icon: 'Settings',
       },
       {
-        title: 'Genetic Operators',
+        title: 'Q-Learning Integration',
         description:
-          'Built-in crossover, mutation, and tournament selection operators ready for LGP experimentation.',
-        icon: 'Dna',
+          'Built-in Q-Learning support for reinforcement learning tasks alongside classification experiments.',
+        icon: 'Brain',
       },
       {
         title: 'Experiment Visualization',

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProjectHero from '@/components/ProjectHero';
-import ArchitectureFlow from '@/components/ArchitectureFlow';
 import TerminalDemo from '@/components/TerminalDemo';
 import ImageShowcase from '@/components/ImageShowcase';
 import FeatureGrid from '@/components/FeatureGrid';
@@ -33,8 +32,7 @@ if (!project) {
       </p>
     </section>
 
-    {slug === 'resume-generator' && <ArchitectureFlow client:visible />}
-    {project.demo?.kind === 'terminal' && <TerminalDemo title={project.demo.title} lines={project.demo.lines} client:visible />}
+{project.demo?.kind === 'terminal' && <TerminalDemo title={project.demo.title} lines={project.demo.lines} client:visible />}
     {project.demo?.kind === 'image' && <ImageShowcase images={project.demo.images} client:visible />}
 
     <FeatureGrid features={project.features} client:visible />
