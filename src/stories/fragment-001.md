@@ -134,9 +134,9 @@ This has to be a dream.
 Pain rips through me—sharp, violent—my brain flashing images—
 
 A resume.<br/>
-A couch.<br/>
-A kiss.<br/>
-A bed.<br/>
+A job offer.<br/>
+A celebration.<br/>
+A flight.<br/>
 A conversation.
 
 That's all I have.
@@ -200,14 +200,23 @@ Who is she?
 
 Katherine steps in, handing me my phone.
 
-Slack is still there. Messages. Normal. Photos?<br/>
-My brain starts to hurt more.
+Slack is still there. Notifications popping up.
+
+"Hey Mike, how are you holding up...?"
+
+Weird. Why would they ask that?
+
+I swipe out. Open messages. Start typing—
+
+A...
+
+My thumb hovers. I don't know who I'm looking for.
+
+I switch to photos instead. Scroll. There's a face I almost—
 
 "You didn't lose your job." Chris says.
 
-I look up—pulled away from the screen before I can dig deeper.
-
-Everything looks fine.
+I look up—pulled away from the screen before I can see her.
 
 So why—why does it feel like something is missing?<br/>
 Something _important_?
