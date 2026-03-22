@@ -1,0 +1,139 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { calculateReadTime } from '@/lib/readTime';
+
+export async function getStaticPaths() {
+  const stories = await getCollection('stories');
+  return stories.map((story) => ({
+    params: { slug: story.id },
+    props: { story },
+  }));
+}
+
+const { story } = Astro.props;
+const { Content } = await render(story);
+const readTime = calculateReadTime(story.body || '');
+---
+
+<BaseLayout
+  title={`${story.data.title} - urmzd`}
+  description={story.data.description}
+  ogType="article"
+  publishedTime={story.data.pubDate}
+  tags={story.data.tags}
+>
+  <article class="mx-auto max-w-2xl px-6 pt-24 pb-24">
+    <header class="mb-16 text-center">
+      <h1 class="text-5xl font-bold tracking-tight">{story.data.title}</h1>
+      <div class="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
+        <time>
+          {
+            story.data.pubDate.toLocaleDateString('en-US', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              timeZone: 'UTC',
+            })
+          }
+        </time>
+        <span>|</span>
+        <span>{readTime.text}</span>
+      </div>
+    </header>
+
+    <div class="story-prose prose prose-lg prose-neutral dark:prose-invert max-w-none">
+      <Content />
+    </div>
+
+    <footer class="story-end">
+      <div class="story-end-ornament" aria-hidden="true">
+        <span class="story-end-line"></span>
+        <span class="story-end-diamond"></span>
+        <span class="story-end-line"></span>
+      </div>
+      <p class="story-end-label">End</p>
+    </footer>
+  </article>
+
+  <style is:global>
+    .story-prose {
+      font-size: 1.2rem;
+      line-height: 2;
+      letter-spacing: 0.01em;
+    }
+
+    .story-prose p {
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+    }
+
+    .story-prose hr {
+      border: none;
+      border-top: none;
+      background: none;
+      height: auto;
+      text-align: center;
+      margin: 3rem auto;
+      overflow: visible;
+    }
+
+    .story-prose hr::after {
+      content: '—\2009\2009\2009\2727\2009\2009\2009—';
+      display: block;
+      color: var(--color-muted-foreground);
+      font-size: 0.875rem;
+      letter-spacing: 0.15em;
+    }
+
+    .story-prose em {
+      font-style: italic;
+    }
+
+    .story-prose strong {
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    /* Story ending */
+    .story-end {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      text-align: center;
+    }
+
+    .story-end-ornament {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .story-end-line {
+      display: block;
+      width: 4rem;
+      height: 1px;
+      background: var(--color-muted-foreground);
+      opacity: 0.3;
+    }
+
+    .story-end-diamond {
+      display: block;
+      width: 6px;
+      height: 6px;
+      background: var(--color-muted-foreground);
+      transform: rotate(45deg);
+      opacity: 0.5;
+    }
+
+    .story-end-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.3em;
+      color: var(--color-muted-foreground);
+      opacity: 0.6;
+    }
+  </style>
+</BaseLayout>
