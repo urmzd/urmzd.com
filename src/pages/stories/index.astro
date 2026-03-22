@@ -1,0 +1,43 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { calculateReadTime } from '@/lib/readTime';
+
+const stories = await getCollection('stories');
+const sortedStories = stories.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout title="Stories - urmzd">
+  <main class="container mx-auto px-4 pt-24 pb-16">
+    <h1 class="mb-8 text-4xl font-bold">Stories</h1>
+    <div class="flex flex-col gap-6">
+      {
+        sortedStories.map((story) => (
+          <article class="group">
+            <a
+              href={`/stories/${story.id}`}
+              class="block rounded-lg border border-border p-6 transition-all duration-300 ease-out hover:border-primary hover:scale-[0.98]"
+            >
+              <h2 class="text-xl font-semibold text-foreground group-hover:underline">
+                {story.data.title}
+              </h2>
+              <p class="mt-2 text-muted-foreground">{story.data.description}</p>
+              <div class="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                <time>
+                  {story.data.pubDate.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    timeZone: 'UTC',
+                  })}
+                </time>
+                <span>|</span>
+                <span>{calculateReadTime(story.body || '').text}</span>
+              </div>
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
