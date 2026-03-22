@@ -6,7 +6,6 @@ export { default as BlogSearch } from './BlogSearch';
 export { default as ChatDemo } from './ChatDemo';
 export { default as CodeBlockEnhancer } from './CodeBlockEnhancer';
 export { default as Collapsible } from './Collapsible';
-export { default as CookieConsent } from './CookieConsent';
 export { default as CopyMarkdownButton } from './CopyMarkdownButton';
 export {
   ConfirmationBiasVisual,
