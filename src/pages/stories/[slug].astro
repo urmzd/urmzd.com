@@ -40,6 +40,15 @@ const readTime = calculateReadTime(story.body || '');
         <span>|</span>
         <span>{readTime.text}</span>
       </div>
+      {story.data.tags.length > 0 && (
+        <div class="mt-3 flex items-center justify-center gap-2">
+          {story.data.tags.map((tag) => (
+            <span class="rounded-full border border-border px-3 py-0.5 text-xs text-muted-foreground">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
     </header>
 
     <div class="story-prose prose prose-lg prose-neutral dark:prose-invert max-w-none">

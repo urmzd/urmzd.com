@@ -12,8 +12,8 @@ const interBold = readFileSync(join(process.cwd(), 'public/fonts/Inter-Bold.ttf'
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getCollection('blog');
+  const stories = await getCollection('stories');
 
-  // Generate paths for all blog posts plus the index page
   const blogPaths = posts.map((post) => ({
     params: { slug: post.id },
     props: {
@@ -24,7 +24,16 @@ export const getStaticPaths: GetStaticPaths = async () => {
     },
   }));
 
-  // Add index page
+  const storyPaths = stories.map((story) => ({
+    params: { slug: story.id },
+    props: {
+      title: story.data.title,
+      description: story.data.description,
+      pubDate: story.data.pubDate,
+      readTime: calculateReadTime(story.body || '').text,
+    },
+  }));
+
   const indexPath = {
     params: { slug: 'index' },
     props: {
@@ -33,7 +42,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     },
   };
 
-  return [indexPath, ...blogPaths];
+  return [indexPath, ...blogPaths, ...storyPaths];
 };
 
 interface OGImageProps {
