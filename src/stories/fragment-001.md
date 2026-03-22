@@ -129,8 +129,6 @@ But the room... it's not right.
 
 This has to be a dream.
 
-"Aaaaaa!"
-
 Pain rips through me—sharp, violent—my brain flashing images—
 
 A resume.<br/>
