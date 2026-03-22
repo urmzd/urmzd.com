@@ -217,7 +217,7 @@ I switch to photos instead. Scroll. There's a face I almost—
 I look up—pulled away from the screen before I can see her.
 
 So why—why does it feel like something is missing?<br/>
-Something _important_?
+Some_one_ important?
 
 "Michael... here's some water."
 
