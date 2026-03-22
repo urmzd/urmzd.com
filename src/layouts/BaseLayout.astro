@@ -2,7 +2,6 @@
 import '@/styles/global.css';
 import AutoHideHeader from '@/components/AutoHideHeader';
 import SocialDock from '@/components/SocialDock';
-import CookieConsent from '@/components/CookieConsent';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import Footer from '@/components/Footer.astro';
 import SEOMeta from '@/components/SEOMeta.astro';
@@ -92,7 +91,6 @@ const {
     </main>
     <Footer />
     {showSocialDock && <SocialDock client:visible />}
-    <CookieConsent client:load />
     {/* <NewsletterSignup client:idle /> */}
     <script is:inline>
       if ('serviceWorker' in navigator) {
