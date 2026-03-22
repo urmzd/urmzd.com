@@ -12,7 +12,7 @@ and I feel like I haven't moved in months.
 My breath... it feels... ahh --<br/>
 What... is this feeling?
 
-I try lifting myself up—slow, heavy—and look around.
+I try lifting myself up -- slow, heavy -- and look around.
 
 It's my parents' place.
 
@@ -25,13 +25,13 @@ Am I dreaming?
 
 But it feels real. Too real.
 
-And then—footsteps.
+And then -- footsteps.
 
 "Hey, Michael... you finally woke up."
 
 ...Katherine.
 
-Wait—what?
+Wait -- what?
 
 "Why are _you_ here?" I ask, my voice dry, confused.
 
@@ -43,7 +43,7 @@ She just looks at me.
 
 ...No.
 
-"The last thing I remember... was March 23rd, 2025."
+"The last thing I remember... was March 21st, 2026."
 
 A pause.
 
@@ -53,20 +53,18 @@ Drugs?
 
 _What the actual fuck is going on?_
 
-"Where is—wait..." I press my head. "What's her name?"
+"Where is -- wait..." I press my head. "What's her name?"
 
 I _had_ someone.
 
-I remember... reviewing a resume... someone named A—
+I remember... reviewing a resume... someone named A --
 
 But it's slipping. Blurry.
 
 That's not her.<br/>
 It's not.
 
-Fragments flicker—
-
-I told someone I loved them.<br/>
+Fragments flicker -- I told someone I loved them.<br/>
 But who?<br/>
 Why can't I remember?
 
@@ -83,12 +81,12 @@ Her voice stretches... distorts...<br/>
 
 I wake up again.
 
-Oh—just a dream. Right?
+Oh -- just a dream. Right?
 
 But... this isn't my bedroom.<br/>
 And she's still there.
 
-"Okay—please... tell me what's going on."
+"Okay -- please... tell me what's going on."
 
 Ana.
 
@@ -96,7 +94,7 @@ The name hits me out of nowhere.
 
 Who's Ana?
 
-A face—blurred, but warm. Familiar.
+A face -- blurred, but warm. Familiar.
 
 "You got into an accident." Katherine says quietly.<br/>
 "I've been taking care of you... for weeks."
@@ -104,21 +102,21 @@ A face—blurred, but warm. Familiar.
 "What accident?"
 
 I try to stand.<br/>
-My legs—they barely listen.
+My legs -- they barely listen.
 
 "It was... severe."
 
 My head pounds. Something's wrong.
 
-This place—it _looks_ like home... but it's bigger. Different. Wrong.
+This place -- it _looks_ like home... but it's bigger. Different. Wrong.
 
 I stumble into the living room.
 
-"Michael, stop—you shouldn't be up!"
+"Michael, stop -- you shouldn't be up!"
 
 She grabs for me. I slap her hand away.
 
-"No—where is everyone?"
+"No -- where is everyone?"
 
 Mom. Dad. Jane. The kids.<br/>
 Where is everyone?<br/>
@@ -129,7 +127,7 @@ But the room... it's not right.
 
 This has to be a dream.
 
-Pain rips through me—sharp, violent—my brain flashing images—
+Pain rips through me -- sharp, violent -- my brain flashing images --
 
 A resume.<br/>
 A job offer.<br/>
@@ -139,7 +137,7 @@ A conversation.
 
 That's all I have.
 
-And then—her voice.
+And then -- her voice.
 
 "I love you, Michael."
 
@@ -147,9 +145,9 @@ Echoing. Over and over.
 
 I collapse onto the couch.
 
-Another flash—someone sitting across from me.
+Another flash -- someone sitting across from me.
 
-It hurts—too much—and everything goes dark.
+It hurts -- too much -- and everything goes dark.
 
 ---
 
@@ -184,13 +182,13 @@ My heart pounds.
 
 Chris freezes.
 
-His face—shock. Then something worse. Sadness.
+His face -- shock. Then something worse. Sadness.
 
 "No."
 
 My head _splits_ open with pain.
 
-I yell for Katherine—but my voice won't go anywhere.
+I yell for Katherine -- but my voice won't go anywhere.
 
 "I need my phone. I need to make sure this isn't a prank. I need to call her..."
 
@@ -204,20 +202,18 @@ Slack is still there. Notifications popping up.
 
 Weird. Why would they ask that?
 
-I swipe out. Open messages. Start typing—
-
-A...
+I swipe out. Open messages. Start typing -- A...
 
 My thumb hovers. I don't know who I'm looking for.
 
-I switch to photos instead. Scroll. There's a face I almost—
+I switch to photos instead. Scroll. There's a face I almost --
 
 "You didn't lose your job." Chris says.
 
-I look up—pulled away from the screen before I can see her.
+I look up -- pulled away from the screen before I can see her.
 
-So why—why does it feel like something is missing?<br/>
-Some_one_ important?
+So why -- why does it feel like something is missing?<br/>
+Some*one* important?
 
 "Michael... here's some water."
 
@@ -233,7 +229,7 @@ Darkness again.
 
 Another voice. Jane.
 
-I can hear them—but I can't move.
+I can hear them -- but I can't move.
 
 Not again.
 
@@ -241,7 +237,7 @@ Not again.
 
 I wake up.
 
-This time—no pain. Just heaviness.
+This time -- no pain. Just heaviness.
 
 "I'm sorry we had to do that." Katherine says softly.<br/>
 "We can't let you hurt yourself."
@@ -254,9 +250,9 @@ Jane steps forward.
 
 "I'm glad to see you again, Michael."
 
-He sits.
+She sits.
 
-"You were in an accident." He pauses.
+"You were in an accident." She pauses.
 
 A pause.
 
@@ -268,26 +264,26 @@ My breath catches.
 
 Pain detonates inside me. My body locks.
 
-And I hear her again—clearer this time.
+And I hear her again -- clearer this time.
 
 "I'm sorry, Michael... I love you."
 
 Tears spill instantly.
 
-My stomach—God—it feels like it's being torn apart.
+My stomach -- God -- it feels like it's being torn apart.
 
 I lift my shirt.
 
 A scar. Massive. Jagged. Running across my body.
 
-I touch it—and suddenly—glass. Cutting through me.<br/>
+I touch it -- and suddenly -- glass. Cutting through me.<br/>
 I can _feel_ it.
 
 My breathing sharpens. My heart races.
 
-My vision—too clear. Too intense.
+My vision -- too clear. Too intense.
 
-My hands—I look down.
+My hands -- I look down.
 
 Scars. Deep. Like something shattered in them.
 
@@ -300,7 +296,7 @@ STOP!
 
 ---
 
-And then—silence.
+And then -- silence.
 
 I'm back. Standing in front of them.
 
@@ -317,7 +313,7 @@ A pause...
 
 Another pause...
 
-"We can't—"
+"We can't --"
 
 A breath.
 
