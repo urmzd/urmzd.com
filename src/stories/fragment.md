@@ -318,3 +318,7 @@ Another pause...
 A breath.
 
 "We can't keep watching you suffer."
+
+---
+
+*To be continued...*
