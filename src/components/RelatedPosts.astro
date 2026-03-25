@@ -1,0 +1,49 @@
+---
+interface Post {
+  id: string;
+  collection: string;
+  data: {
+    title: string;
+    description: string;
+    tags: string[];
+  };
+}
+
+interface Props {
+  currentId: string;
+  currentTags: string[];
+  posts: Post[];
+  basePath: string;
+  max?: number;
+}
+
+const { currentId, currentTags, posts, basePath, max = 3 } = Astro.props;
+
+const related = posts
+  .filter((p) => p.id !== currentId)
+  .map((p) => ({
+    post: p,
+    score: p.data.tags.filter((t) => currentTags.includes(t)).length,
+  }))
+  .filter((p) => p.score > 0)
+  .sort((a, b) => b.score - a.score)
+  .slice(0, max)
+  .map((p) => p.post);
+---
+
+{related.length > 0 && (
+  <nav aria-label="Related posts" class="mt-12 border-t border-border pt-8">
+    <h2 class="mb-4 text-lg font-semibold">Related Posts</h2>
+    <div class="flex flex-col gap-3">
+      {related.map((post) => (
+        <a
+          href={`${basePath}/${post.id}`}
+          class="group rounded-lg border border-border p-4 transition-colors hover:border-primary"
+        >
+          <h3 class="font-medium group-hover:underline">{post.data.title}</h3>
+          <p class="mt-1 text-sm text-muted-foreground line-clamp-2">{post.data.description}</p>
+        </a>
+      ))}
+    </div>
+  </nav>
+)}
