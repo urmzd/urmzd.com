@@ -2,7 +2,7 @@
 title: "Fragment"
 description: "A man wakes up with no memory of the past year. Fragments of a lost love surface through pain, confusion, and the people trying to protect him from the truth."
 pubDate: 2026-03-22
-tags: ["fiction", "short story", "fragments"]
+tags: ["fiction", "short story", "amnesia"]
 ---
 
 I wake up in my bed...
