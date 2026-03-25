@@ -10,6 +10,7 @@ interface Props {
   title: string;
   description?: string;
   showSocialDock?: boolean;
+  fullScreen?: boolean;
   ogImage?: string;
   ogType?: 'website' | 'article';
   publishedTime?: Date;
@@ -20,6 +21,7 @@ const {
   title,
   description = 'Personal website of urmzd',
   showSocialDock = false,
+  fullScreen = false,
   ogImage,
   ogType = 'website',
   publishedTime,
@@ -83,13 +85,13 @@ const {
       }
     </script>
   </head>
-  <body class="min-h-screen bg-background text-foreground antialiased">
+  <body class:list={["min-h-screen bg-background text-foreground antialiased", fullScreen && "h-dvh overflow-hidden"]}>
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground focus:shadow-lg focus:ring-2 focus:ring-ring">Skip to main content</a>
     <AutoHideHeader client:load />
     <main id="main-content">
       <slot />
     </main>
-    <Footer />
+    <Footer class={fullScreen ? "fixed bottom-0 inset-x-0 z-30" : undefined} />
     {showSocialDock && <SocialDock client:visible />}
     {/* <NewsletterSignup client:idle /> */}
     <script is:inline>
