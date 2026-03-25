@@ -27,4 +27,36 @@ const stories = defineCollection({
   }),
 });
 
-export const collections = { blog, stories };
+const research = defineCollection({
+  loader: glob({ pattern: ['**/*.md', '**/*.mdx'], base: './src/research' }),
+  schema: z.object({
+    title: z.string(),
+    tagline: z.string(),
+    description: z.string(),
+    category: z.enum(['paper']).default('paper'),
+    year: z.number(),
+    venue: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    githubUrl: z.string(),
+    paperUrl: z.string().optional(),
+    tech: z.array(z.string()).default([]),
+    detailTech: z.array(z.object({ name: z.string(), icon: z.string() })).optional(),
+    features: z
+      .array(z.object({ title: z.string(), description: z.string(), icon: z.string() }))
+      .optional(),
+    demo: z
+      .discriminatedUnion('kind', [
+        z.object({
+          kind: z.literal('terminal'),
+          castFile: z.string(),
+        }),
+        z.object({
+          kind: z.literal('image'),
+          images: z.array(z.object({ src: z.string(), alt: z.string(), caption: z.string() })),
+        }),
+      ])
+      .optional(),
+  }),
+});
+
+export const collections = { blog, stories, research };
