@@ -1,16 +1,7 @@
 'use client';
-import {
-  IconBrandFacebook,
-  IconBrandLinkedin,
-  IconBrandX,
-  IconCheck,
-  IconDownload,
-  IconLink,
-  IconShare,
-} from '@tabler/icons-react';
+import { IconBrandLinkedin, IconBrandX, IconCheck, IconLink, IconShare } from '@tabler/icons-react';
 import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
-import { mdxToMarkdown, type PostFrontmatter } from '../lib/mdxToMarkdown';
 
 interface ShareButtonProps {
   url: string;
@@ -18,15 +9,6 @@ interface ShareButtonProps {
   description?: string;
   shareText?: string;
   variant?: 'icon' | 'button';
-  postBody?: string;
-  postFrontmatter?: PostFrontmatter;
-  slug?: string;
-}
-
-interface ShareOption {
-  name: string;
-  icon: React.ReactNode;
-  action: () => void;
 }
 
 export default function ShareButton({
@@ -35,9 +17,6 @@ export default function ShareButton({
   description = '',
   shareText,
   variant = 'button',
-  postBody,
-  postFrontmatter,
-  slug,
 }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -49,23 +28,18 @@ export default function ShareButton({
         setIsOpen(false);
       }
     }
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const shareMessage = shareText || description;
 
-  const handleNativeShare = async () => {
+  const handleShare = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({
-          title,
-          text: shareMessage,
-          url,
-        });
+        await navigator.share({ title, text: shareMessage, url });
       } catch {
-        // User cancelled or share failed
+        // User cancelled
       }
     } else {
       setIsOpen(!isOpen);
@@ -75,43 +49,22 @@ export default function ShareButton({
   const handleCopyLink = async () => {
     try {
       await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => {
-        setCopied(false);
-        setIsOpen(false);
-      }, 1500);
     } catch {
-      // Fallback for older browsers
       const textArea = document.createElement('textarea');
       textArea.value = url;
       document.body.appendChild(textArea);
       textArea.select();
       document.execCommand('copy');
       document.body.removeChild(textArea);
-      setCopied(true);
-      setTimeout(() => {
-        setCopied(false);
-        setIsOpen(false);
-      }, 1500);
     }
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+      setIsOpen(false);
+    }, 1500);
   };
 
-  const handleDownload = () => {
-    if (!postBody || !postFrontmatter) return;
-    const markdown = mdxToMarkdown(postBody, postFrontmatter);
-    const blob = new Blob([markdown], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${slug || 'post'}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    setIsOpen(false);
-  };
-
-  const shareOptions: ShareOption[] = [
+  const shareOptions = [
     {
       name: 'X',
       icon: <IconBrandX size={18} />,
@@ -129,34 +82,13 @@ export default function ShareButton({
       icon: <IconBrandLinkedin size={18} />,
       action: () => {
         window.open(
-          `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&summary=${encodeURIComponent(shareMessage)}&source=urmzd.com`,
+          `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
           '_blank',
           'noopener,noreferrer',
         );
         setIsOpen(false);
       },
     },
-    {
-      name: 'Facebook',
-      icon: <IconBrandFacebook size={18} />,
-      action: () => {
-        window.open(
-          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-          '_blank',
-          'noopener,noreferrer',
-        );
-        setIsOpen(false);
-      },
-    },
-    ...(postBody && postFrontmatter
-      ? [
-          {
-            name: 'Download',
-            icon: <IconDownload size={18} />,
-            action: handleDownload,
-          },
-        ]
-      : []),
     {
       name: copied ? 'Copied!' : 'Copy Link',
       icon: copied ? <IconCheck size={18} /> : <IconLink size={18} />,
@@ -170,7 +102,7 @@ export default function ShareButton({
     <MotionConfig reducedMotion="user">
       <div className="relative" ref={menuRef}>
         <motion.button
-          onClick={handleNativeShare}
+          onClick={handleShare}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className={`flex items-center gap-2 rounded-lg border border-border bg-background/50 px-3 py-2 text-sm text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground ${
@@ -193,7 +125,7 @@ export default function ShareButton({
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 transition={{ duration: 0.15 }}
-                className="absolute right-0 top-full z-dropdown mt-2 min-w-[160px] overflow-hidden rounded-lg border border-border bg-background shadow-lg"
+                className="absolute left-0 top-full z-50 mt-2 min-w-[160px] overflow-hidden rounded-lg border border-border bg-background shadow-lg"
               >
                 {shareOptions.map((option) => (
                   <motion.button
