@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://urmzd.com/sitemap-index.xml
