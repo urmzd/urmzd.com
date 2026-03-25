@@ -1,0 +1,104 @@
+---
+import ShareButton from '@/components/ShareButton';
+import CopyMarkdownButton from '@/components/CopyMarkdownButton';
+
+interface Props {
+  title: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  readTime: string;
+  tags?: string[];
+  shareUrl: string;
+  shareText?: string;
+  body?: string;
+  frontmatter: Record<string, any>;
+  slug: string;
+  proseClass?: string;
+}
+
+const {
+  title,
+  pubDate,
+  updatedDate,
+  readTime,
+  tags = [],
+  shareUrl,
+  shareText,
+  body,
+  frontmatter,
+  slug,
+  proseClass,
+} = Astro.props;
+---
+
+<article class="mx-auto max-w-3xl px-6 pt-24 pb-16">
+  <header class="mb-8">
+    <h1 class="text-4xl font-bold">{title}</h1>
+    <div class="mt-4 flex items-center gap-2">
+      <CopyMarkdownButton
+        client:load
+        postBody={body}
+        postFrontmatter={frontmatter}
+        slug={slug}
+      />
+      <ShareButton
+        client:load
+        url={shareUrl}
+        title={title}
+        description={frontmatter.description}
+        shareText={shareText}
+        postBody={body}
+        postFrontmatter={frontmatter}
+        slug={slug}
+      />
+    </div>
+    <div class="mt-4 flex items-center gap-2 text-muted-foreground">
+      <time>
+        {
+          pubDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'UTC',
+          })
+        }
+      </time>
+      {
+        updatedDate && (
+          <>
+            <span>|</span>
+            <span>
+              Updated: <time>{updatedDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                timeZone: 'UTC',
+              })}</time>
+            </span>
+          </>
+        )
+      }
+      <span>|</span>
+      <span>{readTime}</span>
+    </div>
+    {tags.length > 0 && (
+      <div class="mt-3 flex items-center gap-2">
+        {tags.map((tag) => (
+          <span class="rounded-full border border-border px-3 py-0.5 text-xs text-muted-foreground">
+            {tag}
+          </span>
+        ))}
+      </div>
+    )}
+  </header>
+
+  <slot name="before-content" />
+
+  <div class:list={['prose prose-neutral dark:prose-invert max-w-none', proseClass]}>
+    <slot />
+  </div>
+
+  <slot name="after-content" />
+</article>
+
+<slot name="enhancers" />
