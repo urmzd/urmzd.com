@@ -4,24 +4,27 @@ import ResearchHero from '@/components/ResearchHero';
 import ImageShowcase from '@/components/ImageShowcase';
 import FeatureGrid from '@/components/FeatureGrid';
 import TechStackGrid from '@/components/TechStackGrid';
-import { research, getResearchItem } from '@/data/research';
+import { getCollection, render } from 'astro:content';
 
-export function getStaticPaths() {
-  return research
-    .filter((r) => r.hasDetailPage)
-    .map((r) => ({ params: { slug: r.slug } }));
+export async function getStaticPaths() {
+  const entries = await getCollection('research');
+  return entries.map((entry) => ({ params: { slug: entry.id } }));
 }
 
 const { slug } = Astro.params;
-const item = getResearchItem(slug!);
+const entries = await getCollection('research');
+const entry = entries.find((e) => e.id === slug);
 
-if (!item) {
+if (!entry) {
   return Astro.redirect('/research');
 }
+
+const item = entry.data;
+const { Content } = await render(entry);
 ---
 
 <BaseLayout title={`${item.title} - urmzd`} description={item.tagline}>
-  <main class="pb-16">
+  <div class="pb-16">
     <ResearchHero item={item} client:load />
 
     <section class="container mx-auto px-4 py-12">
@@ -31,9 +34,17 @@ if (!item) {
       </p>
     </section>
 
+    {entry.body && (
+      <section class="container mx-auto max-w-3xl px-4 pb-12">
+        <article class="prose prose-invert max-w-none">
+          <Content />
+        </article>
+      </section>
+    )}
+
     {item.demo?.kind === 'image' && <ImageShowcase images={item.demo.images} client:visible />}
 
     {item.features && <FeatureGrid features={item.features} client:visible />}
     {item.detailTech && <TechStackGrid tech={item.detailTech} client:visible />}
-  </main>
+  </div>
 </BaseLayout>
