@@ -13,6 +13,25 @@ const { title, description, image, type = 'website', publishedTime, tags = [] } 
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://urmzd.com';
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
 
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'urmzd.com',
+  url: siteUrl,
+};
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'urmzd',
+  url: siteUrl,
+  sameAs: [
+    'https://github.com/urmzd',
+    'https://linkedin.com/in/urmzd',
+    'https://x.com/urmzd_',
+  ],
+};
+
 // Generate OG image URL from slug if not provided
 // For blog posts (/blog/slug/), we want /og/slug.png
 // For index (/), we want /og/index.png
@@ -55,3 +74,24 @@ const ogImageUrl = image
   )
 }
 {type === 'article' && tags.map((tag) => <meta property="article:tag" content={tag} />)}
+
+<!-- JSON-LD Structured Data -->
+<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+<script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+{type === 'article' && publishedTime && (
+  <script type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description,
+    image: ogImageUrl,
+    url: canonicalUrl,
+    datePublished: publishedTime.toISOString(),
+    author: {
+      '@type': 'Person',
+      name: 'urmzd',
+      url: siteUrl,
+    },
+    keywords: tags.join(', '),
+  })} />
+)}
