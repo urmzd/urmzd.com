@@ -1,3 +1,5 @@
+import { VISUAL_EMBEDS, type VisualEmbedName } from './visualEmbeds';
+
 export interface PostFrontmatter {
   title: string;
   description: string;
@@ -28,11 +30,23 @@ export function mdxToMarkdown(body: string, frontmatter: PostFrontmatter): strin
     '($1 in $2 script)',
   );
 
-  // 5. <WelcomeTimeline ... /> → placeholder
-  md = md.replace(
-    /<WelcomeTimeline[^>]*\/>/g,
-    '*[Interactive timeline — visit the original post to view]*',
-  );
+  // 5. Interactive visuals → clickable preview images linking to embed pages
+  {
+    const SITE = 'https://urmzd.com';
+    const componentToSlug: Record<string, string> = {};
+    for (const [slug, meta] of Object.entries(VISUAL_EMBEDS)) {
+      componentToSlug[meta.component] = slug;
+    }
+    for (const [componentName, slug] of Object.entries(componentToSlug)) {
+      const meta = VISUAL_EMBEDS[slug as VisualEmbedName];
+      const previewUrl = `${SITE}/images/visuals/${slug}.png`;
+      const embedUrl = `${SITE}/embed/${slug}`;
+      md = md.replace(
+        new RegExp(`<${componentName}[^>]*\\/?>`, 'g'),
+        `[![${meta.alt}](${previewUrl})](${embedUrl})`,
+      );
+    }
+  }
 
   // 6. <BlockQuote author="A" source="S">Text</BlockQuote> → > Text\n>\n> — A, S
   md = md.replace(
@@ -79,28 +93,21 @@ export function mdxToMarkdown(body: string, frontmatter: PostFrontmatter): strin
     (_match, label: string, content: string) => `**${label}**\n\n${content.trim()}`,
   );
 
-  // 11. Interactive visuals → descriptive placeholders
-  const visuals: Record<string, string> = {
-    CriticalThinkingLoop:
-      '*[Interactive diagram: Question → Research → Validate → Reflect → Repeat]*',
-    FirstPrinciplesVisual:
-      '*[Interactive visual: stripping assumptions to reveal foundational truths]*',
-    ConfirmationBiasVisual:
-      '*[Interactive visual: evidence cards showing how confirmation bias filters contradicting data]*',
-    ExtrapolationVisual:
-      '*[Interactive chart: linear regression overshooting a nonlinear trend when projected beyond observed data]*',
-    ConsilienceVisual:
-      '*[Interactive visual: independent sources converging on the same conclusion]*',
-    SearchLandscapeVisual:
-      '*[Interactive visual: navigating a solution landscape with local and global optima]*',
-    GPEvolutionVisualizer:
-      '*[Interactive simulation: genetic evolution across generations with selection, crossover, and mutation]*',
-    ChatDemo:
-      '*[Interactive demo: a chatbot exchange showing system prompt, user message, and model response]*',
-  };
-  for (const [tag, placeholder] of Object.entries(visuals)) {
-    md = md.replace(new RegExp(`<${tag}[^>]*\\/?>`, 'g'), placeholder);
+  // 11. Parse <References items={[...]} /> and replace <Cite id={N} /> with inline links
+  const citations = new Map<number, { text: string; url: string }>();
+  const refsMatch = md.match(/<References\s+items=\{(\[[\s\S]*?\])\}\s*\/>/);
+  if (refsMatch) {
+    const itemRegex =
+      /\{\s*id:\s*(\d+)\s*,\s*text:\s*(['"])(.*?)\2\s*,\s*url:\s*(['"])(.*?)\4\s*\}/g;
+    for (const m of refsMatch[1].matchAll(itemRegex)) {
+      citations.set(Number(m[1]), { text: m[3], url: m[5] });
+    }
+    md = md.replace(/<References\s+items=\{[\s\S]*?\}\s*\/>\s*/, '');
   }
+  md = md.replace(/<Cite\s+id=\{(\d+)\}\s*\/>/g, (_match, idStr: string) => {
+    const ref = citations.get(Number(idStr));
+    return ref ? `[[${idStr}]](${ref.url})` : `[${idStr}]`;
+  });
 
   // 12. Strip remaining self-closing JSX components not already handled
   md = md.replace(/<[A-Z]\w+[^>]*\/>/g, '');
