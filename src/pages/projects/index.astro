@@ -5,14 +5,14 @@ import { projects } from '@/data/projects';
 ---
 
 <BaseLayout title="Projects - urmzd" description="Software projects by urmzd">
-  <main class="container mx-auto px-4 pt-24 pb-16">
+  <div class="mx-auto max-w-3xl px-6 pt-24 pb-16">
     <h1 class="mb-2 text-4xl font-bold">Projects</h1>
-    <p class="mb-10 text-muted-foreground">Things I've built and am building.</p>
+    <p class="mb-10 text-muted-foreground">Open-source tools and applications I've built to solve real problems.</p>
 
     <div class="grid gap-6">
       {projects.map((project, i) => (
-        <ProjectCard project={project} index={i} client:visible />
+        <ProjectCard project={project} />
       ))}
     </div>
-  </main>
+  </div>
 </BaseLayout>

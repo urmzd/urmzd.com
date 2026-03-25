@@ -1,5 +1,6 @@
 'use client';
 
+import { Search } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
@@ -173,8 +174,8 @@ export function PlaceholdersAndVanishInput({
   return (
     <form
       className={cn(
-        'w-full relative max-w-xl mx-auto bg-background h-12 rounded-full overflow-hidden shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),_0px_1px_0px_0px_rgba(25,28,33,0.02),_0px_0px_0px_1px_rgba(25,28,33,0.08)] transition duration-200',
-        value && 'bg-muted',
+        'w-full relative h-14 rounded-full overflow-hidden glass-input transition duration-200',
+        value && 'bg-muted/50',
       )}
       onSubmit={handleSubmit}
     >
@@ -207,38 +208,14 @@ export function PlaceholdersAndVanishInput({
         disabled={!value}
         type="submit"
         aria-label="Submit search"
-        className="absolute right-2 top-1/2 z-50 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-muted bg-foreground dark:disabled:bg-muted transition duration-200 flex items-center justify-center"
+        className="absolute right-3 top-1/2 z-50 -translate-y-1/2 h-8 w-8 rounded-full disabled:bg-transparent bg-foreground transition duration-200 flex items-center justify-center"
       >
-        <motion.svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="text-muted-foreground h-4 w-4"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <motion.path
-            d="M5 12l14 0"
-            initial={{
-              strokeDasharray: '50%',
-              strokeDashoffset: '50%',
-            }}
-            animate={{
-              strokeDashoffset: value ? 0 : '50%',
-            }}
-            transition={{
-              duration: 0.3,
-              ease: 'linear',
-            }}
-          />
-          <path d="M13 18l6 -6" />
-          <path d="M13 6l6 6" />
-        </motion.svg>
+        <Search
+          className={cn(
+            'h-4 w-4 transition-colors',
+            value ? 'text-background' : 'text-muted-foreground',
+          )}
+        />
       </button>
 
       <div className="absolute inset-0 flex items-center rounded-full pointer-events-none">

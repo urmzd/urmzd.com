@@ -1,6 +1,7 @@
 ---
 import '@/styles/global.css';
 import AutoHideHeader from '@/components/AutoHideHeader';
+import CommandPalette from '@/components/CommandPalette';
 import SocialDock from '@/components/SocialDock';
 import NewsletterSignup from '@/components/NewsletterSignup';
 import Footer from '@/components/Footer.astro';
@@ -61,6 +62,7 @@ const {
     <link rel="stylesheet" href="https://use.typekit.net/qyu8tlw.css" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#0a0a0a" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icons/icon-180x180.png" />
     <title>{title}</title>
     <script is:inline>
@@ -88,6 +90,7 @@ const {
   <body class:list={["min-h-screen bg-background text-foreground antialiased", fullScreen && "h-dvh overflow-hidden"]}>
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground focus:shadow-lg focus:ring-2 focus:ring-ring">Skip to main content</a>
     <AutoHideHeader client:load />
+    <CommandPalette client:load />
     <main id="main-content">
       <slot />
     </main>

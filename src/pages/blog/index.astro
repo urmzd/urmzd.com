@@ -18,8 +18,8 @@ const blogPosts = sortedPosts.map((post) => ({
 ---
 
 <BaseLayout title="Blog - urmzd">
-  <main class="container mx-auto px-4 pt-24 pb-16">
+  <div class="mx-auto max-w-3xl px-6 pt-24 pb-16">
     <h1 class="mb-8 text-4xl font-bold">Blog</h1>
     <BlogSearch client:load posts={blogPosts} />
-  </main>
+  </div>
 </BaseLayout>

@@ -1,12 +1,12 @@
 'use client';
 
+import type { CollectionEntry } from 'astro:content';
 import { FileText, Github } from 'lucide-react';
 import { motion } from 'motion/react';
-import type { ResearchItem } from '@/data/research';
 import ShareButton from './ShareButton';
 
 interface ResearchHeroProps {
-  item: ResearchItem;
+  item: CollectionEntry<'research'>['data'];
 }
 
 export default function ResearchHero({ item }: ResearchHeroProps) {
@@ -20,7 +20,7 @@ export default function ResearchHero({ item }: ResearchHeroProps) {
         transition={{ duration: 0.4 }}
         className="mb-4 flex flex-wrap items-center gap-3"
       >
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-xs font-medium text-muted-foreground">
+        <span className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-muted-foreground glass-pill">
           {item.category === 'paper' ? (
             <>
               <FileText className="h-3 w-3" />
