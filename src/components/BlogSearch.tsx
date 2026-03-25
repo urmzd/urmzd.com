@@ -94,10 +94,10 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
                 key={tag}
                 type="button"
                 onClick={() => handleTagClick(tag)}
-                className={`rounded-full border px-3 py-1 text-sm transition-colors ${
+                className={`rounded-full px-3 py-1 text-sm transition-all ${
                   activeTag === tag
-                    ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-border text-muted-foreground hover:border-foreground/20 hover:text-foreground'
+                    ? 'border border-primary bg-primary text-primary-foreground'
+                    : 'glass-pill text-muted-foreground hover:border-foreground/20 hover:text-foreground'
                 }`}
               >
                 #{tag}
@@ -124,7 +124,7 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
               <li key={post.id}>
                 <a
                   href={`/blog/${post.id}`}
-                  className="group block rounded-lg border border-border p-6 transition-colors hover:border-primary"
+                  className="group block rounded-xl p-6 transition-all glass-card hover:border-primary/40"
                 >
                   <h2 className="text-2xl font-semibold group-hover:text-primary">{post.title}</h2>
                   <p className="mt-2 text-muted-foreground">{post.description}</p>
@@ -144,6 +144,18 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
                       </>
                     )}
                   </div>
+                  {post.tags && post.tags.length > 0 && (
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      {post.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="glass-pill rounded-full px-2.5 py-0.5 text-xs text-muted-foreground"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </a>
               </li>
             ))}
