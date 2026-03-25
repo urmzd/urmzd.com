@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ArticleLayout from '@/layouts/ArticleLayout.astro';
+import RelatedPosts from '@/components/RelatedPosts.astro';
 import { getCollection, render } from 'astro:content';
 import { calculateReadTime } from '@/lib/readTime';
 import CodeBlockEnhancer from '@/components/CodeBlockEnhancer';
@@ -11,11 +12,11 @@ export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
     params: { slug: post.id },
-    props: { post },
+    props: { post, allPosts: posts },
   }));
 }
 
-const { post } = Astro.props;
+const { post, allPosts } = Astro.props;
 const { Content, headings } = await render(post);
 const readTime = calculateReadTime(post.body || '');
 
@@ -59,6 +60,15 @@ const showTOC = tocHeadings.length >= 3;
     )}
 
     <Content />
+
+    <div slot="after-content">
+      <RelatedPosts
+        currentId={post.id}
+        currentTags={post.data.tags}
+        posts={allPosts}
+        basePath="/blog"
+      />
+    </div>
 
     <Fragment slot="enhancers">
       <CodeBlockEnhancer client:idle />
