@@ -230,7 +230,9 @@ Any contributed images must be compatible with CC BY-NC-ND 4.0 or be original wo
 
 ## Available skills
 
-- **visual-audit** (`.claude/skills/visual-audit.md`): Audit visuals for replacements, feel consistency, reference integrity, and credit compliance. Use when adding, changing, or reviewing images and media.
+- **visual-audit** (`skills/visual-audit/SKILL.md`): Audit visuals for replacements, feel consistency, reference integrity, and credit compliance. Use when adding, changing, or reviewing images and media.
+- **blog-to-tweet** (`skills/blog-to-tweet/SKILL.md`): Convert a blog post into a Twitter/X thread (3-8 tweets) ready to copy and post. Use when promoting a blog post on Twitter/X.
+- **blog-to-twitter-article** (`skills/blog-to-twitter-article/SKILL.md`): Convert a blog post into a standalone Twitter/X article (long-form) with a link back to the original. Use when reposting blog content as a Twitter/X article.
 
 ## Do not
 
