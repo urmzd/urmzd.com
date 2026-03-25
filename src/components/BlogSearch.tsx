@@ -11,6 +11,7 @@ interface BlogPost {
   description: string;
   pubDate: string;
   readTime?: string;
+  tags?: string[];
 }
 
 interface BlogSearchProps {
@@ -26,10 +27,44 @@ const SEARCH_PLACEHOLDERS = [
 
 export default function BlogSearch({ posts }: BlogSearchProps) {
   const [query, setQuery] = useState('');
+  const [activeTag, setActiveTag] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const params = new URLSearchParams(window.location.search);
+    return params.get('tag');
+  });
+
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    for (const post of posts) {
+      for (const tag of post.tags ?? []) {
+        tagSet.add(tag);
+      }
+    }
+    return Array.from(tagSet).sort();
+  }, [posts]);
 
   const filteredPosts = useMemo(() => {
-    return fuzzySearch(query, posts, (post) => [post.title, post.description], 0.5);
-  }, [query, posts]);
+    let result = posts;
+    if (activeTag) {
+      result = result.filter((p) => p.tags?.includes(activeTag));
+    }
+    if (query) {
+      result = fuzzySearch(query, result, (post) => [post.title, post.description], 0.5);
+    }
+    return result;
+  }, [query, posts, activeTag]);
+
+  const handleTagClick = (tag: string) => {
+    const next = activeTag === tag ? null : tag;
+    setActiveTag(next);
+    const url = new URL(window.location.href);
+    if (next) {
+      url.searchParams.set('tag', next);
+    } else {
+      url.searchParams.delete('tag');
+    }
+    window.history.replaceState({}, '', url.toString());
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
@@ -52,8 +87,27 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
           />
         </div>
 
+        {allTags.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {allTags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => handleTagClick(tag)}
+                className={`rounded-full border px-3 py-1 text-sm transition-colors ${
+                  activeTag === tag
+                    ? 'border-primary bg-primary text-primary-foreground'
+                    : 'border-border text-muted-foreground hover:border-foreground/20 hover:text-foreground'
+                }`}
+              >
+                #{tag}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div aria-live="polite" aria-atomic="true">
-          {query && (
+          {(query || activeTag) && (
             <p className="blog-search-count">
               {filteredPosts.length === 0
                 ? 'No posts found'
