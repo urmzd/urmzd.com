@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ArticleLayout from '@/layouts/ArticleLayout.astro';
+import RelatedPosts from '@/components/RelatedPosts.astro';
 import { getCollection, render } from 'astro:content';
 import { calculateReadTime } from '@/lib/readTime';
 
@@ -8,11 +9,11 @@ export async function getStaticPaths() {
   const stories = await getCollection('stories');
   return stories.map((story) => ({
     params: { slug: story.id },
-    props: { story },
+    props: { story, allStories: stories },
   }));
 }
 
-const { story } = Astro.props;
+const { story, allStories } = Astro.props;
 const { Content } = await render(story);
 const readTime = calculateReadTime(story.body || '');
 
@@ -46,7 +47,8 @@ const storyUrl = `${siteUrl}/stories/${story.id}`;
   >
     <Content />
 
-    <footer slot="after-content" class="story-end">
+    <div slot="after-content">
+      <footer class="story-end">
       <div class="story-end-ornament" aria-hidden="true">
         <span class="story-end-line"></span>
         <span class="story-end-diamond"></span>
@@ -54,6 +56,13 @@ const storyUrl = `${siteUrl}/stories/${story.id}`;
       </div>
       <p class="story-end-label">End</p>
     </footer>
+      <RelatedPosts
+        currentId={story.id}
+        currentTags={story.data.tags}
+        posts={allStories}
+        basePath="/stories"
+      />
+    </div>
   </ArticleLayout>
 
   <style is:global>
