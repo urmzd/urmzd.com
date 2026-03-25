@@ -22,7 +22,7 @@ if (!project) {
 ---
 
 <BaseLayout title={`${project.title} - urmzd`} description={project.tagline}>
-  <main class="pb-16">
+  <div class="pb-16">
     <ProjectHero project={project} client:load />
 
     <section class="container mx-auto px-4 py-12">
@@ -37,5 +37,5 @@ if (!project) {
 
     <FeatureGrid features={project.features} client:visible />
     <TechStackGrid tech={project.tech} client:visible />
-  </main>
+  </div>
 </BaseLayout>

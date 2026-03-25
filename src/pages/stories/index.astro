@@ -8,15 +8,16 @@ const sortedStories = stories.sort((a, b) => b.data.pubDate.valueOf() - a.data.p
 ---
 
 <BaseLayout title="Stories - urmzd">
-  <main class="container mx-auto px-4 pt-24 pb-16">
-    <h1 class="mb-8 text-4xl font-bold">Stories</h1>
+  <div class="mx-auto max-w-3xl px-6 pt-24 pb-16">
+    <h1 class="mb-2 text-4xl font-bold">Stories</h1>
+    <p class="mb-10 text-muted-foreground">Short fiction and creative writing exploring ideas through narrative.</p>
     <div class="flex flex-col gap-6">
       {
         sortedStories.map((story) => (
           <article class="group">
             <a
               href={`/stories/${story.id}`}
-              class="block rounded-lg border border-border p-6 transition-all duration-300 ease-out hover:border-primary hover:scale-[0.98]"
+              class="block rounded-xl p-6 transition-all duration-300 ease-out glass-card hover:border-primary/40 hover:scale-[0.98]"
             >
               <h2 class="text-xl font-semibold text-foreground group-hover:underline">
                 {story.data.title}
@@ -35,11 +36,9 @@ const sortedStories = stories.sort((a, b) => b.data.pubDate.valueOf() - a.data.p
                 <span>{calculateReadTime(story.body || '').text}</span>
               </div>
               {story.data.tags.length > 0 && (
-                <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                <div class="mt-3 flex flex-wrap items-center gap-2">
                   {story.data.tags.map((tag) => (
-                    <span class="text-sm text-muted-foreground">
-                      <a href={`/blog?tag=${encodeURIComponent(tag)}`} class="hover:text-foreground transition-colors" onclick="event.stopPropagation()">#{tag}</a>
-                    </span>
+                    <span class="glass-pill rounded-full px-2.5 py-0.5 text-xs text-muted-foreground">#{tag}</span>
                   ))}
                 </div>
               )}
@@ -48,5 +47,5 @@ const sortedStories = stories.sort((a, b) => b.data.pubDate.valueOf() - a.data.p
         ))
       }
     </div>
-  </main>
+  </div>
 </BaseLayout>
