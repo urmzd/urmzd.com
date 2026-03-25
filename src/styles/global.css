@@ -948,10 +948,10 @@
   }
 
   .glass-panel {
-    background: oklch(1 0 0 / 1.5%);
+    background: oklch(0 0 0 / 1.5%);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border: 1px solid oklch(1 0 0 / 3%);
+    border: 1px solid oklch(0 0 0 / 3%);
     border-radius: 1.25rem;
     padding: 1.75rem 2.25rem;
     box-shadow: 0 4px 24px oklch(0 0 0 / 2%);
@@ -961,6 +961,46 @@
     background: oklch(1 0 0 / 1%);
     border-color: oklch(1 0 0 / 2.5%);
     box-shadow: 0 4px 24px oklch(0 0 0 / 8%);
+  }
+
+  .glass-card {
+    background: oklch(0 0 0 / 2%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid oklch(0 0 0 / 4%);
+    box-shadow: 0 2px 16px oklch(0 0 0 / 2%);
+  }
+
+  .dark .glass-card {
+    background: oklch(1 0 0 / 1.5%);
+    border-color: oklch(1 0 0 / 3%);
+    box-shadow: 0 4px 24px oklch(0 0 0 / 10%);
+  }
+
+  .glass-input {
+    background: oklch(0 0 0 / 3%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid oklch(0 0 0 / 5%);
+    box-shadow: 0 2px 20px oklch(0 0 0 / 3%);
+  }
+
+  .dark .glass-input {
+    background: oklch(1 0 0 / 2%);
+    border-color: oklch(1 0 0 / 4%);
+    box-shadow: 0 4px 28px oklch(0 0 0 / 12%);
+  }
+
+  .glass-pill {
+    background: oklch(0 0 0 / 2%);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid oklch(0 0 0 / 4%);
+  }
+
+  .dark .glass-pill {
+    background: oklch(1 0 0 / 1%);
+    border-color: oklch(1 0 0 / 3%);
   }
 
   .final-card-tagline {
@@ -1147,24 +1187,43 @@
 
   /* Project components */
   .project-card {
-    @apply rounded-xl border border-border bg-background p-6 transition-all;
-    box-shadow: 0 2px 12px oklch(0 0 0 / 3%);
-    content-visibility: auto;
-    contain-intrinsic-size: auto 200px;
+    @apply rounded-xl p-6 transition-all;
+    background: oklch(0 0 0 / 2%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid oklch(0 0 0 / 4%);
+    box-shadow: 0 2px 16px oklch(0 0 0 / 2%);
+  }
+
+  .dark .project-card {
+    background: oklch(1 0 0 / 1.5%);
+    border-color: oklch(1 0 0 / 3%);
+    box-shadow: 0 4px 24px oklch(0 0 0 / 10%);
   }
 
   .project-card:hover {
-    border-color: oklch(0.7 0 0 / 30%);
-    box-shadow: 0 8px 32px oklch(0 0 0 / 8%);
+    border-color: oklch(0 0 0 / 8%);
+    box-shadow: 0 8px 32px oklch(0 0 0 / 6%);
+    background: oklch(0 0 0 / 3.5%);
   }
 
   .dark .project-card:hover {
-    border-color: oklch(1 0 0 / 12%);
-    box-shadow: 0 8px 32px oklch(0 0 0 / 25%);
+    border-color: oklch(1 0 0 / 6%);
+    box-shadow: 0 8px 32px oklch(0 0 0 / 20%);
+    background: oklch(1 0 0 / 2.5%);
   }
 
   .tech-badge {
-    @apply rounded-full border border-border px-2.5 py-0.5 text-xs text-muted-foreground transition-colors;
+    @apply rounded-full px-2.5 py-0.5 text-xs text-muted-foreground transition-all;
+    background: oklch(0 0 0 / 2%);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid oklch(0 0 0 / 4%);
+  }
+
+  .dark .tech-badge {
+    background: oklch(1 0 0 / 1%);
+    border-color: oklch(1 0 0 / 3%);
   }
 
   .tech-badge:hover {
@@ -1223,7 +1282,7 @@
   }
 
   .blog-search-input {
-    @apply mb-2;
+    @apply mb-4;
   }
 
   .blog-search-count {
