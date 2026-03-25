@@ -3,6 +3,7 @@
 import { FileText, Github } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { ResearchItem } from '@/data/research';
+import ShareButton from './ShareButton';
 
 interface ResearchHeroProps {
   item: ResearchItem;
@@ -89,6 +90,11 @@ export default function ResearchHero({ item }: ResearchHeroProps) {
           <Github className="h-4 w-4" />
           View on GitHub
         </a>
+        <ShareButton
+          url={typeof window !== 'undefined' ? window.location.href : ''}
+          title={item.title}
+          description={item.tagline}
+        />
       </motion.div>
     </section>
   );

@@ -3,6 +3,7 @@
 import { Github } from 'lucide-react';
 import { motion } from 'motion/react';
 import type { Project } from '@/data/projects';
+import ShareButton from './ShareButton';
 import StatusBadge from './StatusBadge';
 
 interface ProjectHeroProps {
@@ -65,6 +66,11 @@ export default function ProjectHero({ project }: ProjectHeroProps) {
           <Github className="h-4 w-4" />
           View on GitHub
         </a>
+        <ShareButton
+          url={typeof window !== 'undefined' ? window.location.href : ''}
+          title={project.title}
+          description={project.tagline}
+        />
       </motion.div>
     </section>
   );
