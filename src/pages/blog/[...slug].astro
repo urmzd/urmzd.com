@@ -1,12 +1,10 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import ArticleLayout from '@/layouts/ArticleLayout.astro';
 import { getCollection, render } from 'astro:content';
 import { calculateReadTime } from '@/lib/readTime';
 import CodeBlockEnhancer from '@/components/CodeBlockEnhancer';
 import HeadingLinkEnhancer from '@/components/HeadingLinkEnhancer';
-import ShareButton from '@/components/ShareButton';
-import CopyMarkdownButton from '@/components/CopyMarkdownButton';
-import TableOfContents from '@/components/TableOfContents';
 import MobileTOC from '@/components/MobileTOC';
 
 export async function getStaticPaths() {
@@ -24,7 +22,6 @@ const readTime = calculateReadTime(post.body || '');
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://urmzd.com';
 const postUrl = `${siteUrl}/blog/${post.id}`;
 
-// Filter headings to h2 and h3 only
 const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 const showTOC = tocHeadings.length >= 3;
 ---
@@ -36,94 +33,36 @@ const showTOC = tocHeadings.length >= 3;
   publishedTime={post.data.pubDate}
   tags={post.data.tags}
 >
-  <article class="container mx-auto px-4 pt-24 pb-16">
-    <header class="mb-8">
-      <h1 class="text-4xl font-bold">{post.data.title}</h1>
-      <div class="mt-4 flex items-center gap-2">
-          <CopyMarkdownButton
-            client:load
-            postBody={post.body}
-            postFrontmatter={{
-              title: post.data.title,
-              description: post.data.description,
-              pubDate: post.data.pubDate.toISOString().split('T')[0],
-              updatedDate: post.data.updatedDate?.toISOString().split('T')[0],
-              heroImage: post.data.heroImage,
-              tags: post.data.tags,
-            }}
-            slug={post.id}
-          />
-<ShareButton
-            client:load
-            url={postUrl}
-            title={post.data.title}
-            description={post.data.description}
-            shareText={post.data.shareText}
-            postBody={post.body}
-            postFrontmatter={{
-              title: post.data.title,
-              description: post.data.description,
-              pubDate: post.data.pubDate.toISOString().split('T')[0],
-              updatedDate: post.data.updatedDate?.toISOString().split('T')[0],
-              heroImage: post.data.heroImage,
-              tags: post.data.tags,
-            }}
-            slug={post.id}
-          />
+  <ArticleLayout
+    title={post.data.title}
+    pubDate={post.data.pubDate}
+    updatedDate={post.data.updatedDate}
+    readTime={readTime.text}
+    tags={post.data.tags}
+    shareUrl={postUrl}
+    shareText={post.data.shareText}
+    body={post.body}
+    frontmatter={{
+      title: post.data.title,
+      description: post.data.description,
+      pubDate: post.data.pubDate.toISOString().split('T')[0],
+      updatedDate: post.data.updatedDate?.toISOString().split('T')[0],
+      heroImage: post.data.heroImage,
+      tags: post.data.tags,
+    }}
+    slug={post.id}
+  >
+    {showTOC && (
+      <div slot="before-content">
+        <MobileTOC client:load headings={tocHeadings} />
       </div>
-      <div class="mt-4 flex items-center gap-2 text-muted-foreground">
-        <time>
-          {
-            post.data.pubDate.toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              timeZone: 'UTC',
-            })
-          }
-        </time>
-        {
-          post.data.updatedDate && (
-            <>
-              <span>|</span>
-              <span>
-                Updated: <time>{post.data.updatedDate.toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  timeZone: 'UTC',
-                })}</time>
-              </span>
-            </>
-          )
-        }
-        <span>|</span>
-        <span>{readTime.text}</span>
-      </div>
-    </header>
+    )}
 
-    {
-      showTOC && (
-        <div class="lg:hidden">
-          <MobileTOC client:load headings={tocHeadings} />
-        </div>
-      )
-    }
+    <Content />
 
-    <div class={showTOC ? 'lg:grid lg:grid-cols-[1fr_250px] lg:gap-8' : ''}>
-      <div class="prose prose-neutral dark:prose-invert max-w-none">
-        <Content />
-      </div>
-
-      {
-        showTOC && (
-          <aside class="hidden lg:block">
-            <TableOfContents client:load headings={tocHeadings} />
-          </aside>
-        )
-      }
-    </div>
-  </article>
-  <CodeBlockEnhancer client:idle />
-  <HeadingLinkEnhancer client:load />
+    <Fragment slot="enhancers">
+      <CodeBlockEnhancer client:idle />
+      <HeadingLinkEnhancer client:load />
+    </Fragment>
+  </ArticleLayout>
 </BaseLayout>
