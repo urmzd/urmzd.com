@@ -74,7 +74,7 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
                 >
                   <h2 className="text-2xl font-semibold group-hover:text-primary">{post.title}</h2>
                   <p className="mt-2 text-muted-foreground">{post.description}</p>
-                  <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+                  <div className="mt-4 flex flex-col gap-1 text-sm text-muted-foreground sm:flex-row sm:items-center sm:gap-2">
                     <time>
                       {new Date(post.pubDate).toLocaleDateString('en-US', {
                         year: 'numeric',
@@ -85,7 +85,7 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
                     </time>
                     {post.readTime && (
                       <>
-                        <span>|</span>
+                        <span className="hidden sm:inline">|</span>
                         <span>{post.readTime}</span>
                       </>
                     )}
