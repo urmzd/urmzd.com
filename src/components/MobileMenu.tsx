@@ -4,8 +4,8 @@ import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '@/components/ui/button';
+import { navItems } from '@/data/navItems';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
-import { navItems } from './NavigationMenuDemo';
 
 function MenuPortal({
   open,

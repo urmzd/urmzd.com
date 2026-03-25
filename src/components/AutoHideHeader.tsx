@@ -1,6 +1,8 @@
 'use client';
 
+import { Search } from 'lucide-react';
 import { MotionConfig, motion } from 'motion/react';
+import { Button } from '@/components/ui/button';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
 import { MobileMenu } from './MobileMenu';
 import { ModeToggle } from './ModeToggle';
@@ -8,6 +10,10 @@ import NavigationMenuDemo from './NavigationMenuDemo';
 
 export default function AutoHideHeader() {
   const { isVisible } = useScrollDirection();
+
+  const openPalette = () => {
+    document.dispatchEvent(new CustomEvent('open-command-palette'));
+  };
 
   return (
     <MotionConfig reducedMotion="user">
@@ -27,8 +33,16 @@ export default function AutoHideHeader() {
             <NavigationMenuDemo />
           </div>
 
-          {/* Desktop theme toggle */}
-          <div className="hidden md:block">
+          <div className="hidden md:flex md:items-center md:gap-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={openPalette}
+              aria-label="Open command palette (⌘K)"
+            >
+              <Search />
+              <span className="sr-only">Search</span>
+            </Button>
             <ModeToggle />
           </div>
 
