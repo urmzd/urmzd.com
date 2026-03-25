@@ -47,12 +47,9 @@ const {
         title={title}
         description={frontmatter.description}
         shareText={shareText}
-        postBody={body}
-        postFrontmatter={frontmatter}
-        slug={slug}
       />
     </div>
-    <div class="mt-4 flex items-center gap-2 text-muted-foreground">
+    <div class="mt-4 flex flex-col gap-1 text-muted-foreground sm:flex-row sm:items-center sm:gap-2">
       <time>
         {
           pubDate.toLocaleDateString('en-US', {
@@ -63,29 +60,26 @@ const {
           })
         }
       </time>
-      {
-        updatedDate && (
-          <>
-            <span>|</span>
-            <span>
-              Updated: <time>{updatedDate.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                timeZone: 'UTC',
-              })}</time>
-            </span>
-          </>
-        )
-      }
-      <span>|</span>
+      <span class="hidden sm:inline">|</span>
       <span>{readTime}</span>
     </div>
+    {
+      updatedDate && (
+        <div class="mt-1 text-sm text-muted-foreground/70">
+          Updated: <time>{updatedDate.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            timeZone: 'UTC',
+          })}</time>
+        </div>
+      )
+    }
     {tags.length > 0 && (
-      <div class="mt-3 flex items-center gap-2">
+      <div class="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
         {tags.map((tag) => (
-          <span class="rounded-full border border-border px-3 py-0.5 text-xs text-muted-foreground">
-            {tag}
+          <span class="text-sm text-muted-foreground">
+            #{tag}
           </span>
         ))}
       </div>
