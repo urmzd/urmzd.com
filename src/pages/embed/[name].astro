@@ -1,0 +1,19 @@
+---
+import type { GetStaticPaths } from 'astro';
+import EmbedRenderer from '@/components/EmbedRenderer';
+import EmbedLayout from '@/layouts/EmbedLayout.astro';
+import { VISUAL_EMBEDS } from '@/lib/visualEmbeds';
+
+export const getStaticPaths: GetStaticPaths = () => {
+  return Object.entries(VISUAL_EMBEDS).map(([name, meta]) => ({
+    params: { name },
+    props: { componentName: meta.component, alt: meta.alt },
+  }));
+};
+
+const { componentName, alt } = Astro.props;
+---
+
+<EmbedLayout title={alt}>
+  <EmbedRenderer name={componentName} client:load />
+</EmbedLayout>
