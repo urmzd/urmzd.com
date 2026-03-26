@@ -64,7 +64,8 @@ export const projects: Project[] = [
       },
       {
         title: '15 Agent Skills',
-        description: 'Portable agentskills.io specs auto-synced to four AI coding agents.',
+        description:
+          'Portable agentskills.io specs auto-synced to Claude Code, Codex, Gemini, and Copilot.',
         icon: 'Brain',
       },
       {
@@ -79,12 +80,13 @@ export const projects: Project[] = [
       },
       {
         title: 'Neovim + LSP',
-        description: 'Lua-based Neovim config with LSP for all included languages.',
+        description: 'Lua-based Neovim config with full LSP support for all included languages.',
         icon: 'Code',
       },
       {
         title: 'Automation Hooks',
-        description: 'chezmoi scripts auto-rebuild flakes, regenerate completions, sync skills.',
+        description:
+          'chezmoi scripts auto-rebuild flakes, regenerate shell completions, and sync agent skills.',
         icon: 'RefreshCw',
       },
     ],
@@ -106,7 +108,8 @@ export const projects: Project[] = [
     features: [
       {
         title: 'Multi-Provider AI',
-        description: 'Anthropic, OpenAI, Google, and Ollama backends with automatic fallback.',
+        description:
+          'Anthropic, OpenAI, Google, and Ollama backends with automatic fallback chain.',
         icon: 'Brain',
       },
       {
@@ -116,7 +119,8 @@ export const projects: Project[] = [
       },
       {
         title: 'Multi-Agent Review',
-        description: 'Parallel AI agents score and critique resume content independently.',
+        description:
+          'Parallel AI agents independently score and critique resume content with feedback.',
         icon: 'Eye',
       },
       {
@@ -142,7 +146,7 @@ export const projects: Project[] = [
     title: 'sr',
     tagline: 'AI-powered release engineering CLI in Rust',
     description:
-      'Rust CLI handling the full release lifecycle: AI-generated atomic commits, sandboxed code review, PR generation, interactive rebase, and automated semver releases with changelog generation. AI agents run in a strict read-only sandbox with working tree snapshots for safe rollback.',
+      'Rust CLI handling the full release lifecycle: AI-generated atomic commits, code review, PR generation, interactive rebase, branch naming, and automated semver releases. Three AI backends (Claude, Copilot, Gemini) run in a strict read-only sandbox with working tree snapshots for safe rollback.',
     status: 'active',
     githubUrl: 'https://github.com/urmzd/sr',
     tech: [{ name: 'Rust', icon: 'rust' }],
@@ -159,23 +163,26 @@ export const projects: Project[] = [
       },
       {
         title: 'AI Code Review',
-        description: 'Severity-based feedback on staged changes with multi-backend support.',
+        description:
+          'Severity-based AI feedback on staged changes using configurable multi-provider backends.',
         icon: 'Eye',
       },
       {
         title: 'Automated Releases',
-        description: 'Conventional commit parsing, semver bumps, changelogs, and GitHub releases.',
+        description:
+          'Conventional commit parsing, semver bumps, changelog generation, and GitHub releases.',
         icon: 'Tag',
       },
       {
         title: 'Version File Bumping',
-        description: 'Auto-updates Cargo.toml, package.json, pyproject.toml, pom.xml, and Go.',
+        description:
+          'Auto-updates version strings in Cargo.toml, package.json, pyproject.toml, and Go modules.',
         icon: 'FileText',
       },
       {
-        title: 'GitHub Action',
-        description: 'First-class Action with artifact uploads, build hooks, and JSON output.',
-        icon: 'Code',
+        title: 'AI Interactive Rebase',
+        description: 'AI-powered reword, squash, and reorder of commits via intelligent rebase.',
+        icon: 'GitMerge',
       },
     ],
     hasDetailPage: true,
@@ -204,7 +211,7 @@ export const projects: Project[] = [
     title: 'GitHub Insights',
     tagline: 'Composable SVG profile visualizations',
     description:
-      'TypeScript pipeline generating composable SVG sections for GitHub profile READMEs: language velocity streamgraphs, contribution radar charts, project constellation maps, and open-source impact trails. Uses AI for project classification and preamble generation, with dual-theme CSS adapting to light/dark mode.',
+      'TypeScript pipeline generating composable SVG visualizations for GitHub profile READMEs: language velocity streamgraphs, contribution radar charts, project constellation maps, and open-source impact trails. Features AI project classification via GitHub Models, preamble generation, and an interactive Ink-based TUI with live progress.',
     status: 'active',
     githubUrl: 'https://github.com/urmzd/github-insights',
     tech: [
@@ -220,12 +227,13 @@ export const projects: Project[] = [
       },
       {
         title: 'Contribution Rhythm',
-        description: 'Radar chart revealing day-of-week commit patterns with streak stats.',
+        description: 'Radar chart revealing day-of-week commit patterns with streak and PR stats.',
         icon: 'Activity',
       },
       {
         title: 'Project Constellation',
-        description: 'Visual map positioning repos by language ecosystem and complexity.',
+        description:
+          'Visual map positioning repos by language ecosystem and relative complexity level.',
         icon: 'Layers',
       },
       {
@@ -239,9 +247,10 @@ export const projects: Project[] = [
         icon: 'Image',
       },
       {
-        title: 'Composable Sections',
-        description: 'Pick and order sections via config presets or explicit section lists.',
-        icon: 'Settings',
+        title: 'Interactive TUI',
+        description:
+          'Ink-based terminal UI with live progress tracking, spinners, and phase timing.',
+        icon: 'Terminal',
       },
     ],
     hasDetailPage: true,
@@ -292,7 +301,8 @@ export const projects: Project[] = [
       },
       {
         title: 'Zero-Dep TS Client',
-        description: 'Fully typed TypeScript clients generated with no runtime dependencies.',
+        description:
+          'Fully typed TypeScript clients generated with zero runtime dependencies or polyfills.',
         icon: 'Code',
       },
       {
@@ -302,12 +312,14 @@ export const projects: Project[] = [
       },
       {
         title: 'SSE Streaming',
-        description: 'First-class server-sent events via AsyncGenerator and StreamingResponse.',
+        description:
+          'First-class server-sent events support via AsyncGenerator and StreamingResponse APIs.',
         icon: 'RefreshCw',
       },
       {
         title: 'Three Layout Modes',
-        description: 'Bundled, modular, or split-by-tag file organization per generator.',
+        description:
+          'Bundled, modular, or split-by-tag file organization configurable per each generator.',
         icon: 'Layout',
       },
       {
@@ -333,7 +345,7 @@ export const projects: Project[] = [
     title: 'Linear Genetic Programming',
     tagline: 'Rust LGP framework with Q-Learning integration',
     description:
-      'Cargo workspace implementing linear genetic programming as a trait-based Rust library with a CLI for experiment automation. Supports RL environments (CartPole, MountainCar) and classification tasks (Iris) with Q-Learning integration, Rayon-powered parallel fitness evaluation, and structured tracing for experiment diagnostics.',
+      'Cargo workspace implementing linear genetic programming as a trait-based Rust library with a CLI for experiment automation. Supports RL environments (CartPole, MountainCar) and classification tasks (Iris) with Q-Learning integration, Rayon-powered parallel evaluation, and built-in hyperparameter search.',
     status: 'active',
     githubUrl: 'https://github.com/urmzd/linear-gp',
     tech: [
@@ -350,7 +362,8 @@ export const projects: Project[] = [
       },
       {
         title: 'Parallel Evaluation',
-        description: 'Rayon-powered fitness evaluation across all available CPU cores.',
+        description:
+          'Rayon-powered parallel fitness evaluation distributing work across all CPU cores.',
         icon: 'Cpu',
       },
       {
@@ -365,13 +378,14 @@ export const projects: Project[] = [
       },
       {
         title: 'Structured Tracing',
-        description: 'Multi-level tracing with JSON output for log aggregation systems.',
+        description: 'Multi-level structured tracing with JSON output for log aggregation systems.',
         icon: 'BarChart3',
       },
       {
-        title: 'TOML Configs',
-        description: 'Declarative experiment configs with per-environment parameter overrides.',
-        icon: 'Settings',
+        title: 'Hyperparameter Search',
+        description:
+          'Built-in random search with parallel Rayon evaluation and optimal config export.',
+        icon: 'Search',
       },
     ],
     hasDetailPage: true,
@@ -400,6 +414,342 @@ export const projects: Project[] = [
         },
       ],
     },
+  },
+  {
+    slug: 'llmem',
+    title: 'llmem',
+    tagline: 'Tool-agnostic AI agent memory ecosystem in Rust',
+    description:
+      'Rust CLI and library providing two-level (project + global) AI agent memory with plain markdown files. Features semantic search via HNSW/IVF-Flat ANN indexes, tree-sitter code indexing, Ollama embeddings, a RAG server, and context switching — works with Claude Code, Codex, Gemini, and Copilot.',
+    status: 'active',
+    githubUrl: 'https://github.com/urmzd/llmem',
+    tech: [{ name: 'Rust', icon: 'rust' }],
+    features: [
+      {
+        title: 'Two-Level Memory',
+        description:
+          'Project and global memory scopes with automatic precedence and conflict resolution.',
+        icon: 'Layers',
+      },
+      {
+        title: 'Semantic Search',
+        description: 'HNSW and IVF-Flat ANN indexes for fast nearest-neighbor memory retrieval.',
+        icon: 'Search',
+      },
+      {
+        title: 'Code Indexing',
+        description:
+          'Tree-sitter chunking for Rust, Python, JavaScript, TypeScript, and Go source files.',
+        icon: 'Code',
+      },
+      {
+        title: 'Typed Memories',
+        description:
+          'Four memory types: user preferences, feedback corrections, project context, and references.',
+        icon: 'Tag',
+      },
+      {
+        title: 'RAG Server',
+        description:
+          'Optional HTTP server with hot-reload for memory search and context switching.',
+        icon: 'Server',
+      },
+      {
+        title: 'Tool Agnostic',
+        description: 'Works with Claude Code, Codex, Gemini, Copilot, Cursor, or plain markdown.',
+        icon: 'Plug',
+      },
+    ],
+    hasDetailPage: false,
+  },
+  {
+    slug: 'saige',
+    title: 'saige',
+    tagline: 'Unified Go SDK for AI agents, KG, and RAG',
+    description:
+      'Go SDK unifying streaming AI agents, knowledge graph construction, and RAG pipelines under shared Provider, Embedder, and Tool interfaces. Features 15-event delta streaming, sub-agent delegation, conversation tree persistence, multi-retriever fusion via Reciprocal Rank Fusion, and 9 built-in evaluation metrics.',
+    status: 'active',
+    githubUrl: 'https://github.com/urmzd/saige',
+    tech: [
+      { name: 'Go', icon: 'go' },
+      { name: 'PostgreSQL', icon: 'postgresql' },
+    ],
+    features: [
+      {
+        title: 'Streaming Agent Loop',
+        description:
+          'Fifteen typed delta events with parallel tool execution and sub-agent delegation.',
+        icon: 'Activity',
+      },
+      {
+        title: 'Knowledge Graph',
+        description:
+          'LLM-powered entity extraction with fuzzy deduplication and temporal relation tracking.',
+        icon: 'Share2',
+      },
+      {
+        title: 'Multi-Retriever RAG',
+        description: 'Vector, BM25, and graph retrieval fused via Reciprocal Rank Fusion.',
+        icon: 'Search',
+      },
+      {
+        title: 'Conversation Tree',
+        description:
+          'Branching conversation graph with checkpoints, rewind, archive, and RLHF feedback.',
+        icon: 'GitBranch',
+      },
+      {
+        title: 'Provider Resilience',
+        description: 'Four LLM backends with retry and fallback composition out of the box.',
+        icon: 'Shield',
+      },
+      {
+        title: 'Evaluation Metrics',
+        description:
+          'Nine built-in metrics covering retrieval precision, generation faithfulness, and LLM judging.',
+        icon: 'BarChart3',
+      },
+    ],
+    hasDetailPage: false,
+  },
+  {
+    slug: 'zoro',
+    title: 'Zoro',
+    tagline: 'Privacy-first AI research agent with local knowledge graph',
+    description:
+      'Desktop app and web tool for privacy-first AI research, building a persistent knowledge graph entirely on your machine. Uses local Ollama inference, managed SurrealDB for graph storage, SearXNG for web search, and a Wails-embedded Next.js frontend — no data leaves your device.',
+    status: 'active',
+    githubUrl: 'https://github.com/urmzd/zoro',
+    tech: [
+      { name: 'TypeScript', icon: 'typescript' },
+      { name: 'Go', icon: 'go' },
+      { name: 'Next.js', icon: 'nextdotjs' },
+    ],
+    features: [
+      {
+        title: 'Fully Local',
+        description: 'All LLM inference runs on-device via Ollama with no cloud dependencies.',
+        icon: 'Lock',
+      },
+      {
+        title: 'Knowledge Graph',
+        description:
+          'SurrealDB-backed persistent knowledge graph with LLM entity extraction and relationship tracking.',
+        icon: 'Share2',
+      },
+      {
+        title: 'Private Web Search',
+        description:
+          'Managed SearXNG subprocess provides private web search without external API keys.',
+        icon: 'Globe',
+      },
+      {
+        title: 'Desktop App',
+        description: 'Wails native binary embeds Next.js frontend with no network ports required.',
+        icon: 'Monitor',
+      },
+      {
+        title: 'Auto-Provisioning',
+        description:
+          'SurrealDB and SearXNG downloaded and managed automatically on first desktop launch.',
+        icon: 'Download',
+      },
+      {
+        title: 'OpenAPI Client',
+        description:
+          'Generated frontend API client from OpenAPI spec ensures type-safe backend integration.',
+        icon: 'FileText',
+      },
+    ],
+    hasDetailPage: false,
+  },
+  {
+    slug: 'teasr',
+    title: 'teasr',
+    tagline: 'Automated showcase capture from web, terminal, and desktop',
+    description:
+      'Rust CLI that captures screenshots and animated GIFs from web apps, terminal sessions, desktop windows, and local files via a declarative TOML config. Uses Chrome DevTools Protocol for web, PTY scripting for terminal, and gifski for pure-Rust GIF encoding — single binary, no runtime dependencies.',
+    status: 'active',
+    githubUrl: 'https://github.com/urmzd/teasr',
+    tech: [{ name: 'Rust', icon: 'rust' }],
+    features: [
+      {
+        title: 'Four Capture Modes',
+        description:
+          'Web, terminal, screen, and file capture modes with unified interaction syntax.',
+        icon: 'Camera',
+      },
+      {
+        title: 'Terminal Rendering',
+        description:
+          'ANSI-to-SVG-to-PNG pipeline with dracula/monokai themes and macOS window chrome.',
+        icon: 'Terminal',
+      },
+      {
+        title: 'Pure Rust GIFs',
+        description: 'Animated GIF encoding via gifski with no FFmpeg or ImageMagick dependency.',
+        icon: 'Film',
+      },
+      {
+        title: 'Declarative Config',
+        description:
+          'TOML-based scene definitions with interactions like click, type, hover, and scroll.',
+        icon: 'Settings',
+      },
+      {
+        title: 'Server Lifecycle',
+        description: 'Starts dev servers before capture and kills process groups cleanly on exit.',
+        icon: 'Play',
+      },
+      {
+        title: 'GitHub Action',
+        description:
+          'First-class CI Action with Chrome auto-install and cross-platform runner support.',
+        icon: 'Code',
+      },
+    ],
+    hasDetailPage: false,
+  },
+  {
+    slug: 'embed-src',
+    title: 'embed-src',
+    tagline: 'Sync code snippets into docs via comment markers',
+    description:
+      'Rust CLI and GitHub Action that embeds source file contents into any document using comment markers. Supports markdown, Python, Rust, Go, SQL, and CSS comment styles with optional code fence wrapping. Idempotent re-runs, dry-run mode, and CI verification ensure documentation stays synchronized with source code.',
+    status: 'active',
+    githubUrl: 'https://github.com/urmzd/embed-src',
+    tech: [{ name: 'Rust', icon: 'rust' }],
+    features: [
+      {
+        title: 'Universal Markers',
+        description: 'Works with any comment style: HTML, Python, Rust, Go, SQL, CSS, and Lua.',
+        icon: 'FileText',
+      },
+      {
+        title: 'Auto Fencing',
+        description:
+          'Optional code fence wrapping with language auto-detection from file extension.',
+        icon: 'Code',
+      },
+      {
+        title: 'Idempotent Updates',
+        description:
+          'Re-running replaces existing content between markers without duplication or drift.',
+        icon: 'RefreshCw',
+      },
+      {
+        title: 'CI Verification',
+        description: 'Verify mode checks files are up-to-date and fails CI on drift.',
+        icon: 'CheckCircle',
+      },
+      {
+        title: 'GitHub Action',
+        description:
+          'Drop-in Action with configurable commit messages, author details, and push behavior.',
+        icon: 'GitBranch',
+      },
+      {
+        title: 'Dry Run',
+        description: 'Preview all embedding changes without writing files or creating any commits.',
+        icon: 'Eye',
+      },
+    ],
+    hasDetailPage: false,
+  },
+  {
+    slug: 'zigbee-rest',
+    title: 'zigbee-rest',
+    tagline: 'Local-first Zigbee control via REST API and CLI',
+    description:
+      'Go REST API and CLI for direct Zigbee device control via EZSP serial protocol — no Zigbee2MQTT or cloud dependencies required. Features real-time SSE device discovery, JSON-first CLI output for scripting, Swagger documentation, multi-profile support, and cross-platform binaries for Linux and macOS.',
+    status: 'active',
+    githubUrl: 'https://github.com/urmzd/zigbee-rest',
+    tech: [{ name: 'Go', icon: 'go' }],
+    features: [
+      {
+        title: 'Direct EZSP Protocol',
+        description:
+          'Communicates with Zigbee devices via serial EZSP protocol without MQTT brokers.',
+        icon: 'Radio',
+      },
+      {
+        title: 'REST API',
+        description:
+          'Full device management API with Swagger documentation and Gin-powered routing.',
+        icon: 'Server',
+      },
+      {
+        title: 'SSE Discovery',
+        description:
+          'Real-time Server-Sent Events streaming for device pairing and discovery event notifications.',
+        icon: 'Wifi',
+      },
+      {
+        title: 'JSON CLI',
+        description: 'All CLI output is structured JSON to stdout for scripting and piping.',
+        icon: 'Terminal',
+      },
+      {
+        title: 'Agent Integration',
+        description: 'AGENTS.md and Claude Code skill enable AI agents to control smart devices.',
+        icon: 'Brain',
+      },
+      {
+        title: 'Cross-Platform',
+        description:
+          'Pre-built binaries for Linux and macOS on both amd64 and arm64 architectures.',
+        icon: 'Monitor',
+      },
+    ],
+    hasDetailPage: false,
+  },
+  {
+    slug: 'languide',
+    title: 'Languide',
+    tagline: 'Scenario-based language learning PDF generator',
+    description:
+      'Python CLI that generates comprehensive language learning PDFs from structured markdown chapters. Each guide covers 11 scenarios — greetings, restaurants, hotels, transport, emergencies — with pattern templates, politeness tiers, and CJK font support. AI-assisted chapter generation via Claude Code produces 50+ phrases per scenario.',
+    status: 'active',
+    githubUrl: 'https://github.com/urmzd/languide',
+    tech: [{ name: 'Python', icon: 'python' }],
+    features: [
+      {
+        title: 'Scenario Chapters',
+        description:
+          'Eleven structured chapters covering core phrases, transport, restaurants, and cultural guides.',
+        icon: 'BookOpen',
+      },
+      {
+        title: 'Pattern Templates',
+        description:
+          'Bracket-slot phrase patterns with substitutable vocabulary for flexible real-world usage.',
+        icon: 'FileText',
+      },
+      {
+        title: 'Politeness Tiers',
+        description: 'Casual, polite, and very polite variants for every phrase collection.',
+        icon: 'MessageSquare',
+      },
+      {
+        title: 'PDF Generation',
+        description:
+          'Pandoc and XeLaTeX pipeline producing polished PDFs with full Unicode rendering.',
+        icon: 'Printer',
+      },
+      {
+        title: 'CJK Support',
+        description:
+          'Auto-detection and installation of CJK fonts for Japanese, Chinese, and Korean.',
+        icon: 'Globe',
+      },
+      {
+        title: 'AI Generation',
+        description:
+          'Claude Code skill automates full chapter generation with quality checklist validation.',
+        icon: 'Brain',
+      },
+    ],
+    hasDetailPage: false,
   },
 ];
 
