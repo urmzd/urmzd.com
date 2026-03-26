@@ -82,4 +82,9 @@ self.addEventListener('fetch', (event) => {
     );
     return;
   }
+
+  // Everything else (fonts, SVGs, etc.): network-first
+  event.respondWith(
+    fetch(request).catch(() => caches.match(request))
+  );
 });
