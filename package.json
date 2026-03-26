@@ -14,6 +14,7 @@
     "format:check": "biome format .",
     "generate-icons": "node scripts/generate-icons.mjs",
     "generate-visual-previews": "node scripts/generate-visual-previews.mjs",
+    "generate-reposts": "npx tsx scripts/generate-reposts.ts",
     "prepare": "husky"
   },
   "dependencies": {
