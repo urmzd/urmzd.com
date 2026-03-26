@@ -46,9 +46,9 @@ export const projects: Project[] = [
   {
     slug: 'dotfiles',
     title: 'Dotfiles',
-    tagline: 'Cross-platform dev environment via chezmoi + Nix',
+    tagline: 'Unified Nix dev shell with 15+ languages',
     description:
-      'A portable, reproducible development environment managed by chezmoi and Nix flakes. Includes 13 composable dev shells, agent skills for AI tools (Claude Code, Codex, Gemini, Copilot), terminal configuration, and automated bootstrap for macOS and Linux.',
+      'One-command bootstrap to a fully configured machine via chezmoi and Nix flakes. A single unified dev shell provides 15+ languages and 40+ tools, with 15 portable agent skills auto-synced to Claude Code, Codex, Gemini, and Copilot.',
     status: 'active',
     githubUrl: 'https://github.com/urmzd/dotfiles',
     tech: [
@@ -58,38 +58,33 @@ export const projects: Project[] = [
     ],
     features: [
       {
-        title: 'Nix Dev Shells',
-        description:
-          '13 composable, reproducible development shells — one per language, all shareable via flakes.',
+        title: 'Unified Nix Shell',
+        description: 'Single flake providing 15+ languages and 40+ tools via direnv activation.',
         icon: 'Boxes',
       },
       {
-        title: 'Agent Skills',
-        description:
-          'Portable standards distributed to Claude Code, Codex, Gemini, and Copilot via npx skills.',
+        title: '15 Agent Skills',
+        description: 'Portable agentskills.io specs auto-synced to four AI coding agents.',
         icon: 'Brain',
       },
       {
         title: 'Cross-Platform',
-        description:
-          'chezmoi templates adapt to macOS and Linux with platform-specific guards and feature flags.',
+        description: 'chezmoi templates with platform guards adapt to macOS and Linux.',
         icon: 'Monitor',
       },
       {
         title: 'One-Command Bootstrap',
-        description:
-          'Single script installs Nix, chezmoi, and applies the full environment from scratch.',
+        description: 'Single curl installs Nix, chezmoi, and applies the full environment.',
         icon: 'Terminal',
       },
       {
-        title: 'Neovim Config',
-        description: 'Full Lua-based Neovim setup with LSP, tree-sitter, and plugin management.',
+        title: 'Neovim + LSP',
+        description: 'Lua-based Neovim config with LSP for all included languages.',
         icon: 'Code',
       },
       {
-        title: 'Automated Maintenance',
-        description:
-          'chezmoi hooks auto-install packages, generate completions, and check flake freshness.',
+        title: 'Automation Hooks',
+        description: 'chezmoi scripts auto-rebuild flakes, regenerate completions, sync skills.',
         icon: 'RefreshCw',
       },
     ],
@@ -97,12 +92,12 @@ export const projects: Project[] = [
   },
   {
     slug: 'resume-generator',
-    title: 'Resume Generator',
-    tagline: 'Data-driven resumes with AI assessment',
+    title: 'Incipit',
+    tagline: 'Resume CLI with multi-provider AI review',
     description:
-      'A data-driven CLI tool that converts YAML, JSON, or TOML resume data into polished PDFs, DOCX, HTML, LaTeX, and Markdown — with multi-agent AI assessment via Ollama for automated resume feedback and scoring.',
+      'Go CLI that converts JSON/Markdown resumes into PDF, HTML, LaTeX, DOCX, and Markdown via modular templates. Includes multi-provider AI (Anthropic, OpenAI, Google, Ollama) for resume creation from plain text, multi-agent review with scoring, and job-targeted optimization.',
     status: 'active',
-    githubUrl: 'https://github.com/urmzd/resume-generator',
+    githubUrl: 'https://github.com/urmzd/incipit',
     tech: [
       { name: 'Go', icon: 'go' },
       { name: 'Cobra', icon: 'go' },
@@ -110,87 +105,83 @@ export const projects: Project[] = [
     ],
     features: [
       {
-        title: 'Multi-Format Input',
-        description: 'Define your resume in YAML, JSON, or TOML — whichever fits your workflow.',
-        icon: 'FileInput',
-      },
-      {
-        title: 'Rich Output Formats',
-        description: 'Export to PDF, HTML, DOCX, LaTeX, or Markdown with a single command.',
-        icon: 'FileOutput',
-      },
-      {
-        title: 'AI Assessment',
-        description:
-          'Multi-agent AI evaluation via Ollama provides automated feedback and scoring on your resume.',
+        title: 'Multi-Provider AI',
+        description: 'Anthropic, OpenAI, Google, and Ollama backends with automatic fallback.',
         icon: 'Brain',
       },
       {
-        title: 'CLI First',
-        description:
-          'Powerful command-line interface via Cobra for scripting and CI/CD integration.',
-        icon: 'Terminal',
+        title: 'AI Resume Creation',
+        description: 'Converts plain text into structured JSON resume via LLM extraction.',
+        icon: 'FileInput',
       },
       {
-        title: 'Template Engine',
-        description: 'Go template system with custom functions for flexible resume layouts.',
+        title: 'Multi-Agent Review',
+        description: 'Parallel AI agents score and critique resume content independently.',
+        icon: 'Eye',
+      },
+      {
+        title: 'Job Optimization',
+        description: 'Tailors resume content to a specific job description via AI rewriting.',
+        icon: 'Zap',
+      },
+      {
+        title: 'Modular Templates',
+        description: 'Pluggable template system with LaTeX, HTML, DOCX, and Markdown renderers.',
         icon: 'Layout',
       },
       {
-        title: 'Agent Skill',
-        description: 'Usable as an agent skill for integration into AI-powered workflows.',
-        icon: 'Zap',
+        title: 'Five Output Formats',
+        description: 'PDF (via Chromium or TeX), HTML, DOCX, LaTeX, and Markdown output.',
+        icon: 'FileOutput',
       },
     ],
     hasDetailPage: true,
   },
   {
     slug: 'semantic-release',
-    title: 'Semantic Release',
-    tagline: 'Trunk-based semantic versioning CLI',
+    title: 'sr',
+    tagline: 'AI-powered release engineering CLI in Rust',
     description:
-      'A configurable trunk-based semantic release CLI for Rust — analyzes conventional commits, determines version bumps, generates changelogs, creates git tags, and publishes GitHub releases.',
+      'Rust CLI handling the full release lifecycle: AI-generated atomic commits, sandboxed code review, PR generation, interactive rebase, and automated semver releases with changelog generation. AI agents run in a strict read-only sandbox with working tree snapshots for safe rollback.',
     status: 'active',
-    githubUrl: 'https://github.com/urmzd/semantic-release',
+    githubUrl: 'https://github.com/urmzd/sr',
     tech: [{ name: 'Rust', icon: 'rust' }],
     features: [
       {
-        title: 'Conventional Commits',
-        description:
-          'Parses commit messages following the conventional commits spec to determine version bumps.',
+        title: 'AI Atomic Commits',
+        description: 'Analyzes diffs and generates grouped conventional commits via LLM agents.',
         icon: 'GitBranch',
       },
       {
-        title: 'Semantic Versioning',
-        description: 'Automatically calculates the next semver version based on commit types.',
+        title: 'Sandboxed AI Agents',
+        description: 'Read-only tool permissions with working tree snapshots for safe rollback.',
+        icon: 'Shield',
+      },
+      {
+        title: 'AI Code Review',
+        description: 'Severity-based feedback on staged changes with multi-backend support.',
+        icon: 'Eye',
+      },
+      {
+        title: 'Automated Releases',
+        description: 'Conventional commit parsing, semver bumps, changelogs, and GitHub releases.',
         icon: 'Tag',
       },
       {
-        title: 'Changelog Generation',
-        description: 'Produces structured changelogs from your commit history.',
+        title: 'Version File Bumping',
+        description: 'Auto-updates Cargo.toml, package.json, pyproject.toml, pom.xml, and Go.',
         icon: 'FileText',
       },
       {
-        title: 'Dry Run Mode',
-        description: 'Preview what would happen without making any changes using `sr plan`.',
-        icon: 'Zap',
-      },
-      {
-        title: 'Configurable Rules',
-        description:
-          'Customize version bump rules and changelog formatting to match your workflow.',
-        icon: 'Settings',
-      },
-      {
-        title: 'CI/CD Ready',
-        description: 'Designed for automation — runs headlessly in any CI pipeline.',
+        title: 'GitHub Action',
+        description: 'First-class Action with artifact uploads, build hooks, and JSON output.',
         icon: 'Code',
       },
     ],
     hasDetailPage: true,
     demo: {
       kind: 'terminal',
-      title: 'semantic-release',
+      title: 'sr',
       lines: [
         { type: 'command', text: 'sr plan' },
         { type: 'output', text: 'Analyzing commits since v1.2.0...' },
@@ -210,12 +201,12 @@ export const projects: Project[] = [
   },
   {
     slug: 'github-metrics',
-    title: 'GitHub Metrics',
-    tagline: 'Visualize your GitHub activity',
+    title: 'GitHub Insights',
+    tagline: 'Composable SVG profile visualizations',
     description:
-      'A TypeScript tool that collects and visualizes GitHub contribution metrics and activity data. Generates beautiful SVG charts showing language usage, expertise areas, contribution pulse, and more — perfect for embedding in your profile README.',
+      'TypeScript pipeline generating composable SVG sections for GitHub profile READMEs: language velocity streamgraphs, contribution radar charts, project constellation maps, and open-source impact trails. Uses AI for project classification and preamble generation, with dual-theme CSS adapting to light/dark mode.',
     status: 'active',
-    githubUrl: 'https://github.com/urmzd/github-metrics',
+    githubUrl: 'https://github.com/urmzd/github-insights',
     tech: [
       { name: 'TypeScript', icon: 'typescript' },
       { name: 'Node.js', icon: 'nodedotjs' },
@@ -223,34 +214,34 @@ export const projects: Project[] = [
     ],
     features: [
       {
-        title: 'Language Breakdown',
-        description: 'Visualize your most-used programming languages across all repositories.',
+        title: 'Language Velocity',
+        description: 'Streamgraph SVG showing language usage evolution over the past year.',
         icon: 'BarChart3',
       },
       {
-        title: 'Contribution Pulse',
-        description: 'Track your contribution activity over time with pulse charts.',
+        title: 'Contribution Rhythm',
+        description: 'Radar chart revealing day-of-week commit patterns with streak stats.',
         icon: 'Activity',
       },
       {
-        title: 'Expertise Areas',
-        description: 'Identify and display your areas of technical expertise.',
+        title: 'Project Constellation',
+        description: 'Visual map positioning repos by language ecosystem and complexity.',
         icon: 'Layers',
       },
       {
-        title: 'SVG Output',
-        description: 'Generates crisp, scalable SVG charts that look great everywhere.',
+        title: 'AI Classification',
+        description: 'GitHub Models classify repos by status and purpose with AI summaries.',
+        icon: 'Brain',
+      },
+      {
+        title: 'Dual Theme SVGs',
+        description: 'CSS prefers-color-scheme adapts all charts to light and dark mode.',
         icon: 'Image',
       },
       {
-        title: 'GitHub Actions',
-        description: 'Runs automatically via GitHub Actions to keep metrics up to date.',
-        icon: 'RefreshCw',
-      },
-      {
-        title: 'Profile Ready',
-        description: 'Embed directly in your GitHub profile README for instant visibility.',
-        icon: 'Github',
+        title: 'Composable Sections',
+        description: 'Pick and order sections via config presets or explicit section lists.',
+        icon: 'Settings',
       },
     ],
     hasDetailPage: true,
@@ -282,12 +273,12 @@ export const projects: Project[] = [
   },
   {
     slug: 'openapi-generator',
-    title: 'OpenAPI Generator',
-    tagline: 'OpenAPI 3.x to TypeScript & React code generator',
+    title: 'oag',
+    tagline: 'OpenAPI 3.x codegen with plugin architecture',
     description:
-      'A Rust-powered code generator that turns OpenAPI 3.x specs into zero-dependency TypeScript clients, SWR hooks, and SSE streaming utilities for React applications.',
+      'Rust-powered OpenAPI 3.x code generator with a plugin-style architecture: TypeScript clients with zero runtime dependencies, React SWR hooks, Python FastAPI server stubs with Pydantic v2, and first-class SSE streaming via AsyncGenerator. Supports three layout modes, automated test generation, and full $ref resolution.',
     status: 'active',
-    githubUrl: 'https://github.com/urmzd/openapi-generator',
+    githubUrl: 'https://github.com/urmzd/oag',
     tech: [
       { name: 'Rust', icon: 'rust' },
       { name: 'TypeScript', icon: 'typescript' },
@@ -295,34 +286,34 @@ export const projects: Project[] = [
     ],
     features: [
       {
-        title: 'Zero-Dependency Clients',
-        description: 'Generates fully typed TypeScript clients with no runtime dependencies.',
+        title: 'Plugin Architecture',
+        description: 'Enable only the generators you need: TS client, React, or FastAPI.',
+        icon: 'Layers',
+      },
+      {
+        title: 'Zero-Dep TS Client',
+        description: 'Fully typed TypeScript clients generated with no runtime dependencies.',
         icon: 'Code',
       },
       {
-        title: 'SWR Hooks',
-        description: 'Auto-generates React SWR hooks for data fetching from your API spec.',
-        icon: 'RefreshCw',
+        title: 'FastAPI Server Stubs',
+        description: 'Python server stubs with Pydantic v2 models and pytest test generation.',
+        icon: 'Server',
       },
       {
         title: 'SSE Streaming',
-        description: 'Built-in support for server-sent events streaming in generated code.',
-        icon: 'Radio',
+        description: 'First-class server-sent events via AsyncGenerator and StreamingResponse.',
+        icon: 'RefreshCw',
       },
       {
-        title: 'OpenAPI 3.x',
-        description: 'Full support for OpenAPI 3.0 and 3.1 specifications.',
+        title: 'Three Layout Modes',
+        description: 'Bundled, modular, or split-by-tag file organization per generator.',
+        icon: 'Layout',
+      },
+      {
+        title: 'Full $ref Resolution',
+        description: 'Complete OpenAPI 3.x $ref resolution across nested schemas and paths.',
         icon: 'FileText',
-      },
-      {
-        title: 'Type Safety',
-        description: 'Produces fully typed code with proper interfaces and validation.',
-        icon: 'Shield',
-      },
-      {
-        title: 'Fast Generation',
-        description: 'Rust-powered core for blazing fast code generation even on large specs.',
-        icon: 'Zap',
       },
     ],
     hasDetailPage: true,
@@ -331,7 +322,7 @@ export const projects: Project[] = [
       images: [
         {
           src: '/projects/openapi-generator/demo.gif',
-          alt: 'OpenAPI Generator CLI demo showing code generation workflow',
+          alt: 'oag CLI demo showing code generation workflow',
           caption: 'CLI Workflow',
         },
       ],
@@ -339,10 +330,10 @@ export const projects: Project[] = [
   },
   {
     slug: 'linear-gp',
-    title: 'Linear Genetic Programming Framework',
-    tagline: 'Production-grade Rust framework for LGP research',
+    title: 'Linear Genetic Programming',
+    tagline: 'Rust LGP framework with Q-Learning integration',
     description:
-      'A production-grade Rust framework for linear genetic programming research, featuring modular architecture, Q-Learning integration, automated hyperparameter optimization, and support for reinforcement learning and classification tasks. Includes Rayon-powered parallel fitness evaluation, Optuna optimization backed by PostgreSQL, and Python CLI tools for batch experiments, visualization, and statistical analysis.',
+      'Cargo workspace implementing linear genetic programming as a trait-based Rust library with a CLI for experiment automation. Supports RL environments (CartPole, MountainCar) and classification tasks (Iris) with Q-Learning integration, Rayon-powered parallel fitness evaluation, and structured tracing for experiment diagnostics.',
     status: 'active',
     githubUrl: 'https://github.com/urmzd/linear-gp',
     tech: [
@@ -354,39 +345,33 @@ export const projects: Project[] = [
     features: [
       {
         title: 'Trait-Based Architecture',
-        description:
-          'Modular design using Rust traits — swap genetic operators, fitness functions, and selection strategies without changing core logic.',
+        description: 'Swap genetic operators, fitness functions, and selection via Rust traits.',
         icon: 'Layers',
       },
       {
         title: 'Parallel Evaluation',
-        description:
-          'Rayon-powered parallel fitness evaluation for fast population processing across all available cores.',
+        description: 'Rayon-powered fitness evaluation across all available CPU cores.',
         icon: 'Cpu',
       },
       {
-        title: 'Hyperparameter Optimization',
-        description:
-          'Optuna integration with PostgreSQL backend for systematic hyperparameter search across experiments.',
-        icon: 'Settings',
-      },
-      {
-        title: 'Q-Learning Integration',
-        description:
-          'Built-in Q-Learning support for reinforcement learning tasks alongside classification experiments.',
+        title: 'Q-Learning Hybrid',
+        description: 'RL layer learns register-action mappings on top of evolved programs.',
         icon: 'Brain',
       },
       {
-        title: 'Experiment Visualization',
-        description:
-          'Python CLI tools for generating plots of fitness, diversity, and convergence across generations.',
+        title: 'Experiment CLI',
+        description: 'Full pipeline: hyperparameter search, batch runs, and analysis in one tool.',
+        icon: 'Terminal',
+      },
+      {
+        title: 'Structured Tracing',
+        description: 'Multi-level tracing with JSON output for log aggregation systems.',
         icon: 'BarChart3',
       },
       {
-        title: 'Dockerized Workflows',
-        description:
-          'Docker Compose setup for reproducible experiments with PostgreSQL and batch processing out of the box.',
-        icon: 'Server',
+        title: 'TOML Configs',
+        description: 'Declarative experiment configs with per-environment parameter overrides.',
+        icon: 'Settings',
       },
     ],
     hasDetailPage: true,

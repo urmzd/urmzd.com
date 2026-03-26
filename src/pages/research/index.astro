@@ -12,7 +12,7 @@ const sorted = entries.sort((a, b) => b.data.year - a.data.year);
     <h1 class="mb-2 text-4xl font-bold">Research</h1>
     <p class="mb-10 text-muted-foreground">Academic papers and theses exploring machine learning, optimization, and applied mathematics.</p>
 
-    <div class="grid gap-6">
+    <div class="flex flex-col gap-6">
       {sorted.map((entry, i) => (
         <ResearchCard item={{ ...entry.data, slug: entry.id }} />
       ))}

@@ -1,7 +1,7 @@
 ---
 title: "Reinforced Linear Genetic Programming"
 tagline: "Using Q-Learning to automate register-action assignments in LGP"
-description: "Proposes Reinforced Linear Genetic Programming (RLGP), a novel hybrid that layers Q-Learning on top of LGP to learn optimal register-action assignments — eliminating the need for manual mapping. Evaluated on OpenAI Gym CartPole-v1 and MountainCar-v0 benchmarks. LGP achieved a mean reward of 454 on CartPole; RLGP solved the task but plateaued early at 213, suggesting the Q-Learning exploration-exploitation balance needs further tuning."
+description: "Proposes Reinforced Linear Genetic Programming (RLGP), a novel hybrid that layers Q-Learning on top of LGP to learn optimal register-action assignments — eliminating manual domain-specific mapping. Evaluated on OpenAI Gym CartPole-v1 and MountainCar-v0 using a custom Rust framework. LGP achieved mean reward 454 on CartPole; RLGP solved the task but plateaued at 213, revealing a fundamental tension between evolutionary instability and RL convergence. Published on arXiv (2601.09736) and archived at Dalhousie University."
 category: "paper"
 year: 2023
 venue: "Dalhousie University — BCS Honours Thesis"
@@ -28,16 +28,16 @@ features:
     description: "Built-in support for Iris and other standard classification benchmarks."
     icon: "FlaskConical"
   - title: "Experiment Tracking"
-    description: "Track fitness, diversity, and convergence across generations."
+    description: "Fitness, diversity, and convergence tracking across generations."
     icon: "BarChart3"
   - title: "Rust Performance"
-    description: "Core evolution engine written in Rust for maximum throughput."
+    description: "Core evolution engine written in Rust for maximum computational throughput."
     icon: "Cpu"
   - title: "Python Analysis"
-    description: "Python scripting layer for experiment visualization and statistical analysis."
+    description: "Scripting layer for experiment visualization and statistical analysis."
     icon: "Brain"
   - title: "Configurable Runs"
-    description: "Fine-tune population size, mutation rates, and tournament parameters."
+    description: "Fine-tune population size, mutation rates, and tournament selection parameters."
     icon: "Settings"
 demo:
   kind: "image"
@@ -69,10 +69,10 @@ The system was evaluated on two OpenAI Gym benchmarks:
 - **CartPole-v1** — balance a pole on a moving cart. LGP alone achieved a mean reward of 454. RLGP solved the task but plateaued at 213, suggesting the exploration-exploitation balance needs tuning.
 - **MountainCar-v0** — drive an underpowered car up a hill. Both approaches struggled with the sparse reward signal, a known challenge for this environment.
 
-## Key Findings
+## Results
 
 The hybrid approach demonstrates that automated register-action mapping is feasible. LGP's evolved programs can serve as feature extractors for the Q-Learning layer, and the two learning mechanisms don't destructively interfere. However, the Q-Learning component introduces additional hyperparameters (learning rate, discount factor, epsilon decay) that interact with LGP's evolutionary parameters, making the combined search space harder to navigate.
 
-## Limitations
+## Key Takeaway
 
-The early plateau in RLGP's CartPole performance points to a fundamental tension: the Q-Learning agent needs stable state representations to learn effectively, but evolution continuously changes the programs producing those representations. Future work could explore freezing the evolutionary process periodically to let the RL layer converge, or using more robust RL algorithms that handle non-stationary environments.
+The early plateau in RLGP's CartPole performance points to a fundamental tension: the Q-Learning agent needs stable state representations to learn effectively, but evolution continuously changes the programs producing those representations. Freezing the evolutionary process periodically to let the RL layer converge, or using more robust RL algorithms that handle non-stationary environments, are promising directions.

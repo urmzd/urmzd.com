@@ -1,6 +1,6 @@
 'use client';
 
-import { Search } from 'lucide-react';
+import { Github, Search } from 'lucide-react';
 import { MotionConfig, motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
@@ -44,6 +44,18 @@ export default function AutoHideHeader() {
               <Search />
               <span className="sr-only">Search</span>
             </Button>
+            <a
+              href="https://github.com/urmzd/urmzd.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View source on GitHub"
+            >
+              <Button variant="outline" size="icon" asChild>
+                <span>
+                  <Github className="h-4 w-4" />
+                </span>
+              </Button>
+            </a>
             <ModeToggle />
           </div>
 

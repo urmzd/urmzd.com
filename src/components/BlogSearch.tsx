@@ -127,7 +127,7 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
                   className="group block rounded-xl p-6 transition-all glass-card hover:border-primary/40"
                 >
                   <h2 className="text-2xl font-semibold group-hover:text-primary">{post.title}</h2>
-                  <p className="mt-2 text-muted-foreground">{post.description}</p>
+                  <p className="mt-2 line-clamp-3 text-muted-foreground">{post.description}</p>
                   <div className="mt-4 flex flex-col gap-1 text-sm text-muted-foreground sm:flex-row sm:items-center sm:gap-2">
                     <time>
                       {new Date(post.pubDate).toLocaleDateString('en-US', {

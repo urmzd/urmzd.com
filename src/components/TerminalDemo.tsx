@@ -14,7 +14,7 @@ export default function TerminalDemo({ title, lines }: TerminalDemoProps) {
   const isInView = useInView(ref, { once: true, margin: '-60px' });
 
   return (
-    <section ref={ref} className="container mx-auto px-4 py-12">
+    <section ref={ref} className="py-12">
       <h2 className="mb-8 text-2xl font-bold">Demo</h2>
       <motion.div
         className="terminal-mock mx-auto max-w-2xl"
