@@ -4,6 +4,7 @@ import { Search } from 'lucide-react';
 import { MotionConfig, motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
 import { useScrollDirection } from '@/hooks/useScrollDirection';
+import LogoMark from './LogoMark';
 import { MobileMenu } from './MobileMenu';
 import { ModeToggle } from './ModeToggle';
 import NavigationMenuDemo from './NavigationMenuDemo';
@@ -24,8 +25,8 @@ export default function AutoHideHeader() {
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
-          <a href="/" className="text-sm font-semibold tracking-tight text-foreground">
-            urmzd
+          <a href="/" className="text-foreground" aria-label="Home">
+            <LogoMark className="h-7 w-7" />
           </a>
 
           {/* Desktop nav */}
