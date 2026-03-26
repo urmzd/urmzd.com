@@ -1,5 +1,3 @@
-'use client';
-
 import {
   Activity,
   BarChart3,
@@ -28,8 +26,6 @@ import {
   Terminal,
   Zap,
 } from 'lucide-react';
-import { motion, useInView } from 'motion/react';
-import { useRef } from 'react';
 import type { ProjectFeature } from '@/data/projects';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -66,23 +62,14 @@ interface FeatureGridProps {
 }
 
 export default function FeatureGrid({ features }: FeatureGridProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-60px' });
-
   return (
-    <section ref={ref} className="container mx-auto px-4 py-12">
+    <section className="py-12">
       <h2 className="mb-8 text-2xl font-bold">Features</h2>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {features.map((feature, i) => {
+        {features.map((feature) => {
           const Icon = iconMap[feature.icon];
           return (
-            <motion.div
-              key={feature.title}
-              className="feature-card"
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.4, delay: i * 0.08 }}
-            >
+            <div key={feature.title} className="feature-card">
               {Icon && (
                 <div className="mb-3 inline-flex rounded-lg border border-border p-2 text-muted-foreground">
                   <Icon className="h-5 w-5" />
@@ -90,7 +77,7 @@ export default function FeatureGrid({ features }: FeatureGridProps) {
               )}
               <h3 className="mb-1 text-sm font-semibold">{feature.title}</h3>
               <p className="text-sm text-muted-foreground">{feature.description}</p>
-            </motion.div>
+            </div>
           );
         })}
       </div>

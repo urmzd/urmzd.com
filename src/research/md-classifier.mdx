@@ -1,7 +1,7 @@
 ---
 title: "Classification of Ailments Given Description of Symptoms"
 tagline: "CNN-based medical condition prediction from natural language symptom descriptions"
-description: "Addresses the challenge of preliminary medical self-diagnosis by developing a CNN that returns the most probable condition given a natural language symptom description. Compares two preprocessing pipelines — One-Hot Encoding (56x4210 word-stem matrix) and unsupervised FastText embeddings — on data sourced from UpToDate and Mayo Clinic. The One-Hot CNN achieved 90% recall, with perfect precision on migraines and tetanus; FastText underperformed due to semantic information loss during processing."
+description: "Develops a CNN for medical self-diagnosis that returns the most probable condition from natural language symptom descriptions. Compares One-Hot Encoding (56x4210 word-stem matrix with Witten-Bell synthetic augmentation) against unsupervised FastText embeddings on data scraped from Mayo Clinic, UpToDate, Healthline, and NHS. The One-Hot CNN achieved 93% accuracy and 90% recall with perfect precision on migraines and tetanus; FastText reached only 73% accuracy, demonstrating that sparse representations outperform learned embeddings on small medical corpora."
 category: "paper"
 year: 2022
 venue: "Dalhousie University — Course Project"
@@ -25,22 +25,22 @@ detailTech:
     icon: "nltk"
 features:
   - title: "Symptom-to-Diagnosis CNN"
-    description: "CNN that predicts the most probable medical condition from natural language symptom descriptions."
+    description: "Predicts medical conditions from natural language with 93% accuracy."
     icon: "Brain"
   - title: "One-Hot Encoding"
-    description: "Word-stem matrix (56x4210) preprocessing pipeline achieving 90% recall with perfect precision on select conditions."
+    description: "56x4210 word-stem matrix with Witten-Bell synthetic sample augmentation."
     icon: "Code"
   - title: "FastText Embeddings"
-    description: "Unsupervised FastText word embeddings as an alternative preprocessing pipeline for semantic representation."
+    description: "Unsupervised word embeddings trained on medical corpus for comparison."
     icon: "FileText"
-  - title: "Medical Data Sources"
-    description: "Training data sourced from UpToDate and Mayo Clinic for reliable symptom-condition mappings."
+  - title: "Multi-Source Scraping"
+    description: "Training data scraped from Mayo Clinic, UpToDate, Healthline, and NHS."
     icon: "FlaskConical"
   - title: "Multi-Class Classification"
-    description: "Classifies across multiple medical conditions including migraines, tetanus, and more."
+    description: "Classifies migraines, depression, and tetanus with per-class precision metrics."
     icon: "BarChart3"
   - title: "Pipeline Comparison"
-    description: "Side-by-side evaluation of One-Hot vs FastText pipelines to identify optimal preprocessing."
+    description: "Side-by-side evaluation proving sparse representations beat learned embeddings."
     icon: "Activity"
 ---
 
@@ -50,22 +50,17 @@ Preliminary self-diagnosis is something most people attempt informally — searc
 
 ## Approach
 
-Two preprocessing pipelines were compared:
-
-- **One-Hot Encoding** — Symptom descriptions were tokenized, stemmed, and encoded into a 56×4210 binary word-stem matrix. Each row represents a condition, each column a unique stem.
-- **FastText Embeddings** — An unsupervised FastText model was trained on the corpus to produce dense vector representations of symptom descriptions.
-
-Both pipelines fed into identical CNN architectures. Training data was sourced from UpToDate and Mayo Clinic to ensure clinically grounded symptom-condition mappings.
+Two preprocessing pipelines were compared on identical CNN architectures. The One-Hot pipeline tokenized and stemmed symptom descriptions into a 56x4210 binary word-stem matrix, with Witten-Bell distribution used to generate synthetic samples for underrepresented conditions. The FastText pipeline trained unsupervised word embeddings on the corpus with max/min pooling for fixed-length vectors. Training data was scraped from Mayo Clinic, UpToDate, Healthline, and NHS via custom DOM selectors.
 
 ## Results
 
 The One-Hot pipeline significantly outperformed FastText:
 
-- **Recall:** 90% across conditions
+- **One-Hot accuracy:** 93% with 90% recall across conditions
 - **Perfect precision** on migraines and tetanus
-- **FastText** underperformed because the unsupervised embedding training lost semantic distinctions critical for differentiating similar symptom profiles
+- **FastText accuracy:** 73% with 70% recall — the unsupervised embeddings lost semantic distinctions critical for differentiating similar symptom profiles
 
-The result is counterintuitive — dense learned representations are usually preferred over sparse one-hot encodings. In this case, the small corpus size meant FastText couldn't learn meaningful embeddings, while the one-hot representation preserved every lexical distinction the CNN needed.
+The result is counterintuitive — dense learned representations are usually preferred over sparse one-hot encodings. The small corpus meant FastText couldn't learn meaningful embeddings, while one-hot preserved every lexical distinction the CNN needed.
 
 ## Key Takeaway
 

@@ -24,27 +24,27 @@ const { Content } = await render(entry);
 ---
 
 <BaseLayout title={`${item.title} - urmzd`} description={item.tagline}>
-  <div class="pb-16">
+  <div class="mx-auto max-w-3xl px-6 pb-16">
     <ResearchHero item={item} client:load />
 
-    <section class="container mx-auto px-4 py-12">
+    <section class="py-12">
       <h2 class="mb-4 text-2xl font-bold">Overview</h2>
-      <p class="max-w-3xl leading-relaxed text-muted-foreground">
+      <p class="leading-relaxed text-muted-foreground">
         {item.description}
       </p>
     </section>
 
     {entry.body && (
-      <section class="container mx-auto max-w-3xl px-4 pb-12">
+      <section class="pb-12">
         <article class="prose prose-invert max-w-none">
           <Content />
         </article>
       </section>
     )}
 
-    {item.demo?.kind === 'image' && <ImageShowcase images={item.demo.images} client:visible />}
+    {item.demo?.kind === 'image' && <ImageShowcase images={item.demo.images} />}
 
-    {item.features && <FeatureGrid features={item.features} client:visible />}
-    {item.detailTech && <TechStackGrid tech={item.detailTech} client:visible />}
+    {item.features && <FeatureGrid features={item.features} />}
+    {item.detailTech && <TechStackGrid tech={item.detailTech} />}
   </div>
 </BaseLayout>
