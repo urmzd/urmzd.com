@@ -59,4 +59,13 @@ const research = defineCollection({
   }),
 });
 
-export const collections = { blog, stories, research };
+const skills = defineCollection({
+  loader: glob({ pattern: ['**/*.md'], base: './src/skills' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    category: z.string(),
+  }),
+});
+
+export const collections = { blog, stories, research, skills };

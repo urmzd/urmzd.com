@@ -15,6 +15,7 @@
     "generate-icons": "node scripts/generate-icons.mjs",
     "generate-visual-previews": "node scripts/generate-visual-previews.mjs",
     "generate-reposts": "npx tsx scripts/generate-reposts.ts",
+    "fetch-skills": "npx tsx scripts/fetch-skills.ts",
     "prepare": "husky"
   },
   "dependencies": {
