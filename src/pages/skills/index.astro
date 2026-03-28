@@ -1,0 +1,28 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SkillCard from '@/components/SkillCard';
+import { skills, categories, getCategoryLabel } from '@/data/skills';
+---
+
+<BaseLayout title="Skills - urmzd" description="Agent skills that encode development workflows, conventions, and best practices.">
+  <div class="mx-auto max-w-3xl px-6 pt-24 pb-16">
+    <h1 class="mb-2 text-4xl font-bold">Skills</h1>
+    <p class="mb-10 text-muted-foreground">
+      Agent skills I maintain — reusable instruction sets that encode my development workflows, conventions, and best practices.
+      Pulled from <a href="https://github.com/urmzd/dotfiles" target="_blank" rel="noopener noreferrer" class="underline hover:text-foreground">urmzd/dotfiles</a>.
+    </p>
+
+    {categories.map((category) => (
+      <section class="mb-10">
+        <h2 class="mb-4 text-lg font-semibold text-muted-foreground">{getCategoryLabel(category)}</h2>
+        <div class="grid gap-4">
+          {skills
+            .filter((s) => s.category === category)
+            .map((skill) => (
+              <SkillCard skill={skill} />
+            ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</BaseLayout>
