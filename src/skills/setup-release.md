@@ -78,7 +78,7 @@ push to main
 ## sr Action Usage
 
 ```yaml
-- uses: urmzd/sr@v2
+- uses: urmzd/sr@v3
   id: sr
   with:
     github-token: ${{ steps.app-token.outputs.token }}
