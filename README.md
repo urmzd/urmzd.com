@@ -27,7 +27,7 @@ public/           # Static assets (images, fonts, icons)
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org) 22+
+- [Node.js](https://nodejs.org) 24+
 - npm
 - [just](https://github.com/casey/just) (optional — you can use `npm run` directly)
 
