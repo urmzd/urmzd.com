@@ -6,9 +6,12 @@ import satori from 'satori';
 import sharp from 'sharp';
 import { calculateReadTime } from '../../lib/readTime';
 
-// Load fonts at module level for reuse
 const interRegular = readFileSync(join(process.cwd(), 'public/fonts/Inter-Regular.ttf'));
 const interBold = readFileSync(join(process.cwd(), 'public/fonts/Inter-Bold.ttf'));
+const logoSvg = readFileSync(join(process.cwd(), 'public/images/logo-mark.svg'), 'utf-8');
+const logoDataUri = `data:image/svg+xml;base64,${Buffer.from(logoSvg.replace('currentColor', '#F8C300')).toString('base64')}`;
+const authorImg = readFileSync(join(process.cwd(), 'public/images/author.png'));
+const authorDataUri = `data:image/png;base64,${authorImg.toString('base64')}`;
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getCollection('blog');
@@ -21,6 +24,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
       description: post.data.description,
       pubDate: post.data.pubDate,
       readTime: calculateReadTime(post.body || '').text,
+      tags: post.data.tags,
+      slug: `blog/${post.id}`,
     },
   }));
 
@@ -31,14 +36,19 @@ export const getStaticPaths: GetStaticPaths = async () => {
       description: story.data.description,
       pubDate: story.data.pubDate,
       readTime: calculateReadTime(story.body || '').text,
+      tags: story.data.tags,
+      slug: `stories/${story.id}`,
     },
   }));
 
   const indexPath = {
     params: { slug: 'index' },
     props: {
-      title: 'urmzd.com',
-      description: 'Personal website of urmzd',
+      title: 'Urmzd Mukhammadnaim',
+      description:
+        'Software engineer based in Austin, Texas. Building tools that turn structured thinking into working software — from developer utilities and ML pipelines to interactive web experiences.',
+      tags: [] as string[],
+      slug: '',
     },
   };
 
@@ -50,132 +60,197 @@ interface OGImageProps {
   description: string;
   pubDate?: Date;
   readTime?: string;
+  tags: string[];
+  slug: string;
 }
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
-    month: 'long',
+    month: 'short',
     day: 'numeric',
     timeZone: 'UTC',
   });
 }
 
-// Brand-aligned colors for server-side OG generation
-// (Resvg can't resolve CSS custom properties)
-const BRAND_HEX = {
+const C = {
   bg: '#1a1a1e',
+  cardBg: '#222226',
+  cardBorder: '#2e2e33',
   text: '#fafafa',
   muted: '#a1a1aa',
+  mutedSubtle: '#71717a',
   brand: '#F8C300',
-  brandSecondary: '#339933',
+  glowBg: '#2a2518',
 } as const;
 
-function OGImage({ title, description, pubDate, readTime }: OGImageProps) {
-  const metadataText = pubDate && readTime ? `${formatDate(pubDate)} · ${readTime}` : undefined;
-  return {
-    type: 'div',
-    props: {
-      style: {
-        height: '100%',
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'column' as const,
-        justifyContent: 'space-between',
-        backgroundColor: BRAND_HEX.bg,
-        padding: '60px',
-        fontFamily: 'Inter',
-      },
-      children: [
+// biome-ignore lint/suspicious/noExplicitAny: satori vdom nodes
+type Node = any;
+
+function div(style: Record<string, unknown>, children: Node[]): Node {
+  return { type: 'div', props: { style: { display: 'flex', ...style }, children } };
+}
+
+function text(style: Record<string, unknown>, value: string): Node {
+  return { type: 'div', props: { style: { display: 'flex', ...style }, children: value } };
+}
+
+function img(src: string, w: number, h: number, style: Record<string, unknown> = {}): Node {
+  return { type: 'img', props: { src, width: w, height: h, style } };
+}
+
+function OGImage({ title, description, pubDate, readTime, tags, slug }: OGImageProps): Node {
+  const pageUrl = slug ? `urmzd.com/${slug}` : 'urmzd.com';
+  const hasMetadata = !!(pubDate && readTime);
+  const displayTags = tags.slice(0, 4);
+  const metaLine = hasMetadata ? `${formatDate(pubDate!)}  ·  ${readTime}` : '';
+
+  // Tag pills joined with middot
+  const tagText = displayTags.length > 0 ? displayTags.join('  ·  ') : '';
+
+  // Bottom section children
+  const bottomChildren: Node[] = [
+    // Gold accent line
+    div({ width: '120px', height: '2px', backgroundColor: C.brand, opacity: 0.5 }, []),
+  ];
+
+  if (tagText) {
+    bottomChildren.push(
+      text(
         {
-          type: 'div',
-          props: {
-            style: {
-              display: 'flex',
-              flexDirection: 'column' as const,
-              gap: '24px',
-            },
-            children: [
-              {
-                type: 'div',
-                props: {
-                  style: {
-                    fontSize: '56px',
-                    fontWeight: 700,
-                    color: BRAND_HEX.text,
-                    lineHeight: 1.2,
-                    maxWidth: '900px',
-                  },
-                  children: title,
-                },
-              },
-              {
-                type: 'div',
-                props: {
-                  style: {
-                    fontSize: '28px',
-                    color: BRAND_HEX.muted,
-                    lineHeight: 1.4,
-                    maxWidth: '800px',
-                  },
-                  children: description,
-                },
-              },
-            ],
-          },
+          fontSize: '14px',
+          color: C.mutedSubtle,
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+          fontWeight: 400,
         },
+        tagText,
+      ),
+    );
+  }
+
+  // Author row
+  const authorInfoChildren: Node[] = [
+    text({ fontSize: '18px', color: C.text, fontWeight: 500 }, 'Urmzd'),
+  ];
+  if (metaLine) {
+    authorInfoChildren.push(
+      text({ fontSize: '16px', color: C.mutedSubtle, fontWeight: 400 }, metaLine),
+    );
+  }
+  authorInfoChildren.push(
+    text({ fontSize: '15px', color: C.mutedSubtle, fontWeight: 400 }, pageUrl),
+  );
+
+  bottomChildren.push(
+    div({ alignItems: 'center', gap: '14px' }, [
+      // Avatar with gold ring
+      div(
         {
-          type: 'div',
-          props: {
-            style: {
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            },
-            children: [
-              metadataText
-                ? {
-                    type: 'div',
-                    props: {
-                      style: {
-                        fontSize: '24px',
-                        color: BRAND_HEX.muted,
-                        fontWeight: 400,
-                      },
-                      children: metadataText,
-                    },
-                  }
-                : {
-                    type: 'div',
-                    props: {
-                      style: { display: 'flex' },
-                      children: [],
-                    },
-                  },
-              {
-                type: 'div',
-                props: {
-                  style: {
-                    fontSize: '32px',
-                    color: '#71717a',
-                    fontWeight: 500,
-                  },
-                  children: 'urmzd.com',
-                },
-              },
-            ],
-          },
+          width: '52px',
+          height: '52px',
+          borderRadius: '50%',
+          border: `2px solid ${C.brand}`,
+          overflow: 'hidden',
+          alignItems: 'center',
+          justifyContent: 'center',
         },
-      ],
+        [img(authorDataUri, 48, 48, { borderRadius: '50%' })],
+      ),
+      // Author name + meta + url
+      div({ flexDirection: 'column', gap: '2px' }, authorInfoChildren),
+    ]),
+  );
+
+  return div(
+    {
+      height: '100%',
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: C.bg,
+      fontFamily: 'Inter',
+      position: 'relative',
     },
-  };
+    [
+      // Background glow — top-right
+      div(
+        {
+          position: 'absolute',
+          top: '-100px',
+          right: '-100px',
+          width: '500px',
+          height: '500px',
+          borderRadius: '50%',
+          backgroundColor: C.glowBg,
+          opacity: 0.6,
+        },
+        [],
+      ),
+      // Background glow — bottom-left
+      div(
+        {
+          position: 'absolute',
+          bottom: '-80px',
+          left: '-80px',
+          width: '350px',
+          height: '350px',
+          borderRadius: '50%',
+          backgroundColor: '#1e2218',
+          opacity: 0.5,
+        },
+        [],
+      ),
+      // Main card
+      div(
+        {
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          width: '1120px',
+          height: '550px',
+          backgroundColor: C.cardBg,
+          borderRadius: '20px',
+          border: `1px solid ${C.cardBorder}`,
+          padding: '48px 52px',
+        },
+        [
+          // Top: logo + title + description
+          div({ flexDirection: 'column', gap: '20px' }, [
+            img(logoDataUri, 40, 40),
+            text(
+              {
+                fontSize: '48px',
+                fontWeight: 700,
+                color: C.text,
+                lineHeight: 1.15,
+                letterSpacing: '-0.02em',
+                maxWidth: '900px',
+              },
+              title,
+            ),
+            text(
+              {
+                fontSize: '22px',
+                color: C.muted,
+                lineHeight: 1.5,
+                maxWidth: '800px',
+              },
+              description,
+            ),
+          ]),
+          // Bottom: accent line + tags + author
+          div({ flexDirection: 'column', gap: '16px' }, bottomChildren),
+        ],
+      ),
+    ],
+  );
 }
 
 export const GET: APIRoute = async ({ props }) => {
-  const { title, description, pubDate, readTime } = props as OGImageProps;
+  const { title, description, pubDate, readTime, tags, slug } = props as OGImageProps;
 
   // biome-ignore lint/suspicious/noExplicitAny: satori expects ReactNode but returns incompatible type
-  const svg = await satori(OGImage({ title, description, pubDate, readTime }) as any, {
+  const svg = await satori(OGImage({ title, description, pubDate, readTime, tags, slug }) as any, {
     width: 1200,
     height: 630,
     fonts: [
