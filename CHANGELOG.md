@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.3.0 (2026-04-02)
+
+### Features
+
+- **og-image**: redesign with enhanced layout and metadata ([f79bc8d](https://github.com/urmzd/urmzd.com/commit/f79bc8d0e51b5703b7216ba8258b37cc463f0939))
+
+### Documentation
+
+- update sr action references from v2 to v3 ([ea267f5](https://github.com/urmzd/urmzd.com/commit/ea267f51aedbc8dfed097a0b3061467c65d67057))
+
+### Miscellaneous
+
+- add sr git hooks ([96aabb2](https://github.com/urmzd/urmzd.com/commit/96aabb2363d0619cb9cfbf578a11711480bbfe57))
+- **ci**: upgrade sr action to v3 ([8d3d59b](https://github.com/urmzd/urmzd.com/commit/8d3d59b497bac910185e2346a7dae11fd17214a9))
+- upgrade node version from 22 to 24 (#5) ([cba94c1](https://github.com/urmzd/urmzd.com/commit/cba94c146927bfb944f948d6df5f0965a5bc87d1))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.2.0...v0.3.0)
+
+
 ## 0.2.0 (2026-03-30)
 
 ### Features
