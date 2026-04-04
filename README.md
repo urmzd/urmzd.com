@@ -1,54 +1,47 @@
-# urmzd.com
+<p align="center">
+  <h1 align="center">urmzd.com</h1>
+  <p align="center">
+    Personal website, blog, and research portfolio built with Astro, React, and Three.js.
+    <br /><br />
+    <a href="https://urmzd.com">Visit</a>
+    &middot;
+    <a href="https://github.com/urmzd/urmzd.com/issues">Report Bug</a>
+    &middot;
+    <a href="https://urmzd.com/rss.xml">RSS</a>
+  </p>
+</p>
 
-Personal website and blog for [urmzd.com](https://urmzd.com) — built with Astro, React, and Three.js.
+<p align="center">
+  <a href="https://github.com/urmzd/urmzd.com/actions/workflows/ci.yml"><img src="https://github.com/urmzd/urmzd.com/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+</p>
 
-## Tech Stack
+## Features
 
-- **Framework:** [Astro](https://astro.build) with [React](https://react.dev) islands
-- **Styling:** [Tailwind CSS](https://tailwindcss.com) v4
-- **3D:** [Three.js](https://threejs.org) via React Three Fiber
-- **Content:** MDX blog posts with KaTeX math support
-- **Tooling:** [Biome](https://biomejs.dev) (lint + format), [Husky](https://typicode.github.io/husky/) + lint-staged, TypeScript
+- **Blog** posts in MDX with interactive components, KaTeX math, and citations
+- **Stories** in Markdown with literary prose formatting
+- **Research** showcase with paper links, tech stacks, and demo galleries
+- **Projects** portfolio with live descriptions synced from GitHub
+- **Agent Skills** catalog synced from [urmzd/dotfiles](https://github.com/urmzd/dotfiles)
+- **3D plexus background** via React Three Fiber
+- **Glassmorphism UI** with Tailwind CSS v4
+- **Dynamic OG images** generated with Satori
+- **RSS feed**, sitemap, and search with fuzzy matching
 
-## Project Structure
-
-```
-src/
-├── pages/        # Astro page routes
-├── components/   # React & Astro components
-├── layouts/      # Page layouts
-├── blog/         # MDX blog posts
-├── data/         # Static data and constants
-├── hooks/        # React hooks
-├── lib/          # Shared utilities
-└── styles/       # Global styles
-public/           # Static assets (images, fonts, icons)
-```
-
-## Prerequisites
-
-- [Node.js](https://nodejs.org) 24+
-- npm
-## Getting Started
+## Quick Start
 
 ```bash
-# Clone the repo
 git clone https://github.com/urmzd/urmzd.com.git
 cd urmzd.com
-
-# Install dependencies
 npm install
-
-# Set up environment variables
 cp .env.example .env
-
-# Start dev server
 npm run dev
 ```
 
 The site will be available at `http://localhost:4321`.
 
-## Available Commands
+**Requires** Node.js 24+ and npm.
+
+## Usage
 
 | Command | Script |
 | --- | --- |
@@ -60,13 +53,18 @@ The site will be available at `http://localhost:4321`.
 | Format | `npm run format` |
 | Format (check) | `npm run format:check` |
 | Type check | `npm run check` |
+| Sync skills | `npm run fetch:skills` |
 | Generate icons | `npm run generate:icons` |
+
+## Agent Skill
+
+This repo's conventions are available as portable agent skills in [`skills/`](skills/).
 
 ## License
 
 This project is dual-licensed:
 
-- **Code** (source files, config, tooling) — [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
-- **Content** (blog posts, images, branding) — [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)
+- **Code** (source files, config, tooling) **licensed under** [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+- **Content** (blog posts, images, branding) **licensed under** [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 See [LICENSE](./LICENSE) for full details.
