@@ -60,7 +60,7 @@ The site will be available at `http://localhost:4321`.
 | Format | `npm run format` |
 | Format (check) | `npm run format:check` |
 | Type check | `npm run check` |
-| Generate icons | `npm run generate-icons` |
+| Generate icons | `npm run generate:icons` |
 
 ## License
 
