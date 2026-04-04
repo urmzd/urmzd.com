@@ -1,6 +1,6 @@
 ---
 title: "Scaffold Go Project"
-description: "Scaffold a complete Go project with CI/CD, release pipeline, justfile, sr.yaml, .envrc, and standard files. Use when creating a new Go CLI, service, or module, or when the user mentions \"new Go project\", \"go mod init\", or \"Go scaffold\"."
+description: "Scaffold a complete Go project with CI/CD, release pipeline, Makefile, sr.yaml, .envrc, and standard files. Uses go toolchain and make as the native build system. Use when creating a new Go CLI, service, or module, or when the user mentions \"new Go project\", \"go mod init\", or \"Go scaffold\"."
 category: "development"
 ---
 
@@ -119,7 +119,7 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
-      - uses: urmzd/sr@v3
+      - uses: urmzd/sr@v2
         id: sr
         with:
           github-token: ${{ steps.app-token.outputs.token }}
@@ -235,39 +235,42 @@ hooks:
 
 No `version_files` — Go uses git tags only. No `stage_files` — `go.sum` changes are committed during development, not release.
 
-### `justfile`
+### `Makefile`
 
-```just
-default: check
+```makefile
+.PHONY: all init build test lint fmt check run install
 
-# Module name (override if different from directory)
-mod := `basename $(pwd)`
-cmd := "cmd/" + mod
+MOD := $(shell basename $(CURDIR))
+CMD := cmd/$(MOD)
+
+all: check
 
 init:
-    git config core.hooksPath .githooks
-    go mod download && go mod tidy
+	git config core.hooksPath .githooks
+	go mod download && go mod tidy
 
 build:
-    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o bin/{{mod}} ./{{cmd}}
+	CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o bin/$(MOD) ./$(CMD)
 
 test:
-    go test ./...
+	go test ./...
 
 lint:
-    golangci-lint run
+	golangci-lint run
 
 fmt:
-    gofmt -w .
+	gofmt -w .
 
 check: fmt lint test
 
-run *args="": build
-    ./bin/{{mod}} {{args}}
+run: build
+	./bin/$(MOD)
 
 install:
-    CGO_ENABLED=0 go install -trimpath -ldflags="-s -w" ./{{cmd}}
+	CGO_ENABLED=0 go install -trimpath -ldflags="-s -w" ./$(CMD)
 ```
+
+For complex projects (multi-service repos, code generation, protobuf), add a justfile to handle orchestration that Make handles poorly (dependency ordering, parameterized recipes).
 
 ### `.envrc`
 

@@ -1,6 +1,6 @@
 ---
 title: "Scaffold Python Project"
-description: "Scaffold a complete Python project with CI/CD, release pipeline, justfile, sr.yaml, pyproject.toml, .envrc, and standard files. Uses uv and ruff. Use when creating a new Python CLI, library, or application, or when the user mentions \"new Python project\", \"uv init\", or \"Python scaffold\"."
+description: "Scaffold a complete Python project with CI/CD, release pipeline, justfile, sr.yaml, pyproject.toml, .envrc, and standard files. Uses uv, ruff, and justfile (Python lacks a native task runner like npm scripts, so just fills that gap). Use when creating a new Python CLI, library, or application, or when the user mentions \"new Python project\", \"uv init\", or \"Python scaffold\"."
 category: "development"
 ---
 
@@ -103,7 +103,7 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
-      - uses: urmzd/sr@v3
+      - uses: urmzd/sr@v2
         id: sr
         with:
           github-token: ${{ steps.app-token.outputs.token }}
