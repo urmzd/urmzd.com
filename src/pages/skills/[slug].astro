@@ -21,10 +21,6 @@ const { Content } = await render(entry);
 
 <BaseLayout title={`${entry.data.title} - urmzd`} description={entry.data.description}>
   <div class="mx-auto max-w-3xl px-6 pt-24 pb-16">
-    <a href="/skills" class="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
-      &larr; Back to Skills
-    </a>
-
     <div class="mb-8">
       <span class="mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-muted-foreground glass-pill">
         {getCategoryLabel(entry.data.category)}
