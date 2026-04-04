@@ -95,35 +95,35 @@ export const skills: Skill[] = [
     slug: 'scaffold-go',
     title: 'Scaffold Go Project',
     description:
-      'Scaffold a complete Go project with CI/CD, release pipeline, justfile, sr.yaml, .envrc, and standard files. Use when creating a new Go CLI, service, or module, or when the user mentions "new Go project", "go mod init", or "Go scaffold".',
+      'Scaffold a complete Go project with CI/CD, release pipeline, Makefile, sr.yaml, .envrc, and standard files. Uses go toolchain and make as the native build system. Use when creating a new Go CLI, service, or module, or when the user mentions "new Go project", "go mod init", or "Go scaffold".',
     category: 'development',
   },
   {
     slug: 'scaffold-node',
     title: 'Scaffold Node/TypeScript Project',
     description:
-      'Scaffold a complete Node/TypeScript project with CI/CD, release pipeline, justfile, sr.yaml, .envrc, and standard files. Uses npm and biome. Use when creating a new Node.js app, TypeScript library, or website, or when the user mentions "new Node project", "npm init", "TypeScript scaffold", or "Astro site".',
+      'Scaffold a complete Node/TypeScript project with CI/CD, release pipeline, sr.yaml, .envrc, and standard files. Uses npm scripts and biome. Use when creating a new Node.js app, TypeScript library, or website, or when the user mentions "new Node project", "npm init", "TypeScript scaffold", or "Astro site".',
     category: 'development',
   },
   {
     slug: 'scaffold-python',
     title: 'Scaffold Python Project',
     description:
-      'Scaffold a complete Python project with CI/CD, release pipeline, justfile, sr.yaml, pyproject.toml, .envrc, and standard files. Uses uv and ruff. Use when creating a new Python CLI, library, or application, or when the user mentions "new Python project", "uv init", or "Python scaffold".',
+      'Scaffold a complete Python project with CI/CD, release pipeline, justfile, sr.yaml, pyproject.toml, .envrc, and standard files. Uses uv, ruff, and justfile (Python lacks a native task runner like npm scripts, so just fills that gap). Use when creating a new Python CLI, library, or application, or when the user mentions "new Python project", "uv init", or "Python scaffold".',
     category: 'development',
   },
   {
     slug: 'scaffold-rust',
     title: 'Scaffold Rust Project',
     description:
-      'Scaffold a complete Rust project with CI/CD, release pipeline, justfile, sr.yaml, .envrc, and standard files. Use when creating a new Rust CLI, library, or workspace, or when the user mentions "new Rust project", "cargo init", or "Rust scaffold".',
+      'Scaffold a complete Rust project with CI/CD, release pipeline, sr.yaml, .envrc, and standard files. Uses cargo as the native build system. Use when creating a new Rust CLI, library, or workspace, or when the user mentions "new Rust project", "cargo init", or "Rust scaffold".',
     category: 'development',
   },
   {
     slug: 'scaffold-terraform',
     title: 'Scaffold Terraform Project',
     description:
-      'Scaffold a Terraform infrastructure project with CI/CD (plan on PR, apply on push), AWS OIDC auth, justfile, .envrc, and standard files. Use when creating infrastructure repos, or when the user mentions "new Terraform project", "terraform init", "AWS infra", or "infrastructure scaffold".',
+      'Scaffold a Terraform infrastructure project with CI/CD (plan on PR, apply on push), AWS OIDC auth, .envrc, and standard files. Uses terraform CLI as the native tool. Use when creating infrastructure repos, or when the user mentions "new Terraform project", "terraform init", "AWS infra", or "infrastructure scaffold".',
     category: 'development',
   },
   {
@@ -141,6 +141,111 @@ export const skills: Skill[] = [
     category: 'development',
   },
   {
+    slug: 'diagnose-ci',
+    title: 'diagnose-ci',
+    description:
+      'Find failing CI pipelines, pull logs, identify root cause, and suggest or apply fixes. Use when CI is red or the user asks why a pipeline failed.',
+    category: 'general',
+  },
+  {
+    slug: 'fix-and-retry',
+    title: 'fix-and-retry',
+    description:
+      'Diagnose a CI failure, apply the fix, commit, push, and watch the re-run. Use after a pipeline fails and you want to fix and retry in one shot.',
+    category: 'general',
+  },
+  {
+    slug: 'get-work',
+    title: 'get-work',
+    description:
+      "Scan a folder for git repos and report GitHub status, branch divergence, and what's needed to get each repo up to date. Use when checking on multiple repos at once.",
+    category: 'general',
+  },
+  {
+    slug: 'persona-architect',
+    title: 'persona-architect',
+    description:
+      'Adopt the Architect persona — interface-first systems design with verbose, principle-driven reasoning. Use for module decomposition, phased delivery plans, and systematic design work.',
+    category: 'general',
+  },
+  {
+    slug: 'persona-curator',
+    title: 'persona-curator',
+    description:
+      'Adopt the Curator persona — prescriptive perfectionist focused on consistency, polish, and visual hierarchy. Use when refining documentation, formatting, naming, and cross-project standards.',
+    category: 'general',
+  },
+  {
+    slug: 'persona-debugger',
+    title: 'persona-debugger',
+    description:
+      'Adopt the Debugger persona — terse, empirical root-cause analysis. Use when something is broken and you need fast, evidence-based diagnosis.',
+    category: 'general',
+  },
+  {
+    slug: 'persona-ideator',
+    title: 'persona-ideator',
+    description:
+      'Adopt the Ideator persona — expansive, generative creative exploration. Use when brainstorming features, exploring UX possibilities, and pushing boundaries before constraining.',
+    category: 'general',
+  },
+  {
+    slug: 'persona-strategist',
+    title: 'persona-strategist',
+    description:
+      'Adopt the Strategist persona — imperative, structured orchestration across multiple systems and repos. Use for multi-repo sweeps, batch operations, and systematic coordination.',
+    category: 'general',
+  },
+  {
+    slug: 'persona-writer',
+    title: 'persona-writer',
+    description:
+      'Adopt the Writer persona — concise, outcome-focused technical documentation. Use for READMEs, skill files, API docs, and any documentation that must serve both humans and AI agents.',
+    category: 'general',
+  },
+  {
+    slug: 'pr',
+    title: 'pr',
+    description:
+      'Create a pull request with auto-generated summary from commits, following conventional commit conventions. Use when creating PRs.',
+    category: 'general',
+  },
+  {
+    slug: 'release-audit',
+    title: 'release-audit',
+    description:
+      'Audit releases, tags, and assets for a repo or all repos in a directory. Finds orphaned tags, missing assets, and sr config issues. Use when checking release health.',
+    category: 'general',
+  },
+  {
+    slug: 'repo-init',
+    title: 'repo-init',
+    description:
+      'Full repo bootstrap — create GitHub repo, add license, scaffold CI/release, write README, set metadata, and push. Use when starting a new project from scratch.',
+    category: 'general',
+  },
+  {
+    slug: 'ship',
+    title: 'ship',
+    description:
+      'Commit with conventional message, push, and watch CI pipeline until it passes or fails. Use when shipping code changes.',
+    category: 'general',
+  },
+  {
+    slug: 'update-repo-meta',
+    title: 'update-repo-meta',
+    description:
+      'Update GitHub repo metadata — topics, description, homepage, and visibility via gh CLI. Use when updating repo settings.',
+    category: 'general',
+  },
+  {
+    slug: 'sync-docs',
+    title: 'Documentation Sync',
+    description:
+      'Audit and synchronize project documentation — README, AGENTS.md, llms.txt, docs/, and embed-src markers. Use after feature changes, refactors, or when docs may be stale. Can be run as a scheduled agent or invoked manually.',
+    category: 'maintenance',
+  },
+  {
     slug: 'audit-security',
     title: 'Security Audit',
     description:
@@ -151,7 +256,7 @@ export const skills: Skill[] = [
     slug: 'write-readme',
     title: 'README Standards',
     description:
-      'README structure — centered header, badges, demos, section order, Agent Skill section, and llms.txt. Use when creating or updating any project README.',
+      'README structure — centered header, badges, demos, section order, install.sh pattern, quickstart, embed-src usage, and llms.txt. Use when creating or updating any project README.',
     category: 'visual',
   },
   {

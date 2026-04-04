@@ -1,6 +1,6 @@
 ---
 title: "Scaffold Node/TypeScript Project"
-description: "Scaffold a complete Node/TypeScript project with CI/CD, release pipeline, justfile, sr.yaml, .envrc, and standard files. Uses npm and biome. Use when creating a new Node.js app, TypeScript library, or website, or when the user mentions \"new Node project\", \"npm init\", \"TypeScript scaffold\", or \"Astro site\"."
+description: "Scaffold a complete Node/TypeScript project with CI/CD, release pipeline, sr.yaml, .envrc, and standard files. Uses npm scripts and biome. Use when creating a new Node.js app, TypeScript library, or website, or when the user mentions \"new Node project\", \"npm init\", \"TypeScript scaffold\", or \"Astro site\"."
 category: "development"
 ---
 
@@ -125,7 +125,7 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
 
-      - uses: urmzd/sr@v3
+      - uses: urmzd/sr@v2
         id: sr
         with:
           github-token: ${{ steps.app-token.outputs.token }}
@@ -206,38 +206,26 @@ hooks:
     - sr hook commit-msg
 ```
 
-### `justfile`
+### `package.json` scripts
 
-```just
-default: check
+Add these scripts to `package.json`:
 
-init:
-    git config core.hooksPath .githooks
-    npm ci
-
-build:
-    npm run build
-
-test:
-    npm test
-
-lint:
-    npx biome check
-
-fmt:
-    npx biome check --write
-
-typecheck:
-    npx tsc --noEmit
-
-check: fmt lint typecheck test
-
-run *args="":
-    npm start -- {{args}}
-
-dev:
-    npm run dev
+```json
+{
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "biome check",
+    "fmt": "biome check --write",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run fmt && npm run lint && npm run typecheck && npm test",
+    "dev": "tsc --watch",
+    "prepare": "git config core.hooksPath .githooks"
+  }
+}
 ```
+
+Use `npm run <task>` for all operations. No justfile — npm is the native task runner.
 
 ### `.envrc`
 
@@ -286,6 +274,27 @@ Replace npm commands:
 - `npx` → `pnpm exec`
 - `stage_files: [pnpm-lock.yaml]` in sr.yaml
 
+### Monorepo Variant (Turbo)
+
+For multi-package repos, add turbo for cached, parallel task execution:
+
+- `npm install turbo --save-dev` at workspace root
+- Add `turbo.json` with pipeline definitions (`build`, `test`, `lint`, `typecheck`)
+- Replace direct `npm run` calls with `turbo run` in npm scripts and CI
+- Turbo caches task outputs — subsequent runs skip unchanged packages
+
+```json
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": { "dependsOn": ["^build"], "outputs": ["dist/**"] },
+    "test": { "dependsOn": ["build"] },
+    "lint": {},
+    "typecheck": {}
+  }
+}
+```
+
 ## Gotchas
 
 - Use `npm ci` (not `npm install`) in CI for reproducible installs
@@ -295,3 +304,4 @@ Replace npm commands:
 - `cache: npm` in setup-node handles caching automatically
 - For framework-specific type checks (e.g., `astro check`), add a separate `check` job
 - `cancel-in-progress: false` on release workflow to prevent partial releases
+- For monorepos, use `turbo run <task>` instead of running tasks per-package manually

@@ -29,8 +29,6 @@ public/           # Static assets (images, fonts, icons)
 
 - [Node.js](https://nodejs.org) 24+
 - npm
-- [just](https://github.com/casey/just) (optional — you can use `npm run` directly)
-
 ## Getting Started
 
 ```bash
@@ -39,30 +37,30 @@ git clone https://github.com/urmzd/urmzd.com.git
 cd urmzd.com
 
 # Install dependencies
-just install  # or: npm install
+npm install
 
 # Set up environment variables
 cp .env.example .env
 
 # Start dev server
-just dev  # or: npm run dev
+npm run dev
 ```
 
 The site will be available at `http://localhost:4321`.
 
 ## Available Commands
 
-| Command | just | npm |
-| --- | --- | --- |
-| Dev server | `just dev` | `npm run dev` |
-| Production build | `just build` | `npm run build` |
-| Preview build | `just preview` | `npm run preview` |
-| Lint | `just lint` | `npm run lint` |
-| Lint (autofix) | — | `npm run lint:fix` |
-| Format | `just fmt` | `npm run format` |
-| Format (check) | — | `npm run format:check` |
-| Type check | — | `npm run check` |
-| Generate icons | — | `npm run generate-icons` |
+| Command | Script |
+| --- | --- |
+| Dev server | `npm run dev` |
+| Production build | `npm run build` |
+| Preview build | `npm run preview` |
+| Lint | `npm run lint` |
+| Lint (autofix) | `npm run lint:fix` |
+| Format | `npm run format` |
+| Format (check) | `npm run format:check` |
+| Type check | `npm run check` |
+| Generate icons | `npm run generate:icons` |
 
 ## License
 

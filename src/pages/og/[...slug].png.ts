@@ -10,8 +10,15 @@ const interRegular = readFileSync(join(process.cwd(), 'public/fonts/Inter-Regula
 const interBold = readFileSync(join(process.cwd(), 'public/fonts/Inter-Bold.ttf'));
 const logoSvg = readFileSync(join(process.cwd(), 'public/images/logo-mark.svg'), 'utf-8');
 const logoDataUri = `data:image/svg+xml;base64,${Buffer.from(logoSvg.replace('currentColor', '#F8C300')).toString('base64')}`;
-const authorImg = readFileSync(join(process.cwd(), 'public/images/author.png'));
-const authorDataUri = `data:image/png;base64,${authorImg.toString('base64')}`;
+
+// Pre-process author image: crop to square from center, resize to 96px (2x for retina), sRGB
+const authorDataUriPromise = sharp(join(process.cwd(), 'public/images/author.png'))
+  .resize(96, 96, { fit: 'cover', position: 'top' })
+  .toColourspace('srgb')
+  .removeAlpha()
+  .png()
+  .toBuffer()
+  .then((buf) => `data:image/png;base64,${buf.toString('base64')}`);
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getCollection('blog');
@@ -99,7 +106,10 @@ function img(src: string, w: number, h: number, style: Record<string, unknown> =
   return { type: 'img', props: { src, width: w, height: h, style } };
 }
 
-function OGImage({ title, description, pubDate, readTime, tags, slug }: OGImageProps): Node {
+function OGImage(
+  { title, description, pubDate, readTime, tags, slug }: OGImageProps,
+  authorDataUri: string,
+): Node {
   const pageUrl = slug ? `urmzd.com/${slug}` : 'urmzd.com';
   const hasMetadata = !!(pubDate && readTime);
   const displayTags = tags.slice(0, 4);
@@ -248,26 +258,30 @@ function OGImage({ title, description, pubDate, readTime, tags, slug }: OGImageP
 
 export const GET: APIRoute = async ({ props }) => {
   const { title, description, pubDate, readTime, tags, slug } = props as OGImageProps;
+  const authorDataUri = await authorDataUriPromise;
 
   // biome-ignore lint/suspicious/noExplicitAny: satori expects ReactNode but returns incompatible type
-  const svg = await satori(OGImage({ title, description, pubDate, readTime, tags, slug }) as any, {
-    width: 1200,
-    height: 630,
-    fonts: [
-      {
-        name: 'Inter',
-        data: interRegular,
-        weight: 400,
-        style: 'normal',
-      },
-      {
-        name: 'Inter',
-        data: interBold,
-        weight: 700,
-        style: 'normal',
-      },
-    ],
-  });
+  const svg = await satori(
+    OGImage({ title, description, pubDate, readTime, tags, slug }, authorDataUri) as any,
+    {
+      width: 1200,
+      height: 630,
+      fonts: [
+        {
+          name: 'Inter',
+          data: interRegular,
+          weight: 400,
+          style: 'normal',
+        },
+        {
+          name: 'Inter',
+          data: interBold,
+          weight: 700,
+          style: 'normal',
+        },
+      ],
+    },
+  );
 
   const png = await sharp(Buffer.from(svg)).png().toBuffer();
 
