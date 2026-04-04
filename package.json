@@ -55,13 +55,13 @@
     "format": "biome format --write .",
     "format:check": "biome format .",
     "generate:icons": "node scripts/generate-icons.mjs",
-    "generate:reposts": "npx tsx scripts/generate-reposts.ts",
     "generate:previews": "node scripts/generate-visual-previews.mjs",
+    "generate:reposts": "npx tsx scripts/generate-reposts.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "prepare": "husky",
     "preview": "astro preview"
   },
   "type": "module",
-  "version": "0.3.0"
+  "version": "0.3.1"
 }

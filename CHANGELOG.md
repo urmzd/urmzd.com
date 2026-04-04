@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.1 (2026-04-04)
+
+### Bug Fixes
+
+- **skills**: remove back button from skill detail page (#9) ([00fb531](https://github.com/urmzd/urmzd.com/commit/00fb531097e75f4621ae33e2377b0659223bf077))
+
+### Miscellaneous
+
+- remove justfile, fix OG image, update Python tooling (#8) ([74e20f5](https://github.com/urmzd/urmzd.com/commit/74e20f54d1f805218f10734144869638648247ab))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.3.0...v0.3.1)
+
+
 ## 0.3.0 (2026-04-02)
 
 ### Features
