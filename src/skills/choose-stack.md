@@ -44,7 +44,7 @@ category: "development"
 
 - **uv** — package manager and virtual environment tool
 - **ruff** — linting and formatting
-- **mypy** — static type checking
+- **ty** — static type checking
 - **pytest** — testing framework
 - **pydantic** — data validation with type annotations
 - **fastapi** — async web framework

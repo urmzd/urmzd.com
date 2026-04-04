@@ -12,7 +12,7 @@ Thanks for your interest in contributing to urmzd.com! This guide covers the wor
    ```
 3. Install dependencies:
    ```bash
-   just install  # or: npm install
+   npm install
    ```
 
 ## Development Workflow
@@ -25,13 +25,13 @@ Thanks for your interest in contributing to urmzd.com! This guide covers the wor
 
 2. Start the dev server:
    ```bash
-   just dev  # or: npm run dev
+   npm run dev
    ```
 
 3. Before committing, run lint and format checks:
    ```bash
-   just lint   # or: npm run lint
-   just fmt    # or: npm run format
+   npm run lint
+   npm run format
    ```
    A pre-commit hook (Husky + lint-staged) runs these automatically on staged files.
 
@@ -39,7 +39,7 @@ Thanks for your interest in contributing to urmzd.com! This guide covers the wor
 
 [Biome](https://biomejs.dev) handles both linting and formatting — no separate Prettier/ESLint config needed.
 
-- Run `just fmt` to format and `just lint` to lint.
+- Run `npm run format` to format and `npm run lint` to lint.
 - The pre-commit hook enforces this automatically, so CI failures from style issues should be rare.
 - Follow existing patterns in the codebase for component structure and naming.
 
