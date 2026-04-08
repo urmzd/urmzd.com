@@ -7,10 +7,12 @@ interface Skill {
   title: string;
   description: string;
   category: string;
+  type: 'skill' | 'agent';
 }
 
 const REPO = 'urmzd/dotfiles';
 const SKILLS_PATH = 'skills';
+const AGENTS_PATH = 'dot_agents/agents';
 
 function parseFrontmatter(content: string): Record<string, string> {
   const match = content.match(/^---\n([\s\S]*?)\n---/);
@@ -83,9 +85,45 @@ function main() {
       ].join('\n');
       writeFileSync(join(contentDir, `${dir}.md`), `${mdFrontmatter}\n\n${body}`);
 
-      skills.push({ slug: dir, title, description, category });
+      skills.push({ slug: dir, title, description, category, type: 'skill' });
     } catch {
       console.warn(`Skipping ${dir}: could not fetch SKILL.md`);
+    }
+  }
+
+  // Fetch agents
+  console.log('Fetching agents from', REPO);
+  const agentListing = execSync(`gh api repos/${REPO}/contents/${AGENTS_PATH} --jq '.[].name'`, {
+    encoding: 'utf-8',
+  }).trim();
+  const agentFiles = agentListing.split('\n').filter((f) => f.endsWith('.md'));
+
+  for (const file of agentFiles) {
+    try {
+      const encoded = execSync(
+        `gh api repos/${REPO}/contents/${AGENTS_PATH}/${file} --jq '.content'`,
+        { encoding: 'utf-8' },
+      ).trim();
+      const raw = Buffer.from(encoded, 'base64').toString('utf-8');
+      const fm = parseFrontmatter(raw);
+      const body = stripFrontmatter(raw);
+
+      const slug = file.replace(/\.md$/, '');
+      const title = fm.name || slug;
+      const description = fm.description || '';
+
+      const mdFrontmatter = [
+        '---',
+        `title: "${title.replace(/"/g, '\\"')}"`,
+        `description: "${description.replace(/"/g, '\\"')}"`,
+        `category: "agent"`,
+        '---',
+      ].join('\n');
+      writeFileSync(join(contentDir, `${slug}.md`), `${mdFrontmatter}\n\n${body}`);
+
+      skills.push({ slug, title, description, category: 'agent', type: 'agent' });
+    } catch {
+      console.warn(`Skipping agent ${file}: could not fetch`);
     }
   }
 
@@ -97,6 +135,7 @@ export interface Skill {
   title: string;
   description: string;
   category: string;
+  type: 'skill' | 'agent';
 }
 
 export const skills: Skill[] = ${JSON.stringify(skills, null, 2)};
@@ -107,6 +146,7 @@ const categoryLabels: Record<string, string> = {
   development: 'Development',
   security: 'Security',
   visual: 'Visual & Branding',
+  agent: 'Agents',
   general: 'General',
 };
 

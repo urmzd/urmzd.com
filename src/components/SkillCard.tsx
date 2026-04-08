@@ -1,8 +1,9 @@
-import { Bot, Code, ExternalLink, Eye, Hammer, Shield, Terminal } from 'lucide-react';
+import { Bot, Brain, Code, ExternalLink, Eye, Hammer, Shield, Terminal } from 'lucide-react';
 import type { Skill } from '@/data/skills';
 import { getCategoryLabel } from '@/data/skills';
 
 const categoryIcons: Record<string, typeof Code> = {
+  agent: Brain,
   ai: Bot,
   cli: Terminal,
   development: Code,
