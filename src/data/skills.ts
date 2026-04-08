@@ -4,15 +4,73 @@ export interface Skill {
   title: string;
   description: string;
   category: string;
+  type: 'skill' | 'agent';
 }
 
 export const skills: Skill[] = [
+  {
+    slug: 'architect',
+    title: 'architect',
+    description:
+      '| Adopt the Architect persona. Interface-first systems design with verbose, principle-driven reasoning. Use for module decomposition, phased delivery plans, and systematic design work.',
+    category: 'agent',
+    type: 'agent',
+  },
+  {
+    slug: 'curator',
+    title: 'curator',
+    description:
+      '| Adopt the Curator persona. Prescriptive perfectionist focused on consistency, polish, and visual hierarchy. Use when refining documentation, formatting, naming, and cross-project standards.',
+    category: 'agent',
+    type: 'agent',
+  },
+  {
+    slug: 'debugger',
+    title: 'debugger',
+    description:
+      '| Adopt the Debugger persona. Terse, empirical root-cause analysis. Use when something is broken and you need fast, evidence-based diagnosis.',
+    category: 'agent',
+    type: 'agent',
+  },
+  {
+    slug: 'ideator',
+    title: 'ideator',
+    description:
+      '| Adopt the Ideator persona. Expansive, generative creative exploration. Use when brainstorming features, exploring UX possibilities, and pushing boundaries before constraining.',
+    category: 'agent',
+    type: 'agent',
+  },
+  {
+    slug: 'strategist',
+    title: 'strategist',
+    description:
+      '| Adopt the Strategist persona. Imperative, structured orchestration across multiple systems and repos. Use for multi-repo sweeps, batch operations, and systematic coordination.',
+    category: 'agent',
+    type: 'agent',
+  },
+  {
+    slug: 'technical-documentation-architect',
+    title: 'technical-documentation-architect',
+    description:
+      '| Use this agent when you need to create, update, or restructure technical documentation including API docs, user guides, README files, architecture documentation, or code documentation. Deploy this agent after implementing new features, refactoring code, or when documentation needs updating.',
+    category: 'agent',
+    type: 'agent',
+  },
+  {
+    slug: 'writer',
+    title: 'writer',
+    description:
+      '| Adopt the Writer persona. Concise, outcome-focused technical documentation. Use for READMEs, skill files, API docs, and any documentation that must serve both humans and AI agents.',
+    category: 'agent',
+    type: 'agent',
+  },
   {
     slug: 'configure-ai',
     title: 'AI Workflows',
     description:
       'AI tools, Claude Code configuration, sr commits, AGENTS.md standard, skills-as-docs philosophy, and llms.txt. Use when setting up AI tooling, configuring projects for AI, or working with agent skills.',
     category: 'ai',
+    type: 'skill',
   },
   {
     slug: 'create-llms-txt',
@@ -20,20 +78,23 @@ export const skills: Skill[] = [
     description:
       'Generate a spec-compliant llms.txt file for any project by analyzing its codebase, docs, and public URLs. Use when creating an llms.txt, making a project LLM-discoverable, or when the user mentions "llms.txt" in the context of generating or scaffolding one.',
     category: 'ai',
+    type: 'skill',
   },
   {
     slug: 'create-oss-skill',
     title: 'Create OSS Skill',
     description:
-      'Create well-formed Agent Skills following the agentskills.io specification — scaffold directories, write SKILL.md files, bundle scripts, and structure instructions for progressive disclosure. Use when creating a new skill, reviewing skill structure, optimizing a skill description, or setting up evals for skill quality.',
+      'Create well-formed Agent Skills following the agentskills.io specification. Scaffold directories, write SKILL.md files, bundle scripts, and structure instructions for progressive disclosure. Use when creating a new skill, reviewing skill structure, optimizing a skill description, or setting up evals for skill quality.',
     category: 'ai',
+    type: 'skill',
   },
   {
     slug: 'extend-oss-skills-to-claude',
     title: 'Extend OSS Skills to Claude',
     description:
-      'Extend standard agentskills.io skills with Claude Code-specific features — invocation control, subagent execution, dynamic context injection, string substitutions, model/effort overrides, and deployment scoping. Use when adapting a portable skill for Claude Code, adding Claude-specific frontmatter, setting up subagent delegation, or configuring skill permissions.',
+      'Extend standard agentskills.io skills with Claude Code-specific features. Invocation control, subagent execution, dynamic context injection, string substitutions, model/effort overrides, and deployment scoping. Use when adapting a portable skill for Claude Code, adding Claude-specific frontmatter, setting up subagent delegation, or configuring skill permissions.',
     category: 'ai',
+    type: 'skill',
   },
   {
     slug: 'setup-devenv',
@@ -41,27 +102,39 @@ export const skills: Skill[] = [
     description:
       '13 composable Nix development shells for reproducible tooling. Use when setting up dev environments, configuring .envrc files, or adding Nix shells to projects.',
     category: 'cli',
+    type: 'skill',
+  },
+  {
+    slug: 'check-project',
+    title: 'Check Project',
+    description:
+      'Validate project structure against scaffold conventions -- check for required files, CI consistency, optional directory usage, and documentation completeness. Use to audit an existing project or verify a scaffold was applied correctly.',
+    category: 'development',
+    type: 'skill',
   },
   {
     slug: 'setup-ci',
     title: 'CI/CD Standards',
     description:
-      'CI/CD conventions — ci.yml + release.yml naming, concurrency, bot skip, embed-src/teasr steps, and workflow structure. Language-specific pipelines live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node, scaffold-terraform. Use when setting up GitHub Actions or understanding CI conventions.',
+      'CI/CD conventions. ci.yml + release.yml naming, concurrency, bot skip, embed-src/teasr steps, and workflow structure. Language-specific pipelines live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node, scaffold-terraform. Use when setting up GitHub Actions or understanding CI conventions.',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'build-cli',
     title: 'CLI Patterns',
     description:
-      'CLI conventions — output modes, TTY detection, JSON piping, stdout/stderr separation, interactivity, signal handling, visual style, and CI integration. Use when building or reviewing any CLI tool.',
+      'CLI conventions. Output modes, TTY detection, JSON piping, stdout/stderr separation, interactivity, signal handling, visual style, and CI integration. Use when building or reviewing any CLI tool.',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'assess-quality',
     title: 'Code Quality',
     description:
-      'Code quality assessment — readability, onboarding ease, scalability without bloat, brand coherence across projects, and intentional design for developers and AI agents. The foundational "why" behind all conventions. Use when reviewing code quality, assessing project health, onboarding to a new project, or making architectural decisions about structure and consistency.',
+      'Code quality assessment. Readability, onboarding ease, scalability without bloat, brand coherence across projects, and intentional design for developers and AI agents. The foundational "why" behind all conventions. Use when reviewing code quality, assessing project health, onboarding to a new project, or making architectural decisions about structure and consistency.',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'write-code',
@@ -69,27 +142,31 @@ export const skills: Skill[] = [
     description:
       'Tech stack, coding patterns, commit conventions, interface design, error handling, testing, and junior-friendly philosophy. Use when writing code, making commits, or choosing tools/patterns.',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'review-design',
     title: 'Pragmatic Programming',
     description:
-      'Pragmatic Programmer principles — DRY, orthogonality, tracer bullets, prototyping, estimation, design by contract, and pragmatic paranoia. Use when writing, reviewing, or refactoring code.',
+      'Pragmatic Programmer principles. DRY, orthogonality, tracer bullets, prototyping, estimation, design by contract, and pragmatic paranoia. Use when writing, reviewing, or refactoring code.',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'scaffold-project',
     title: 'Project Scaffolding',
     description:
-      'Project structure — standard files, documentation conventions, and dispatch to language-specific scaffolds. Use when creating or standardizing projects. Delegates to scaffold-rust, scaffold-go, scaffold-python, scaffold-node, or scaffold-terraform for CI/CD, release pipelines, and language-specific config.',
+      'Project structure. Standard files, documentation conventions, and dispatch to language-specific scaffolds. Use when creating or standardizing projects. Delegates to scaffold-rust, scaffold-go, scaffold-python, scaffold-node, or scaffold-terraform for CI/CD, release pipelines, and language-specific config.',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'setup-release',
     title: 'Release Workflow',
     description:
-      'Release pipeline conventions — sr.yaml config, sr action usage, git hooks, monorepo support, post-release patterns, and version file mapping. Language-specific build targets and publishing live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node. Use when setting up or modifying release pipelines.',
+      'Release pipeline conventions. sr.yaml config, sr action usage, git hooks, monorepo support, post-release patterns, and version file mapping. Language-specific build targets and publishing live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node. Use when setting up or modifying release pipelines.',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'scaffold-go',
@@ -97,6 +174,7 @@ export const skills: Skill[] = [
     description:
       'Scaffold a complete Go project with CI/CD, release pipeline, Makefile, sr.yaml, .envrc, and standard files. Uses go toolchain and make as the native build system. Use when creating a new Go CLI, service, or module, or when the user mentions "new Go project", "go mod init", or "Go scaffold".',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'scaffold-node',
@@ -104,6 +182,7 @@ export const skills: Skill[] = [
     description:
       'Scaffold a complete Node/TypeScript project with CI/CD, release pipeline, sr.yaml, .envrc, and standard files. Uses npm scripts and biome. Use when creating a new Node.js app, TypeScript library, or website, or when the user mentions "new Node project", "npm init", "TypeScript scaffold", or "Astro site".',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'scaffold-python',
@@ -111,13 +190,15 @@ export const skills: Skill[] = [
     description:
       'Scaffold a complete Python project with CI/CD, release pipeline, justfile, sr.yaml, pyproject.toml, .envrc, and standard files. Uses uv, ruff, and justfile (Python lacks a native task runner like npm scripts, so just fills that gap). Use when creating a new Python CLI, library, or application, or when the user mentions "new Python project", "uv init", or "Python scaffold".',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'scaffold-rust',
     title: 'Scaffold Rust Project',
     description:
-      'Scaffold a complete Rust project with CI/CD, release pipeline, sr.yaml, .envrc, and standard files. Uses cargo as the native build system. Use when creating a new Rust CLI, library, or workspace, or when the user mentions "new Rust project", "cargo init", or "Rust scaffold".',
+      'Scaffold a complete Rust project with CI/CD, release pipeline, and sr.yaml. Uses cargo as the native build system. Use when creating a new Rust CLI, library, or workspace, or when the user mentions "new Rust project", "cargo init", or "Rust scaffold".',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'scaffold-terraform',
@@ -125,6 +206,7 @@ export const skills: Skill[] = [
     description:
       'Scaffold a Terraform infrastructure project with CI/CD (plan on PR, apply on push), AWS OIDC auth, .envrc, and standard files. Uses terraform CLI as the native tool. Use when creating infrastructure repos, or when the user mentions "new Terraform project", "terraform init", "AWS infra", or "infrastructure scaffold".',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'test-code',
@@ -132,13 +214,15 @@ export const skills: Skill[] = [
     description:
       'Testing philosophy, test types, per-language conventions, file organization, fixtures/mocks, CI strategy, and what NOT to test. Use when writing tests, reviewing test coverage, setting up test infrastructure, or deciding what to test.',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'choose-stack',
     title: 'Tools',
     description:
-      'Canonical tech stack reference organized by purpose — release, docs/demos, codegen, and per-language tools. Use when choosing libraries, setting up projects, or selecting the right tool.',
+      'Canonical tech stack reference organized by purpose. Release, docs/demos, codegen, and per-language tools. Use when choosing libraries, setting up projects, or selecting the right tool.',
     category: 'development',
+    type: 'skill',
   },
   {
     slug: 'diagnose-ci',
@@ -146,6 +230,7 @@ export const skills: Skill[] = [
     description:
       'Find failing CI pipelines, pull logs, identify root cause, and suggest or apply fixes. Use when CI is red or the user asks why a pipeline failed.',
     category: 'general',
+    type: 'skill',
   },
   {
     slug: 'fix-and-retry',
@@ -153,6 +238,7 @@ export const skills: Skill[] = [
     description:
       'Diagnose a CI failure, apply the fix, commit, push, and watch the re-run. Use after a pipeline fails and you want to fix and retry in one shot.',
     category: 'general',
+    type: 'skill',
   },
   {
     slug: 'get-work',
@@ -160,48 +246,7 @@ export const skills: Skill[] = [
     description:
       "Scan a folder for git repos and report GitHub status, branch divergence, and what's needed to get each repo up to date. Use when checking on multiple repos at once.",
     category: 'general',
-  },
-  {
-    slug: 'persona-architect',
-    title: 'persona-architect',
-    description:
-      'Adopt the Architect persona — interface-first systems design with verbose, principle-driven reasoning. Use for module decomposition, phased delivery plans, and systematic design work.',
-    category: 'general',
-  },
-  {
-    slug: 'persona-curator',
-    title: 'persona-curator',
-    description:
-      'Adopt the Curator persona — prescriptive perfectionist focused on consistency, polish, and visual hierarchy. Use when refining documentation, formatting, naming, and cross-project standards.',
-    category: 'general',
-  },
-  {
-    slug: 'persona-debugger',
-    title: 'persona-debugger',
-    description:
-      'Adopt the Debugger persona — terse, empirical root-cause analysis. Use when something is broken and you need fast, evidence-based diagnosis.',
-    category: 'general',
-  },
-  {
-    slug: 'persona-ideator',
-    title: 'persona-ideator',
-    description:
-      'Adopt the Ideator persona — expansive, generative creative exploration. Use when brainstorming features, exploring UX possibilities, and pushing boundaries before constraining.',
-    category: 'general',
-  },
-  {
-    slug: 'persona-strategist',
-    title: 'persona-strategist',
-    description:
-      'Adopt the Strategist persona — imperative, structured orchestration across multiple systems and repos. Use for multi-repo sweeps, batch operations, and systematic coordination.',
-    category: 'general',
-  },
-  {
-    slug: 'persona-writer',
-    title: 'persona-writer',
-    description:
-      'Adopt the Writer persona — concise, outcome-focused technical documentation. Use for READMEs, skill files, API docs, and any documentation that must serve both humans and AI agents.',
-    category: 'general',
+    type: 'skill',
   },
   {
     slug: 'pr',
@@ -209,6 +254,7 @@ export const skills: Skill[] = [
     description:
       'Create a pull request with auto-generated summary from commits, following conventional commit conventions. Use when creating PRs.',
     category: 'general',
+    type: 'skill',
   },
   {
     slug: 'release-audit',
@@ -216,13 +262,15 @@ export const skills: Skill[] = [
     description:
       'Audit releases, tags, and assets for a repo or all repos in a directory. Finds orphaned tags, missing assets, and sr config issues. Use when checking release health.',
     category: 'general',
+    type: 'skill',
   },
   {
     slug: 'repo-init',
     title: 'repo-init',
     description:
-      'Full repo bootstrap — create GitHub repo, add license, scaffold CI/release, write README, set metadata, and push. Use when starting a new project from scratch.',
+      'Full repo bootstrap. Create GitHub repo, add license, scaffold CI/release, write README, set metadata, and push. Use when starting a new project from scratch.',
     category: 'general',
+    type: 'skill',
   },
   {
     slug: 'ship',
@@ -230,20 +278,23 @@ export const skills: Skill[] = [
     description:
       'Commit with conventional message, push, and watch CI pipeline until it passes or fails. Use when shipping code changes.',
     category: 'general',
+    type: 'skill',
   },
   {
     slug: 'update-repo-meta',
     title: 'update-repo-meta',
     description:
-      'Update GitHub repo metadata — topics, description, homepage, and visibility via gh CLI. Use when updating repo settings.',
+      'Update GitHub repo metadata. Topics, description, homepage, and visibility via gh CLI. Use when updating repo settings.',
     category: 'general',
+    type: 'skill',
   },
   {
     slug: 'sync-docs',
     title: 'Documentation Sync',
     description:
-      'Audit and synchronize project documentation — README, AGENTS.md, llms.txt, docs/, and embed-src markers. Use after feature changes, refactors, or when docs may be stale. Can be run as a scheduled agent or invoked manually.',
+      'Audit and synchronize project documentation. README, AGENTS.md, llms.txt, docs/, and embed-src markers. Use after feature changes, refactors, or when docs may be stale. Can be run as a scheduled agent or invoked manually.',
     category: 'maintenance',
+    type: 'skill',
   },
   {
     slug: 'audit-security',
@@ -251,13 +302,15 @@ export const skills: Skill[] = [
     description:
       'Security auditing, threat detection, sensitive data leak prevention, and system diagnostics via Activity Monitor. Use when checking for security issues, investigating suspicious processes, preventing credential leaks, or hardening configurations.',
     category: 'security',
+    type: 'skill',
   },
   {
     slug: 'write-readme',
     title: 'README Standards',
     description:
-      'README structure — centered header, badges, demos, section order, install.sh pattern, quickstart, embed-src usage, and llms.txt. Use when creating or updating any project README.',
+      'README structure. Centered header, badges, demos, section order, install.sh pattern, quickstart, embed-src usage, and llms.txt. Use when creating or updating any project README.',
     category: 'visual',
+    type: 'skill',
   },
   {
     slug: 'style-brand',
@@ -265,6 +318,7 @@ export const skills: Skill[] = [
     description:
       'Terminal theme, font, VHS demos, teasr integration, asset conventions, and branding across README/demos. Use when configuring appearance, recording demos, or maintaining visual consistency.',
     category: 'visual',
+    type: 'skill',
   },
 ];
 
@@ -274,6 +328,7 @@ const categoryLabels: Record<string, string> = {
   development: 'Development',
   security: 'Security',
   visual: 'Visual & Branding',
+  agent: 'Agents',
   general: 'General',
 };
 

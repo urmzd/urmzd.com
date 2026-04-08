@@ -35,7 +35,6 @@ concurrency:
 
 jobs:
   fmt:
-    if: github.actor != 'github-actions[bot]'
     name: Format
     runs-on: ubuntu-latest
     steps:
@@ -53,7 +52,6 @@ jobs:
           fi
 
   lint:
-    if: github.actor != 'github-actions[bot]'
     name: Lint
     runs-on: ubuntu-latest
     steps:
@@ -64,7 +62,6 @@ jobs:
       - uses: golangci/golangci-lint-action@v7
 
   test:
-    if: github.actor != 'github-actions[bot]'
     name: Test
     runs-on: ubuntu-latest
     steps:
@@ -233,12 +230,12 @@ hooks:
     - sr hook commit-msg
 ```
 
-No `version_files` — Go uses git tags only. No `stage_files` — `go.sum` changes are committed during development, not release.
+No `version_files`. Go uses git tags only. No `stage_files`. `go.sum` changes are committed during development, not release.
 
 ### `Makefile`
 
 ```makefile
-.PHONY: all init build test lint fmt check run install
+.PHONY: all init build test lint fmt check run install record
 
 MOD := $(shell basename $(CURDIR))
 CMD := cmd/$(MOD)
@@ -268,6 +265,9 @@ run: build
 
 install:
 	CGO_ENABLED=0 go install -trimpath -ldflags="-s -w" ./$(CMD)
+
+record:
+	teasr showme
 ```
 
 For complex projects (multi-service repos, code generation, protobuf), add a justfile to handle orchestration that Make handles poorly (dependency ordering, parameterized recipes).
@@ -292,9 +292,9 @@ go.sum
 ## Gotchas
 
 - Always use `go-version-file: go.mod` instead of hardcoding Go versions
-- `CGO_ENABLED=0` for static binaries — required for pure-Go projects, especially those using `modernc.org/sqlite`
-- Inject version/commit/date via `-ldflags "-X main.version=..."` — declare `var version, commit, date string` in main.go
-- No `version_files` in sr.yaml — Go versioning is tag-only
+- `CGO_ENABLED=0` for static binaries. Required for pure-Go projects, especially those using `modernc.org/sqlite`
+- Inject version/commit/date via `-ldflags "-X main.version=..."`. Declare `var version, commit, date string` in main.go
+- No `version_files` in sr.yaml. Go versioning is tag-only
 - `golangci-lint-action@v7` auto-detects Go version from go.mod
 - Bot skip uses `github.actor != 'github-actions[bot]'` or `'sr-releaser[bot]'` depending on which bot triggers
-- Cross-compilation is native in Go — no `cross` tool needed, just set `GOOS`/`GOARCH`
+- Cross-compilation is native in Go; no `cross` tool needed, just set `GOOS`/`GOARCH`

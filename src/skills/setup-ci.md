@@ -1,6 +1,6 @@
 ---
 title: "CI/CD Standards"
-description: "CI/CD conventions — ci.yml + release.yml naming, concurrency, bot skip, embed-src/teasr steps, and workflow structure. Language-specific pipelines live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node, scaffold-terraform. Use when setting up GitHub Actions or understanding CI conventions."
+description: "CI/CD conventions. ci.yml + release.yml naming, concurrency, bot skip, embed-src/teasr steps, and workflow structure. Language-specific pipelines live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node, scaffold-terraform. Use when setting up GitHub Actions or understanding CI conventions."
 category: "development"
 ---
 
@@ -15,7 +15,7 @@ Universal conventions that apply across all languages. For language-specific CI 
 | `ci.yml` | `pull_request: branches: [main]` + `workflow_call` | Quality gate: fmt, lint, test |
 | `release.yml` | `push: branches: [main]` + `workflow_dispatch` | Automated releases |
 
-- No `build.yml` or `publish.yml` — build and publish are jobs within `release.yml`
+- **No `build.yml` or `publish.yml`** build and publish are jobs within `release.yml`
 - Specialized workflows allowed for domain-specific needs (e.g., `experiments.yml`)
 - Exception: Terraform uses a single `terraform.yml` (see `scaffold-terraform`)
 
@@ -37,12 +37,12 @@ Push main → release.yml:
 ## Concurrency
 
 ```yaml
-# CI workflows — cancel stale runs
+# CI workflows: cancel stale runs
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# Release workflows — never cancel mid-release
+# Release workflows: never cancel mid-release
 concurrency:
   group: release
   cancel-in-progress: false

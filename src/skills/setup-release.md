@@ -1,6 +1,6 @@
 ---
 title: "Release Workflow"
-description: "Release pipeline conventions — sr.yaml config, sr action usage, git hooks, monorepo support, post-release patterns, and version file mapping. Language-specific build targets and publishing live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node. Use when setting up or modifying release pipelines."
+description: "Release pipeline conventions. sr.yaml config, sr action usage, git hooks, monorepo support, post-release patterns, and version file mapping. Language-specific build targets and publishing live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node. Use when setting up or modifying release pipelines."
 category: "development"
 ---
 
@@ -57,7 +57,7 @@ hooks:
 | Rust | `[Cargo.toml]` | `[Cargo.lock]` |
 | Python | `[pyproject.toml]` | `[uv.lock]` |
 | Node | `[package.json]` | `[package-lock.json]` |
-| Go | _(none — tag only)_ | _(none)_ |
+| Go | _(none; tag only)_ | _(none)_ |
 
 sr auto-discovers workspace members for Rust (Cargo), Python (uv), and Node (npm).
 
@@ -69,8 +69,8 @@ push to main
   → release.yml:
       embed-src (sync code in README) [if markers exist]
       → sr release (bump → changelog → tag → GitHub release)
-      → build matrix (platform-specific — see scaffold-* skills)
-      → publish (registry-specific — see scaffold-* skills)
+      → build matrix (platform-specific; see scaffold-* skills)
+      → publish (registry-specific; see scaffold-* skills)
       → teasr (post-release demo capture) [if teasr.toml exists]
       → lockfile sync commit [skip ci]
 ```
@@ -96,7 +96,7 @@ Outputs: `released` (bool), `tag` (e.g. `v1.2.0`), `version` (e.g. `1.2.0`).
 
 ## Git Hooks
 
-sr manages git hooks natively via `sr.yaml` — no pre-commit framework needed:
+sr manages git hooks natively via `sr.yaml`. No pre-commit framework needed:
 
 ```yaml
 hooks:

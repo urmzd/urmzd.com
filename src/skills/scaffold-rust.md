@@ -1,6 +1,6 @@
 ---
 title: "Scaffold Rust Project"
-description: "Scaffold a complete Rust project with CI/CD, release pipeline, sr.yaml, .envrc, and standard files. Uses cargo as the native build system. Use when creating a new Rust CLI, library, or workspace, or when the user mentions \"new Rust project\", \"cargo init\", or \"Rust scaffold\"."
+description: "Scaffold a complete Rust project with CI/CD, release pipeline, and sr.yaml. Uses cargo as the native build system. Use when creating a new Rust CLI, library, or workspace, or when the user mentions \"new Rust project\", \"cargo init\", or \"Rust scaffold\"."
 category: "development"
 ---
 
@@ -286,7 +286,7 @@ For workspaces, list all member `Cargo.toml` files in `version_files`.
 
 ### Common Commands
 
-No justfile — cargo is the native build system:
+No justfile. Cargo is the native build system:
 
 ```sh
 cargo fmt --all           # format
@@ -300,11 +300,23 @@ Set up git hooks during init: `git config core.hooksPath .githooks && cargo fetc
 
 For complex projects (workspaces with many crates, custom build steps, cross-compilation), add a justfile to orchestrate multi-step workflows that cargo alone can't express.
 
-### `.envrc`
+## Demo Recording
 
-```sh
-use flake .#rust
+For projects with a justfile, add a `record` recipe:
+
+```just
+record:
+    teasr showme
 ```
+
+For projects recording their own CLI, build first:
+
+```just
+record: build
+    PATH="$(pwd)/target/release:$PATH" teasr showme
+```
+
+Without a justfile, run `teasr showme` directly.
 
 ## Gotchas
 

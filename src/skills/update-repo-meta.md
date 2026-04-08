@@ -1,6 +1,6 @@
 ---
 title: "update-repo-meta"
-description: "Update GitHub repo metadata — topics, description, homepage, and visibility via gh CLI. Use when updating repo settings."
+description: "Update GitHub repo metadata. Topics, description, homepage, and visibility via gh CLI. Use when updating repo settings."
 category: "general"
 ---
 

@@ -26,6 +26,9 @@ on:
     branches: [main]
   workflow_call:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -219,13 +222,14 @@ Add these scripts to `package.json`:
     "fmt": "biome check --write",
     "typecheck": "tsc --noEmit",
     "check": "npm run fmt && npm run lint && npm run typecheck && npm test",
+    "record": "teasr showme",
     "dev": "tsc --watch",
     "prepare": "git config core.hooksPath .githooks"
   }
 }
 ```
 
-Use `npm run <task>` for all operations. No justfile — npm is the native task runner.
+Use `npm run <task>` for all operations. No justfile. npm is the native task runner.
 
 ### `.envrc`
 
@@ -281,7 +285,7 @@ For multi-package repos, add turbo for cached, parallel task execution:
 - `npm install turbo --save-dev` at workspace root
 - Add `turbo.json` with pipeline definitions (`build`, `test`, `lint`, `typecheck`)
 - Replace direct `npm run` calls with `turbo run` in npm scripts and CI
-- Turbo caches task outputs — subsequent runs skip unchanged packages
+- Turbo caches task outputs; subsequent runs skip unchanged packages
 
 ```json
 {
@@ -300,7 +304,7 @@ For multi-package repos, add turbo for cached, parallel task execution:
 - Use `npm ci` (not `npm install`) in CI for reproducible installs
 - `biome check` handles both formatting and linting in one pass
 - `biome check --write` to auto-fix (replaces `prettier --write` + `eslint --fix`)
-- Node 22 is the current LTS — use `node-version: 22`
+- Node 22 is the current LTS. Use `node-version: 22`
 - `cache: npm` in setup-node handles caching automatically
 - For framework-specific type checks (e.g., `astro check`), add a separate `check` job
 - `cancel-in-progress: false` on release workflow to prevent partial releases
