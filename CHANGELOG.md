@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.4.0 (2026-04-08)
+
+### Features
+
+- **agents**: introduce agent personas and update skills catalog ([5f8bcab](https://github.com/urmzd/urmzd.com/commit/5f8bcabf715c44671c5f9a47bc4c1b1061a3b20a))
+- **skills**: add agent category support to infrastructure ([48ec35b](https://github.com/urmzd/urmzd.com/commit/48ec35b1b4e4af02585ff39ffd3c5868dc001d92))
+
+### Documentation
+
+- **readme**: redesign with centered header, features, and agent skill section (#10) ([79ba0d0](https://github.com/urmzd/urmzd.com/commit/79ba0d0cf567b81663905afdc3874b8c97533625))
+
+### Miscellaneous
+
+- add linguist overrides to fix language stats (#11) ([d6039b7](https://github.com/urmzd/urmzd.com/commit/d6039b708351f37e68d31d48ebfd3e598eb6ac6d))
+- **deps**: bump actions/create-github-app-token from 1 to 3 ([dead7e2](https://github.com/urmzd/urmzd.com/commit/dead7e2d0ce0f3490b5aeed813930dbd601b055d))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.3.1...v0.4.0)
+
+
 ## 0.3.1 (2026-04-04)
 
 ### Bug Fixes
