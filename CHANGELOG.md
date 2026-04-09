@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.2 (2026-04-09)
+
+### Bug Fixes
+
+- remove --allow-dirty from scaffold-rust publish template ([15e0e5b](https://github.com/urmzd/urmzd.com/commit/15e0e5b06f594d34e218ae384485d56b5e7cfa1e))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.4.1...v0.4.2)
+
+
 ## 0.4.1 (2026-04-09)
 
 ### Bug Fixes
