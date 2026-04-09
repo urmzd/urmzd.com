@@ -19,17 +19,17 @@ Audit project documentation for consistency, staleness, and completeness. Fix is
 
 ### 1. embed-src Markers
 
-Run `embed-src --verify` on all files with markers to detect drift:
+Run `embed-src run --verify` on all files with markers to detect drift:
 
 ```sh
 # Find all files with embed-src markers
-grep -rl 'embed-src src=' . --include='*.md' | xargs embed-src --verify
+grep -rl 'embed-src src=' . --include='*.md' | xargs embed-src run --verify
 ```
 
-If any markers are stale, run `embed-src` to update them:
+If any markers are stale, run `embed-src run` to update them:
 
 ```sh
-grep -rl 'embed-src src=' . --include='*.md' | xargs embed-src
+grep -rl 'embed-src src=' . --include='*.md' | xargs embed-src run
 ```
 
 ### 2. README Completeness
