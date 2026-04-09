@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.1 (2026-04-09)
+
+### Bug Fixes
+
+- **skills**: update embed-src references to use 'run' subcommand ([6daa525](https://github.com/urmzd/urmzd.com/commit/6daa52592af2418909616da83db88ab9658a6df4))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.4.0...v0.4.1)
+
+
 ## 0.4.0 (2026-04-08)
 
 ### Features
