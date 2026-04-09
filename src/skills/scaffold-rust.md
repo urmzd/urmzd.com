@@ -228,7 +228,7 @@ jobs:
   #     - name: Publish
   #       env:
   #         CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
-  #       run: cargo publish --allow-dirty
+  #       run: cargo publish
 ```
 
 ### `sr.yaml`
