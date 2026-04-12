@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.3 (2026-04-12)
+
+### Refactoring
+
+- **pages**: remove old skills page routes ([d565dac](https://github.com/urmzd/urmzd.com/commit/d565dace8f9d6215496a44b48e409dc73611e9b6))
+- **routing**: rename skills route to genai ([3a31b78](https://github.com/urmzd/urmzd.com/commit/3a31b7855e3bdd424331939e16cbc75fa4589ba4))
+
+### Miscellaneous
+
+- **assets**: remove unused logo-text image ([b4dad60](https://github.com/urmzd/urmzd.com/commit/b4dad6005dc57fb39a65a91f6153b8ec4e7726a8))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.4.2...v0.4.3)
+
+
 ## 0.4.2 (2026-04-09)
 
 ### Bug Fixes
