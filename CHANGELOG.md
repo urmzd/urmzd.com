@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.6.2 (2026-04-12)
+
+### Bug Fixes
+
+- **readTime**: use 250 WPM and fix frontmatter regex stripping body content ([42e0058](https://github.com/urmzd/urmzd.com/commit/42e0058cace07d75cfe227344286f1681e43aa38))
+
+### Documentation
+
+- **blog**: update langchain-dissection citations and timeline ([08d2726](https://github.com/urmzd/urmzd.com/commit/08d272674243e95ef763ef16f9f7134f3cbb017d))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.6.1...v0.6.2)
+
+
 ## 0.6.1 (2026-04-12)
 
 ### Bug Fixes
