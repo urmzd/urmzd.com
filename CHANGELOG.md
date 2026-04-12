@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.6.0 (2026-04-12)
+
+### Features
+
+- **markdown**: add callout and embed remark plugins ([1d5b7b1](https://github.com/urmzd/urmzd.com/commit/1d5b7b1e121832291df98d7a78d9d588f65c8a25))
+
+### Documentation
+
+- **blog**: refine LangChain dissection critique on orthogonality ([f88b931](https://github.com/urmzd/urmzd.com/commit/f88b931783ebea8f01befede88d0994635b3ed3f))
+
+### Refactoring
+
+- **blog**: remove old MDX files after migration ([fdbbaa3](https://github.com/urmzd/urmzd.com/commit/fdbbaa36bb67b90856942b23efce1a81fc7e0b9e))
+- **blog**: migrate posts from MDX to markdown ([66f3986](https://github.com/urmzd/urmzd.com/commit/66f398615d7c09880a32e906b2be545b5a60bfdc))
+
+### Miscellaneous
+
+- **deps**: add markdown processing dependencies ([a37d399](https://github.com/urmzd/urmzd.com/commit/a37d3992fa0975e4fede4ff1cc3620155d7bc293))
+- **layout**: improve author profile image and metadata ([617cc3e](https://github.com/urmzd/urmzd.com/commit/617cc3e1f4551b44511e5b1ee25e4875e4904c1b))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.5.0...v0.6.0)
+
+
 ## 0.5.0 (2026-04-12)
 
 ### Features
