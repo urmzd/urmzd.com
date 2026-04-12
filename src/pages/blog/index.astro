@@ -4,8 +4,8 @@ import BlogSearch from '@/components/BlogSearch';
 import { getCollection } from 'astro:content';
 import { calculateReadTime } from '@/lib/readTime';
 
-const posts = await getCollection('blog');
-const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const blogPosts = sortedPosts.map((post) => ({
   id: post.id,
@@ -14,6 +14,7 @@ const blogPosts = sortedPosts.map((post) => ({
   pubDate: post.data.pubDate.toISOString(),
   readTime: calculateReadTime(post.body || '').text,
   tags: post.data.tags,
+  draft: post.data.draft ?? false,
 }));
 ---
 

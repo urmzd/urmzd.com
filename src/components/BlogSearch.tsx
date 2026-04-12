@@ -12,6 +12,7 @@ interface BlogPost {
   pubDate: string;
   readTime?: string;
   tags?: string[];
+  draft?: boolean;
 }
 
 interface BlogSearchProps {
@@ -27,6 +28,8 @@ const SEARCH_PLACEHOLDERS = [
 
 export default function BlogSearch({ posts }: BlogSearchProps) {
   const [query, setQuery] = useState('');
+  const [showDrafts, setShowDrafts] = useState(false);
+  const hasDrafts = useMemo(() => posts.some((p) => p.draft), [posts]);
   const [activeTag, setActiveTag] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
     const params = new URLSearchParams(window.location.search);
@@ -34,17 +37,18 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
   });
 
   const allTags = useMemo(() => {
+    const visiblePosts = showDrafts ? posts : posts.filter((p) => !p.draft);
     const tagSet = new Set<string>();
-    for (const post of posts) {
+    for (const post of visiblePosts) {
       for (const tag of post.tags ?? []) {
         tagSet.add(tag);
       }
     }
     return Array.from(tagSet).sort();
-  }, [posts]);
+  }, [posts, showDrafts]);
 
   const filteredPosts = useMemo(() => {
-    let result = posts;
+    let result = showDrafts ? posts : posts.filter((p) => !p.draft);
     if (activeTag) {
       result = result.filter((p) => p.tags?.includes(activeTag));
     }
@@ -52,7 +56,7 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
       result = fuzzySearch(query, result, (post) => [post.title, post.description], 0.5);
     }
     return result;
-  }, [query, posts, activeTag]);
+  }, [query, posts, activeTag, showDrafts]);
 
   const handleTagClick = (tag: string) => {
     const next = activeTag === tag ? null : tag;
@@ -87,8 +91,21 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
           />
         </div>
 
-        {allTags.length > 0 && (
+        {(allTags.length > 0 || hasDrafts) && (
           <div className="mt-4 flex flex-wrap gap-2">
+            {hasDrafts && (
+              <button
+                type="button"
+                onClick={() => setShowDrafts((v) => !v)}
+                className={`rounded-full px-3 py-1 text-sm transition-all ${
+                  showDrafts
+                    ? 'border border-primary bg-primary text-primary-foreground'
+                    : 'glass-pill text-muted-foreground hover:border-foreground/20 hover:text-foreground'
+                }`}
+              >
+                drafts
+              </button>
+            )}
             {allTags.map((tag) => (
               <button
                 key={tag}
@@ -126,7 +143,14 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
                   href={`/blog/${post.id}`}
                   className="group block rounded-xl p-6 transition-all glass-card hover:border-primary/40"
                 >
-                  <h2 className="text-2xl font-semibold group-hover:text-primary">{post.title}</h2>
+                  <h2 className="text-2xl font-semibold group-hover:text-primary">
+                    {post.title}
+                    {post.draft && (
+                      <span className="ml-2 inline-block align-middle rounded-full border border-muted-foreground/30 px-2 py-0.5 text-xs font-medium text-muted-foreground">
+                        Draft
+                      </span>
+                    )}
+                  </h2>
                   <p className="mt-2 line-clamp-3 text-muted-foreground">{post.description}</p>
                   <div className="mt-4 flex flex-col gap-1 text-sm text-muted-foreground sm:flex-row sm:items-center sm:gap-2">
                     <time>

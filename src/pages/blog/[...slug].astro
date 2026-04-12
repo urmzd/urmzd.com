@@ -17,6 +17,7 @@ export async function getStaticPaths() {
 }
 
 const { post, allPosts } = Astro.props;
+const publishedPosts = allPosts.filter((p: typeof post) => p.data.draft !== true);
 const { Content, headings } = await render(post);
 const readTime = calculateReadTime(post.body || '');
 
@@ -65,7 +66,7 @@ const showTOC = tocHeadings.length >= 3;
       <RelatedPosts
         currentId={post.id}
         currentTags={post.data.tags}
-        posts={allPosts}
+        posts={publishedPosts}
         basePath="/blog"
       />
     </div>
