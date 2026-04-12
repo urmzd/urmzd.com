@@ -21,7 +21,7 @@ export default function SkillCard({ skill }: SkillCardProps) {
 
   return (
     <a
-      href={`/skills/${skill.slug}`}
+      href={`/genai/${skill.slug}`}
       className="group block rounded-xl p-6 transition-all glass-card hover:border-primary/40"
     >
       <div className="mb-3 flex items-center justify-between">
