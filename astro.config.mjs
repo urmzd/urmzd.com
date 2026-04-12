@@ -5,6 +5,9 @@ import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
+import remarkGfm from 'remark-gfm';
+import remarkCallouts from './src/lib/remark-callouts';
+import remarkEmbeds from './src/lib/remark-embeds';
 import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 
@@ -20,7 +23,7 @@ i18n: {
   },
   integrations: [react(), mdx(), sitemap()],
   markdown: {
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkGfm, remarkCallouts, remarkEmbeds, remarkMath],
     rehypePlugins: [rehypeKatex, rehypeSlug],
   },
   vite: {
