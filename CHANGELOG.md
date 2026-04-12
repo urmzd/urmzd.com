@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.6.1 (2026-04-12)
+
+### Bug Fixes
+
+- **MobileTOC**: defer scroll action until after collapse animation ([51e5ec8](https://github.com/urmzd/urmzd.com/commit/51e5ec8ecb9f9107e4a990d07436cc3483be63b6))
+
+### Documentation
+
+- **langchain-dissection**: revise explanation of ai framework patterns ([c38bedb](https://github.com/urmzd/urmzd.com/commit/c38bedbe884f42ff1b593d21c7c88c822418bb5c))
+- **blog**: update langchain-dissection with saige reference and clarifications ([260bb0c](https://github.com/urmzd/urmzd.com/commit/260bb0c0e4a64f98483af9da30da6f4ad4d6530b))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.6.0...v0.6.1)
+
+
 ## 0.6.0 (2026-04-12)
 
 ### Features
