@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.0 (2026-04-12)
+
+### Features
+
+- **blog**: add langchain dissection article ([263a81d](https://github.com/urmzd/urmzd.com/commit/263a81d1a51751a13d1ebb985880113c705fa0cf))
+- **blog**: add draft posts support ([caba43a](https://github.com/urmzd/urmzd.com/commit/caba43a5b81082f0a95353d91e6549f048d3f34c))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.4.3...v0.5.0)
+
+
 ## 0.4.3 (2026-04-12)
 
 ### Refactoring
