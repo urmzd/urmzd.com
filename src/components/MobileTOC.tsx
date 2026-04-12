@@ -17,12 +17,16 @@ export default function MobileTOC({ headings }: MobileTOCProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = (slug: string) => {
-    const element = document.getElementById(slug);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      history.pushState(null, '', `#${slug}`);
-    }
     setIsOpen(false);
+    // Delay scroll until after the collapse animation (200ms) completes,
+    // otherwise the layout shift cancels the smooth scroll.
+    setTimeout(() => {
+      const element = document.getElementById(slug);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        history.pushState(null, '', `#${slug}`);
+      }
+    }, 250);
   };
 
   return (
