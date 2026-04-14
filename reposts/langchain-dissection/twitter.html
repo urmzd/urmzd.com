@@ -14,10 +14,6 @@
 </head>
 <body>
 
-<p><em>For the full experience with interactive visuals and citations, read the original at <a href="https://urmzd.com/blog/langchain-dissection">https://urmzd.com/blog/langchain-dissection</a></em></p>
-
-<hr>
-
 <p>There are a hundred and four days of summer vacation. LangChain will put you on call for half of them.</p>
 
 <p>For those who don't already know, LangChain<sup><a href="#fn-1" id="fnref-1">[1]</a></sup> is the de-facto prototyping and now ostensibly "production-grade" agentic framework that many teams are adopting. Most new-generation AI frameworks are poorly designed and create the kind of technical debt you wish you never accrued. The companies' solution to their poorly designed abstractions? Introduce overpriced observability tooling and custom enterprise solutions — to problems they created. Imagine someone poisoning a well and then offering you the antidote. You'd probably avoid them altogether.</p>
@@ -118,6 +114,8 @@ class Batch(Protocol):
 <p>If you want to see what this looks like in practice, <a href="https://github.com/urmzd/saige">saige</a> is my own Go SDK built on these principles — one method on the Provider interface, orthogonal packages, OTel for observability. The stack trace stays readable without purchasing anything.</p>
 
 <hr>
+
+<p><em>Originally published at <a href="https://urmzd.com/blog/langchain-dissection">https://urmzd.com/blog/langchain-dissection</a></em></p>
 
 <hr>
 <ol>

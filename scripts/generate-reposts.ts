@@ -71,14 +71,31 @@ const frontmatter: PostFrontmatter = {
   tags: [],
 };
 
-// --- Strip trailing --- (section divider before References) to avoid double <hr> ---
-const cleanBody = body.replace(/\n---\s*$/, '');
+// --- Strip --- before footnote definitions to avoid double <hr> ---
+const cleanBody = body.replace(/\n---\s*\n(\[\^)/, '\n$1');
 
 // --- Generate HTML for both platforms ---
 const twitterBody = mdxToHtml(cleanBody, { headingLevel: 2 });
 const linkedinBody = mdxToHtml(cleanBody, { headingLevel: 3 });
 
 const blogUrl = `${SITE}/blog/${slug}`;
+
+const ctaLine = `<p><em>Originally published at <a href="${blogUrl}">${blogUrl}</a></em></p>`;
+
+function insertCta(articleHtml: string): string {
+  // Insert CTA before the footnotes <hr><ol> block, or at the end
+  const footnotesIdx = articleHtml.lastIndexOf('<hr>\n<ol>');
+  if (footnotesIdx !== -1) {
+    // Reuse the footnotes <hr> as the divider — insert CTA between it and the <ol>
+    const before = articleHtml.slice(0, footnotesIdx);
+    const after = articleHtml.slice(footnotesIdx);
+    return `${before}<hr>\n\n${ctaLine}\n\n${after}`;
+  }
+  // No footnotes — add a single <hr> before CTA
+  // Strip trailing <hr> to avoid doubles
+  const trimmed = articleHtml.replace(/\n*<hr>\s*$/, '');
+  return `${trimmed}\n\n<hr>\n\n${ctaLine}`;
+}
 
 function wrapTwitter(articleHtml: string): string {
   return `<!DOCTYPE html>
@@ -97,11 +114,7 @@ function wrapTwitter(articleHtml: string): string {
 </head>
 <body>
 
-<p><em>For the full experience with interactive visuals and citations, read the original at <a href="${blogUrl}">${blogUrl}</a></em></p>
-
-<hr>
-
-${articleHtml}
+${insertCta(articleHtml)}
 
 </body>
 </html>`;
@@ -124,11 +137,7 @@ function wrapLinkedin(articleHtml: string): string {
 </head>
 <body>
 
-<p><em>For the full experience with interactive visuals and citations, read the original at <a href="${blogUrl}">${blogUrl}</a></em></p>
-
-<hr>
-
-${articleHtml}
+${insertCta(articleHtml)}
 
 </body>
 </html>`;
