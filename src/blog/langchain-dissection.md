@@ -4,7 +4,7 @@ description: "LangChain's Runnable abstraction bundles too much into a single in
 pubDate: 2026-04-12
 tags: ["ai", "langchain", "software-engineering", "architecture", "python"]
 shareText: "LangChain's Runnable bundles streaming, batching, serialization, and callbacks into one interface. That's not composition — it's a violation of orthogonality."
-draft: true
+draft: false
 ---
 
 There are a hundred and four days of summer vacation. LangChain will put you on call for half of them.

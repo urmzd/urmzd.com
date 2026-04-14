@@ -32,12 +32,17 @@ if (!slug) {
 }
 
 const mdxPath = join(ROOT, 'src', 'blog', `${slug}.mdx`);
+const mdPath = join(ROOT, 'src', 'blog', `${slug}.md`);
 let raw: string;
 try {
   raw = readFileSync(mdxPath, 'utf-8');
 } catch {
-  console.error(`Blog post not found: src/blog/${slug}.mdx`);
-  process.exit(1);
+  try {
+    raw = readFileSync(mdPath, 'utf-8');
+  } catch {
+    console.error(`Blog post not found: src/blog/${slug}.mdx or src/blog/${slug}.md`);
+    process.exit(1);
+  }
 }
 
 // --- Parse frontmatter ---
@@ -134,16 +139,14 @@ function escapeHtml(str: string): string {
 }
 
 // --- Write output ---
-const twitterDir = join(ROOT, 'reposts', 'twitter');
-const linkedinDir = join(ROOT, 'reposts', 'linkedin');
-mkdirSync(twitterDir, { recursive: true });
-mkdirSync(linkedinDir, { recursive: true });
+const outDir = join(ROOT, 'reposts', slug);
+mkdirSync(outDir, { recursive: true });
 
-const twitterPath = join(twitterDir, `${slug}.html`);
-const linkedinPath = join(linkedinDir, `${slug}.html`);
+const twitterPath = join(outDir, 'twitter.html');
+const linkedinPath = join(outDir, 'linkedin.html');
 
 writeFileSync(twitterPath, wrapTwitter(twitterBody));
 writeFileSync(linkedinPath, wrapLinkedin(linkedinBody));
 
-console.log(`✓ reposts/twitter/${slug}.html`);
-console.log(`✓ reposts/linkedin/${slug}.html`);
+console.log(`✓ reposts/${slug}/twitter.html`);
+console.log(`✓ reposts/${slug}/linkedin.html`);

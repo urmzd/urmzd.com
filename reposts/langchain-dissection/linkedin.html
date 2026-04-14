@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ferb, I Know What We're Doing Today: A Pragmatic Dissection of LangChain</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 680px; margin: 2rem auto; padding: 0 1rem; line-height: 1.7; color: #1a1a1a; }
+    h3 { font-size: 1.2rem; margin-top: 2rem; }
+    hr { border: none; border-top: 1px solid #ccc; margin: 2rem 0; }
+    a { color: #0a66c2; }
+    img { max-width: 100%; height: auto; border-radius: 8px; margin: 1rem 0; }
+    blockquote { border-left: 3px solid #ccc; margin: 1.5rem 0; padding: 0.5rem 1rem; color: #444; }
+  </style>
+</head>
+<body>
+
+<p><em>For the full experience with interactive visuals and citations, read the original at <a href="https://urmzd.com/blog/langchain-dissection">https://urmzd.com/blog/langchain-dissection</a></em></p>
+
+<hr>
+
+<p>There are a hundred and four days of summer vacation. LangChain will put you on call for half of them.</p>
+
+<p>For those who don't already know, LangChain<sup><a href="#fn-1" id="fnref-1">[1]</a></sup> is the de-facto prototyping and now ostensibly "production-grade" agentic framework that many teams are adopting. Most new-generation AI frameworks are poorly designed and create the kind of technical debt you wish you never accrued. The companies' solution to their poorly designed abstractions? Introduce overpriced observability tooling and custom enterprise solutions — to problems they created. Imagine someone poisoning a well and then offering you the antidote. You'd probably avoid them altogether.</p>
+
+<p>Most of these poor design choices were a direct result of feature bundling at scale without clear interface abstractions. The tragedy is that this was avoidable. When an industry is moving fast and you need to ship, the right move is to slow down on the design: enumerate the features you need, talk to the people around you about what they need, and prototype early. The prototyping experience will be brutal, but that's the point — it gives you real feedback before you've committed. Instead, these frameworks optimized for demos and first-mover optics, which plays well to non-technical audiences but leaves engineers holding the bag.</p>
+
+<p>The result is everything a pragmatic programmer knows to avoid: leaky abstractions, happy-path coding, and violations of orthogonality — independent concerns fused into a single change surface. Once the prototype works and the pressure is on, engineers continue building on the abstraction until they hit a use case where the coupling forces them to monkeypatch — and then the next engineer builds on that monkeypatch. In a more cruel scenario, you hit a production bug with no clear way to diagnose it, and an SDR shows up to sell you their observability product. Due in part to Hyrum's Law<sup><a href="#fn-3" id="fnref-3">[3]</a></sup> and the sheer volume of consumers, these interfaces become nearly impossible to migrate away from.</p>
+
+<hr>
+
+<h3>The Almighty Runnable</h3>
+
+<p>LangChain's entire mechanism is built around one class: the <code>Runnable</code>. It's designed to help compose pipelines, and while <code>langchain_classic</code> received a significant upgrade to v1, the core problem remains — this interface violates orthogonality at every level, and it causes more problems than it solves.</p>
+
+<p>Before going further, it's worth grounding the criticism in what the file actually contains<sup><a href="#fn-4" id="fnref-4">[4]</a></sup>. The file <code>base.py</code> runs over 6,000 lines. The base <code>Runnable</code> class alone exposes dozens of public methods, and its imports pull from across <code>langchain_core</code> — callback managers, tracers, stream handlers, config utilities, serialization primitives — before a single line of business logic runs. This is what you inherit when you touch <code>Runnable</code>.</p>
+
+<p>The composability pitch sounds great until you actually need specific information to build out an agent. The abstractions over RAG, and the further abstractions over the underlying agent mechanics, dilute the quality of insight you have into your own system. The truth is: in most use cases, the SDKs the providers ship are sufficient for a POC, and creating your own thin abstractions from there is straightforward. The apparent complexity dissolves one layer deeper: async generators are pull-based, so a single consumer gets backpressure for free — the consumer controls the rate implicitly. Fan-out to multiple consumers means a queue per consumer, fire and continue; the dispatch layer owns the buffer, not the streaming abstraction. Cancellation is a token initialized once and threaded through — one signal, the loop exits. Errors surface at the await point and propagate up the call stack. Every one of these is a composition of simple pieces with clear ownership boundaries, not a framework concern. Once you have the deltas, you act on them however you want — tool calls, assistant messages, artifacts, video, audio, images — the underlying semantics are yours, accessed through an agnostic interface. Plug them into whatever workflow orchestration tool you already use and you have full insight at every level of the stack. No multi-layer abstractions stretching the stack trace so deep you need to purchase an entire new product to read it. By defaulting to LangChain, you're trading readability, maintainability, extensibility, and observability for speed — a trade almost no one should be making in AI systems. Those four properties are what separate a system that holds up from one that's waiting to fail.</p>
+
+<p>The <code>Runnable</code> bundles streaming, batching, serialization, callback management, and transformations into a single interface. These are independent concerns — orthogonal in the precise sense: a change to how you batch requests has no logical relationship to how you serialize a chain, and neither should affect your streaming protocol. But because they share a change surface, they do. Modify the callback wiring and you risk breaking batch inference. Extend the streaming logic and serialization tests start failing. That coupling doesn't stay contained — it propagates into every class that touches the interface. "God class" is the colloquial term, but orthogonality is the engineering principle it violates: independent concerns fused into a single change surface, so that nothing can move without everything else moving with it.</p>
+
+<p>The alternative isn't complicated. Here's a sketch:</p>
+
+<pre><code data-lang="python">from typing import Literal
+from pydantic import BaseModel
+
+# The base of truth: LLMs produce tokens (deltas) which aggregate into messages.
+
+class Delta(BaseModel):
+    type: Literal["str"] = "str"
+    content: ...  # discriminated union array
+
+class Message(BaseModel):
+    type: Literal["message"] = "message"
+    content: ...  # discriminated union array
+
+# A provider class that does one thing well.
+# It reads messages, calls the API, and returns deltas.
+# It doesn't care whether you stream them or buffer them — that's the caller's concern.
+
+class ModelInfo(BaseModel):
+    provider: str = "anthropic"
+    model: str = "claude-sonnet-4-5:latest"
+
+class GenerationConfig(BaseModel):
+    model: ModelInfo
+    ...
+
+class LLMProvider(Protocol):
+    async def stream(
+        self, config: GenerationConfig, messages: Sequence[Message]
+    ) -&gt; AsyncGenerator[Delta, None]:
+        ...
+
+# Need metadata (probabilities, etc.)? Wrap it — don't bake it in.
+
+class DetailedDelta[M: BaseModel](BaseModel):
+    type: Literal["detailed_delta"]
+    content: Delta
+    metadata: M
+
+class RawProvider(Protocol):
+    async def stream(
+        self, config: GenerationConfig, messages: ...
+    ) -&gt; AsyncGenerator[DetailedDelta, ...]:
+        ...
+
+# Want batching? Compose it as a separate concern.
+
+class BatchIdentifier[T: BaseModel](BaseModel):
+    type: Literal["batch"]
+    content: T
+
+class Batch(Protocol):
+    async def batch(
+        self, batch_input: Sequence[Sequence[Message]]
+    ) -&gt; AsyncGenerator[BatchIdentifier[Delta], None]:
+        # Run asyncio or a queue-based generator.
+        # Can wrap an LLMProvider internally: b(p(x)) -&gt; y
+        # Implementation details are fluid; the interface stays clean.
+        ...</code></pre>
+
+<p>Each type is orthogonal — not merely smaller, but independent along distinct axes. You can swap the batching implementation without touching the streaming protocol. You can add metadata to deltas without modifying the provider interface. The composition is explicit, and changes stay where they belong. That's what orthogonality buys you: freedom to change one concern without auditing every other.</p>
+
+<h3>You Don't Need LangSmith</h3>
+
+<p>Remember the well-poisoning analogy? The observability story is where it plays out most clearly. LangChain's opacity creates a diagnostic gap, and LangSmith steps in to fill it — for a price. But the problem only exists because the abstraction made your system opaque in the first place.</p>
+
+<p>OpenTelemetry already defines semantic conventions for generative AI<sup><a href="#fn-2" id="fnref-2">[2]</a></sup>. Traces, spans, token counts, model parameters — all standardized. Instrument your provider calls with OTel, and you get first-class observability in the tools you already run: Grafana, Google Cloud, Datadog, or any OTel-compatible backend. No vendor lock-in, no proprietary SDK, no additional bill.</p>
+
+<p>More importantly, you own it. When something breaks, the fix is a commit in your repository — not a PR upstream that you wait weeks for, or a support ticket to a vendor. You control the instrumentation, the retention, the alerting. And because OTel spans carry arbitrary attributes, you get the business insights for free: cost per request, latency by model, error rates by prompt template. That's not a feature of LangSmith — it's a feature of owning your own telemetry.</p>
+
+<p>In fairness to LangChain's origins: the initial commit in October 2022<sup><a href="#fn-5" id="fnref-5">[5]</a></sup> was a focused prototype — LLMs, Chains, and Prompts with three demo use cases. By January 2023, barely two months later, the README<sup><a href="#fn-6" id="fnref-6">[6]</a></sup> listed six explicit concern areas — LLMs/Prompts, Chains, Data Augmented Generation, Agents, Memory, and Evaluation — all under a single composability abstraction. That rapid expansion was likely a deliberate move to capture market share early, which is a fair sacrifice when the alternative is irrelevance. But the design consequences followed directly: the <code>Runnable</code> became a god class because it was the load-bearing wall for six different problem domains simultaneously. The LCEL rewrite was a chance to decompose it — and it was deliberate, not rushed — but it doubled down on the same non-orthogonal interface. That rewrite produced <code>base.py</code> — the file you just read the stats on — which is the definitive answer to whether it addressed the underlying problem.</p>
+
+<p>Here's what's actually happening under the hood of every RAG pipeline and every agentic system: you're querying an index and injecting context, running a job with a probabilistic worker, and speaking a wire protocol to external tools. None of these are new problems. Embeddings and nearest-neighbor search predate the term RAG. Context loading and eviction are cache management. MCP is a message format — it describes how to advertise a tool and pass results back, the same way HTTP describes how to advertise a resource and transfer state. Autonomous agents are job runners where the worker is non-deterministic; you still need security boundaries, retry logic, observability, and failure handling, because those requirements come from operating any system that touches external state under uncertainty, not from the worker being an LLM.</p>
+
+<p>The engineers who understand these underlying principles can work directly with the provider APIs — which are, in every case, a handful of parameters around a message array and a tool interface — and compose from there. The engineers who don't will reach for a framework that encapsulates what they don't yet understand. The problem is structural: once you're depending on an abstraction that buries the underlying mechanics, you no longer have the knowledge required to maintain the system correctly. Abstractions are supposed to reduce complexity. These frameworks extend it, and then sell you the tooling to manage the complexity they introduced.</p>
+
+<p>If you want to see what this looks like in practice, <a href="https://github.com/urmzd/saige">saige</a> is my own Go SDK built on these principles — one method on the Provider interface, orthogonal packages, OTel for observability. The stack trace stays readable without purchasing anything.</p>
+
+<hr>
+
+<hr>
+<ol>
+<li id="fn-1">LangChain Repository. GitHub. https://github.com/langchain-ai/langchain</li>
+<li id="fn-2">"Semantic Conventions for Generative AI." OpenTelemetry. https://opentelemetry.io/docs/specs/semconv/gen-ai/</li>
+<li id="fn-3">"Hyrum's Law." https://www.hyrumslaw.com/</li>
+<li id="fn-4"><code>langchain_core/runnables/base.py</code>. GitHub. https://github.com/langchain-ai/langchain/blob/master/libs/core/langchain_core/runnables/base.py</li>
+<li id="fn-5">LangChain initial commit README (October 2022). GitHub. https://github.com/langchain-ai/langchain/blob/18aeb720126a68201c7e3b5a617139c27c779496/README.md</li>
+<li id="fn-6">LangChain README (January 2023). GitHub. https://github.com/langchain-ai/langchain/blob/3efec55f939a9758682488bf23c1d7646ee35a6f/README.md</li>
+</ol>
+
+</body>
+</html>
