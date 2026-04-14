@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.7.0 (2026-04-14)
+
+### Features
+
+- **blog**: publish langchain-dissection and add rich text repost support (#12) ([efb5709](https://github.com/urmzd/urmzd.com/commit/efb57099924101eb789583f153f461a4751b606c))
+
+### Miscellaneous
+
+- migrate sr config and action to v4 ([2d76cc1](https://github.com/urmzd/urmzd.com/commit/2d76cc15f8d91ac84abec922739fb6b1fbe7314b))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.6.2...v0.7.0)
+
+
 ## 0.6.2 (2026-04-12)
 
 ### Bug Fixes
