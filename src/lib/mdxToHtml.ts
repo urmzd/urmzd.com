@@ -124,7 +124,7 @@ export function mdxToHtml(body: string, options: MdxToHtmlOptions): string {
     const langAttr = lang ? ` data-lang="${lang}"` : '';
     const idx = codeBlocks.length;
     codeBlocks.push(`<pre><code${langAttr}>${escaped.trimEnd()}</code></pre>`);
-    return `__CODE_${idx}__`;
+    return `ZCODEZ${idx}Z`;
   });
 
   // 14a. Convert inline code and protect from further transforms
@@ -132,7 +132,7 @@ export function mdxToHtml(body: string, options: MdxToHtmlOptions): string {
   text = text.replace(/`([^`]+)`/g, (_match, code: string) => {
     const idx = inlineCode.length;
     inlineCode.push(`<code>${code}</code>`);
-    return `__INLINE_${idx}__`;
+    return `ZINLINEZ${idx}Z`;
   });
 
   // 14b. Extract footnote definitions and replace inline references
@@ -150,11 +150,11 @@ export function mdxToHtml(body: string, options: MdxToHtmlOptions): string {
     // Append footnotes section as a preserved block
     const fnEntries = Array.from(footnotes.entries())
       .sort(([a], [b]) => Number(a) - Number(b))
-      .map(([id, content]) => `<li id="fn-${id}">${content} <a href="#fnref-${id}">\u21a9</a></li>`)
+      .map(([id, content]) => `<li id="fn-${id}">${content}</li>`)
       .join('\n');
     const fnIdx = codeBlocks.length;
     codeBlocks.push(`<hr>\n<ol>\n${fnEntries}\n</ol>`);
-    text += `\n\n__CODE_${fnIdx}__`;
+    text += `\n\nZCODEZ${fnIdx}Z`;
   }
 
   // 15. Convert markdown headings to HTML
@@ -180,7 +180,7 @@ export function mdxToHtml(body: string, options: MdxToHtmlOptions): string {
   text = text.replace(/<(pre|ol|ul|blockquote|hr|div)[\s>][\s\S]*?<\/\1>|<hr>/g, (match) => {
     const idx = preserved.length;
     preserved.push(match);
-    return `__BLOCK_${idx}__`;
+    return `ZBLOCKZ${idx}Z`;
   });
 
   // 19. Wrap paragraphs — split on double newlines, wrap non-tag blocks in <p>
@@ -190,7 +190,7 @@ export function mdxToHtml(body: string, options: MdxToHtmlOptions): string {
     .filter((block) => block.length > 0);
 
   const htmlBlocks = blocks.map((block) => {
-    if (/^__(BLOCK|CODE)_\d+__$/.test(block)) return block;
+    if (/^Z(BLOCKZ|CODEZ)\d+Z$/.test(block)) return block;
     if (/^<(h[1-6]|hr|blockquote|a|img|p|div|ul|ol|pre)/i.test(block)) {
       return block;
     }
@@ -200,9 +200,9 @@ export function mdxToHtml(body: string, options: MdxToHtmlOptions): string {
   let result = htmlBlocks.join('\n\n');
 
   // 20. Restore preserved blocks, code blocks, and inline code
-  result = result.replace(/__BLOCK_(\d+)__/g, (_match, idx: string) => preserved[Number(idx)]);
-  result = result.replace(/__CODE_(\d+)__/g, (_match, idx: string) => codeBlocks[Number(idx)]);
-  result = result.replace(/__INLINE_(\d+)__/g, (_match, idx: string) => inlineCode[Number(idx)]);
+  result = result.replace(/ZBLOCKZ(\d+)Z/g, (_match, idx: string) => preserved[Number(idx)]);
+  result = result.replace(/ZCODEZ(\d+)Z/g, (_match, idx: string) => codeBlocks[Number(idx)]);
+  result = result.replace(/ZINLINEZ(\d+)Z/g, (_match, idx: string) => inlineCode[Number(idx)]);
 
   return result;
 }
