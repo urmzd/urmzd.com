@@ -116,7 +116,7 @@ export const skills: Skill[] = [
     slug: 'setup-ci',
     title: 'CI/CD Standards',
     description:
-      'CI/CD conventions. ci.yml + release.yml naming, concurrency, bot skip, embed-src/teasr steps, and workflow structure. Language-specific pipelines live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node, scaffold-terraform. Use when setting up GitHub Actions or understanding CI conventions.',
+      'CI/CD conventions. ci.yml + release.yml naming, concurrency, bot skip, fsrc/teasr steps, and workflow structure. Language-specific pipelines live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node, scaffold-terraform. Use when setting up GitHub Actions or understanding CI conventions.',
     category: 'development',
     type: 'skill',
   },
@@ -292,7 +292,7 @@ export const skills: Skill[] = [
     slug: 'sync-docs',
     title: 'Documentation Sync',
     description:
-      'Audit and synchronize project documentation. README, AGENTS.md, llms.txt, docs/, and embed-src markers. Use after feature changes, refactors, or when docs may be stale. Can be run as a scheduled agent or invoked manually.',
+      'Audit and synchronize project documentation. README, AGENTS.md, llms.txt, docs/, and fsrc markers. Use after feature changes, refactors, or when docs may be stale. Can be run as a scheduled agent or invoked manually.',
     category: 'maintenance',
     type: 'skill',
   },
@@ -308,7 +308,7 @@ export const skills: Skill[] = [
     slug: 'write-readme',
     title: 'README Standards',
     description:
-      'README structure. Centered header, badges, demos, section order, install.sh pattern, quickstart, embed-src usage, and llms.txt. Use when creating or updating any project README.',
+      'README structure. Centered header, badges, demos, section order, install.sh pattern, quickstart, fsrc usage, and llms.txt. Use when creating or updating any project README.',
     category: 'visual',
     type: 'skill',
   },

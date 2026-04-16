@@ -12,7 +12,7 @@ Universal release conventions. For language-specific build matrices, publish ste
 
 - Target accessibility: build for multiple platforms (Linux, macOS, Windows)
 - Users should be able to install with one command (install.sh)
-- GitHub Actions where applicable (sr, embed-src, teasr expose actions)
+- GitHub Actions where applicable (sr, fsrc, teasr expose actions)
 - Every release automatically updates changelog, creates GitHub release, uploads artifacts
 
 ## sr.yaml Standard Config
@@ -67,7 +67,7 @@ sr auto-discovers workspace members for Rust (Cargo), Python (uv), and Node (npm
 push to main
   → ci.yml (fmt → lint → test)
   → release.yml:
-      embed-src (sync code in README) [if markers exist]
+      fsrc (sync code in README) [if markers exist]
       → sr release (bump → changelog → tag → GitHub release)
       → build matrix (platform-specific; see scaffold-* skills)
       → publish (registry-specific; see scaffold-* skills)
@@ -91,7 +91,7 @@ Outputs: `released` (bool), `tag` (e.g. `v1.2.0`), `version` (e.g. `1.2.0`).
 
 - **Lockfile sync:** language-specific lock update → commit `[skip ci]`
 - **Asset generation:** VHS demo + screenshots
-- **File embedding:** embed-src → commit
+- **File embedding:** fsrc → commit
 - **Demo capture:** teasr → commit to `showcase/`
 
 ## Git Hooks

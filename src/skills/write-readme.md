@@ -1,6 +1,6 @@
 ---
 title: "README Standards"
-description: "README structure. Centered header, badges, demos, section order, install.sh pattern, quickstart, embed-src usage, and llms.txt. Use when creating or updating any project README."
+description: "README structure. Centered header, badges, demos, section order, install.sh pattern, quickstart, fsrc usage, and llms.txt. Use when creating or updating any project README."
 category: "visual"
 ---
 
@@ -114,7 +114,7 @@ curl -fsSL https://raw.githubusercontent.com/{owner}/{repo}/main/install.sh | sh
 \```
 ```
 
-**Library projects** -- install command followed by a minimal working code snippet. Use embed-src referencing an actual file in `examples/`:
+**Library projects** -- install command followed by a minimal working code snippet. Use fsrc referencing an actual file in `examples/`:
 
 ```markdown
 ## Quick Start
@@ -123,8 +123,8 @@ curl -fsSL https://raw.githubusercontent.com/{owner}/{repo}/main/install.sh | sh
 {install-command}
 \```
 
-<!-- embed-src src="examples/basic/main.{ext}" fence="auto" -->
-<!-- /embed-src -->
+<!-- fsrc src="examples/basic/main.{ext}" fence="auto" -->
+<!-- /fsrc -->
 
 See [`examples/`](examples/) for more.
 ```
@@ -174,22 +174,22 @@ This repo's conventions are available as portable agent skills in [`skills/`](sk
 
 READMEs must NOT include directory trees, file tables, or "Key Directories" sections. Project structure is discoverable via `tree` and `ripgrep`/`ag`. Writing it out is duplicative and goes stale. AGENTS.md handles structural context for AI agents.
 
-## embed-src for Code Examples
+## fsrc for Code Examples
 
-Use [embed-src](https://github.com/urmzd/embed-src) markers to keep code examples in sync with actual source files. This prevents documentation drift.
+Use [fsrc](https://github.com/urmzd/fsrc) markers to keep code examples in sync with actual source files. This prevents documentation drift.
 
 ```markdown
-<!-- embed-src src="example.yml" fence="auto" -->
-<!-- /embed-src -->
+<!-- fsrc src="example.yml" fence="auto" -->
+<!-- /fsrc -->
 ```
 
-When embed-src runs (locally or in CI), it replaces the content between markers with the referenced file. Use this for:
+When fsrc runs (locally or in CI), it replaces the content between markers with the referenced file. Use this for:
 
 - Workflow examples (`example.yml`, `ci.yml`)
 - Configuration snippets (`pyproject.toml`, `biome.json`)
 - Code samples that exist as actual files in the repo
 
-Prefer embed-src over copy-pasting code into the README. If the code doesn't exist as a standalone file, create one in an `examples/` directory and embed it.
+Prefer fsrc over copy-pasting code into the README. If the code doesn't exist as a standalone file, create one in an `examples/` directory and embed it.
 
 ## install.sh Pattern
 
