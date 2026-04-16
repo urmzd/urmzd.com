@@ -611,13 +611,13 @@ export const projects: Project[] = [
     hasDetailPage: false,
   },
   {
-    slug: 'embed-src',
-    title: 'embed-src',
+    slug: 'fsrc',
+    title: 'fsrc',
     tagline: 'Sync code snippets into docs via comment markers',
     description:
       'Rust CLI and GitHub Action that embeds source file contents into any document using comment markers. Supports markdown, Python, Rust, Go, SQL, and CSS comment styles with optional code fence wrapping. Idempotent re-runs, dry-run mode, and CI verification ensure documentation stays synchronized with source code.',
     status: 'active',
-    githubUrl: 'https://github.com/urmzd/embed-src',
+    githubUrl: 'https://github.com/urmzd/fsrc',
     tech: [{ name: 'Rust', icon: 'rust' }],
     features: [
       {
