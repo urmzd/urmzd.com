@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.1 (2026-04-16)
+
+### Bug Fixes
+
+- **ci**: migrate sr v4 to v7 for artifact and input support (#14) ([2204b15](https://github.com/urmzd/urmzd.com/commit/2204b158f525d4dccd41deda81597b9f19b11fa9))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.7.0...v0.7.1)
+
+
 ## 0.7.0 (2026-04-14)
 
 ### Features
