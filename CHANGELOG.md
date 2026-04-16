@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.2 (2026-04-16)
+
+### Refactoring
+
+- replace embed-src references with fsrc (#15) ([10ee13d](https://github.com/urmzd/urmzd.com/commit/10ee13d3160b5b43e98a7c557ab5cf1b2976009a))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.7.1...v0.7.2)
+
+
 ## 0.7.1 (2026-04-16)
 
 ### Bug Fixes
