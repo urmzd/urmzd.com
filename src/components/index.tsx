@@ -17,7 +17,6 @@ export {
   SearchLandscapeVisual,
 } from './CriticalThinkingVisuals';
 export { default as ExploreCard } from './ExploreCard';
-export { default as FeatureGrid } from './FeatureGrid';
 export { default as GPEvolutionVisualizer } from './GPEvolutionVisualizer';
 export { default as HeadingLinkEnhancer } from './HeadingLinkEnhancer';
 export { default as Hero } from './Hero';
@@ -39,7 +38,6 @@ export { default as SocialDock } from './SocialDock';
 export { default as SocialLinksGrid } from './SocialLinksGrid';
 export { default as StatusBadge } from './StatusBadge';
 export { default as TableOfContents } from './TableOfContents';
-export { default as TechStackGrid } from './TechStackGrid';
 export { default as TimelineImage } from './TimelineImage';
 export { default as WelcomeTimeline } from './WelcomeTimeline';
 export { default as YouTubeEmbed } from './YouTubeEmbed';

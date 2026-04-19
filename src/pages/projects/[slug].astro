@@ -1,41 +1,41 @@
 ---
+import { getCollection, render } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProjectHero from '@/components/ProjectHero';
-import TerminalDemo from '@/components/TerminalDemo';
-import ImageShowcase from '@/components/ImageShowcase';
-import FeatureGrid from '@/components/FeatureGrid';
-import TechStackGrid from '@/components/TechStackGrid';
-import { projects, getProject } from '@/data/projects';
 
-export function getStaticPaths() {
-  return projects
-    .filter((p) => p.hasDetailPage)
-    .map((p) => ({ params: { slug: p.slug } }));
+export async function getStaticPaths() {
+  const entries = await getCollection('projects', ({ data }) => data.kind === 'project');
+  return entries.map((entry) => ({ params: { slug: entry.id } }));
 }
 
 const { slug } = Astro.params;
-const project = getProject(slug!);
+const entries = await getCollection('projects', ({ data }) => data.kind === 'project');
+const entry = entries.find((e) => e.id === slug);
 
-if (!project) {
+if (!entry) {
   return Astro.redirect('/projects');
 }
+
+const { Content } = await render(entry);
+const hasBody = (entry.body ?? '').trim().length > 0;
 ---
 
-<BaseLayout title={`${project.title} - urmzd`} description={project.tagline}>
+<BaseLayout title={`${entry.data.title} - urmzd`} description={entry.data.description}>
   <div class="mx-auto max-w-3xl px-6 pb-16">
-    <ProjectHero project={project} client:load />
+    <ProjectHero project={entry.data} client:load />
 
-    <section class="py-12">
-      <h2 class="mb-4 text-2xl font-bold">Overview</h2>
-      <p class="leading-relaxed text-muted-foreground">
-        {project.description}
-      </p>
-    </section>
+    {entry.data.tags.length > 0 && (
+      <div class="mb-8 flex flex-wrap gap-2">
+        {entry.data.tags.map((tag) => (
+          <span class="tech-badge">{tag}</span>
+        ))}
+      </div>
+    )}
 
-    {project.demo?.kind === 'terminal' && <TerminalDemo title={project.demo.title} lines={project.demo.lines} client:visible />}
-    {project.demo?.kind === 'image' && <ImageShowcase images={project.demo.images} client:visible />}
-
-    <FeatureGrid features={project.features} client:visible />
-    <TechStackGrid tech={project.tech} client:visible />
+    {hasBody && (
+      <article class="prose prose-invert max-w-none">
+        <Content />
+      </article>
+    )}
   </div>
 </BaseLayout>

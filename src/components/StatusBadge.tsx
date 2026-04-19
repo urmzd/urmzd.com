@@ -1,11 +1,11 @@
 'use client';
 
-import type { ProjectStatus } from '@/data/projects';
 import { cn } from '@/lib/utils';
+
+export type ProjectStatus = 'active' | 'archived';
 
 const statusConfig: Record<ProjectStatus, { label: string; dotClass: string }> = {
   active: { label: 'Active', dotClass: 'status-dot-active' },
-  wip: { label: 'In Progress', dotClass: 'status-dot-wip' },
   archived: { label: 'Archived', dotClass: 'status-dot-archived' },
 };
 

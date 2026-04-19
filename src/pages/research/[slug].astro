@@ -1,50 +1,41 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import ResearchHero from '@/components/ResearchHero';
-import ImageShowcase from '@/components/ImageShowcase';
-import FeatureGrid from '@/components/FeatureGrid';
-import TechStackGrid from '@/components/TechStackGrid';
 import { getCollection, render } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProjectHero from '@/components/ProjectHero';
 
 export async function getStaticPaths() {
-  const entries = await getCollection('research');
+  const entries = await getCollection('projects', ({ data }) => data.kind === 'research');
   return entries.map((entry) => ({ params: { slug: entry.id } }));
 }
 
 const { slug } = Astro.params;
-const entries = await getCollection('research');
+const entries = await getCollection('projects', ({ data }) => data.kind === 'research');
 const entry = entries.find((e) => e.id === slug);
 
 if (!entry) {
   return Astro.redirect('/research');
 }
 
-const item = entry.data;
 const { Content } = await render(entry);
+const hasBody = (entry.body ?? '').trim().length > 0;
 ---
 
-<BaseLayout title={`${item.title} - urmzd`} description={item.tagline}>
+<BaseLayout title={`${entry.data.title} - urmzd`} description={entry.data.description}>
   <div class="mx-auto max-w-3xl px-6 pb-16">
-    <ResearchHero item={item} client:load />
+    <ProjectHero project={entry.data} client:load />
 
-    <section class="py-12">
-      <h2 class="mb-4 text-2xl font-bold">Overview</h2>
-      <p class="leading-relaxed text-muted-foreground">
-        {item.description}
-      </p>
-    </section>
-
-    {entry.body && (
-      <section class="pb-12">
-        <article class="prose prose-invert max-w-none">
-          <Content />
-        </article>
-      </section>
+    {entry.data.tags.length > 0 && (
+      <div class="mb-8 flex flex-wrap gap-2">
+        {entry.data.tags.map((tag) => (
+          <span class="tech-badge">{tag}</span>
+        ))}
+      </div>
     )}
 
-    {item.demo?.kind === 'image' && <ImageShowcase images={item.demo.images} />}
-
-    {item.features && <FeatureGrid features={item.features} />}
-    {item.detailTech && <TechStackGrid tech={item.detailTech} />}
+    {hasBody && (
+      <article class="prose prose-invert max-w-none">
+        <Content />
+      </article>
+    )}
   </div>
 </BaseLayout>

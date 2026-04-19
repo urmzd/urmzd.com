@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { githubLoader } from './lib/github-loader';
 import { skillsLoader } from './lib/skills-loader';
 
 const blog = defineCollection({
@@ -28,35 +29,22 @@ const stories = defineCollection({
   }),
 });
 
-const research = defineCollection({
-  loader: glob({ pattern: ['**/*.md', '**/*.mdx'], base: './src/research' }),
+const projects = defineCollection({
+  loader: githubLoader(),
   schema: z.object({
+    kind: z.enum(['project', 'research']),
     title: z.string(),
-    tagline: z.string(),
     description: z.string(),
-    category: z.enum(['paper']).default('paper'),
-    year: z.number(),
-    venue: z.string().optional(),
     tags: z.array(z.string()).default([]),
-    githubUrl: z.string(),
-    paperUrl: z.string().optional(),
-    tech: z.array(z.string()).default([]),
-    detailTech: z.array(z.object({ name: z.string(), icon: z.string() })).optional(),
-    features: z
-      .array(z.object({ title: z.string(), description: z.string(), icon: z.string() }))
-      .optional(),
-    demo: z
-      .discriminatedUnion('kind', [
-        z.object({
-          kind: z.literal('terminal'),
-          castFile: z.string(),
-        }),
-        z.object({
-          kind: z.literal('image'),
-          images: z.array(z.object({ src: z.string(), alt: z.string(), caption: z.string() })),
-        }),
-      ])
-      .optional(),
+    status: z.enum(['active', 'archived']),
+    githubUrl: z.string().url(),
+    homepageUrl: z.string().url().optional(),
+    language: z.string().optional(),
+    stars: z.number().default(0),
+    pushedAt: z.coerce.date(),
+    year: z.coerce.number().optional(),
+    venue: z.string().optional(),
+    paperUrl: z.string().url().optional(),
   }),
 });
 
@@ -73,4 +61,4 @@ const skills = defineCollection({
   }),
 });
 
-export const collections = { blog, stories, research, skills };
+export const collections = { blog, stories, projects, skills };

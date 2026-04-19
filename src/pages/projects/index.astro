@@ -1,7 +1,13 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProjectCard from '@/components/ProjectCard';
-import { projects } from '@/data/projects';
+
+const entries = await getCollection('projects', ({ data }) => data.kind === 'project');
+const sorted = entries.sort((a, b) => {
+  if (a.data.status !== b.data.status) return a.data.status === 'active' ? -1 : 1;
+  return b.data.pushedAt.valueOf() - a.data.pushedAt.valueOf();
+});
 ---
 
 <BaseLayout title="Projects - urmzd" description="Software projects by urmzd">
@@ -10,8 +16,15 @@ import { projects } from '@/data/projects';
     <p class="mb-10 text-muted-foreground">Open-source tools and applications I've built to solve real problems.</p>
 
     <div class="grid gap-6">
-      {projects.map((project, i) => (
-        <ProjectCard project={project} />
+      {sorted.map((entry) => (
+        <ProjectCard project={{
+          slug: entry.id,
+          title: entry.data.title,
+          description: entry.data.description,
+          tags: entry.data.tags,
+          status: entry.data.status,
+          language: entry.data.language,
+        }} />
       ))}
     </div>
   </div>

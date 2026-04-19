@@ -1,10 +1,15 @@
 ---
-import BaseLayout from '@/layouts/BaseLayout.astro';
-import ResearchCard from '@/components/ResearchCard';
 import { getCollection } from 'astro:content';
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProjectCard from '@/components/ProjectCard';
 
-const entries = await getCollection('research');
-const sorted = entries.sort((a, b) => b.data.year - a.data.year);
+const entries = await getCollection('projects', ({ data }) => data.kind === 'research');
+const sorted = entries.sort((a, b) => {
+  const ay = a.data.year ?? 0;
+  const by = b.data.year ?? 0;
+  if (ay !== by) return by - ay;
+  return b.data.pushedAt.valueOf() - a.data.pushedAt.valueOf();
+});
 ---
 
 <BaseLayout title="Research - urmzd" description="Academic research by urmzd">
@@ -12,9 +17,17 @@ const sorted = entries.sort((a, b) => b.data.year - a.data.year);
     <h1 class="mb-2 text-4xl font-bold">Research</h1>
     <p class="mb-10 text-muted-foreground">Academic papers and theses exploring machine learning, optimization, and applied mathematics.</p>
 
-    <div class="flex flex-col gap-6">
-      {sorted.map((entry, i) => (
-        <ResearchCard item={{ ...entry.data, slug: entry.id }} />
+    <div class="grid gap-6">
+      {sorted.map((entry) => (
+        <ProjectCard project={{
+          slug: entry.id,
+          title: entry.data.title,
+          description: entry.data.description,
+          tags: entry.data.tags,
+          status: entry.data.status,
+          language: entry.data.language,
+          href: `/research/${entry.id}`,
+        }} />
       ))}
     </div>
   </div>
