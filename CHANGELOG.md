@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.3 (2026-04-19)
+
+### Bug Fixes
+
+- **scripts**: correct skills path to dot_agents/skills ([fbc34ec](https://github.com/urmzd/urmzd.com/commit/fbc34ecc3efd470c178ef220a9c8f800b2ad3974))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.7.2...v0.7.3)
+
+
 ## 0.7.2 (2026-04-16)
 
 ### Refactoring
