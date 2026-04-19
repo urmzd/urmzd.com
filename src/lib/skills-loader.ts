@@ -31,14 +31,6 @@ const SOURCES: Source[] = [
       { kind: 'agent', dir: 'dot_agents/agents' },
     ],
   },
-  {
-    repo: 'https://github.com/urmzd/infra.git',
-    localPath: HOME ? join(HOME, 'github/infra') : undefined,
-    cachePath: join(CACHE_ROOT, 'infra'),
-    sourceRepo: 'urmzd/infra',
-    branch: 'main',
-    entries: [{ kind: 'skill', dir: 'skills', defaultCategory: 'infrastructure' }],
-  },
 ];
 
 function isGitRepo(path: string): boolean {
