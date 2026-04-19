@@ -1,7 +1,21 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import SkillCard from '@/components/SkillCard';
-import { skills, categories, getCategoryLabel } from '@/data/skills';
+import { getCategoryLabel, type SkillSummary } from '@/lib/skill-categories';
+import { getCollection } from 'astro:content';
+
+const entries = await getCollection('skills');
+const skills: SkillSummary[] = entries
+  .map((e) => ({
+    slug: e.id,
+    title: e.data.title,
+    description: e.data.description,
+    category: e.data.category,
+    type: e.data.type,
+  }))
+  .sort((a, b) => a.category.localeCompare(b.category) || a.title.localeCompare(b.title));
+
+const categories = [...new Set(skills.map((s) => s.category))].sort();
 ---
 
 <BaseLayout title="GenAI - urmzd" description="Agent skills that encode development workflows, conventions, and best practices.">
@@ -9,7 +23,7 @@ import { skills, categories, getCategoryLabel } from '@/data/skills';
     <h1 class="mb-2 text-4xl font-bold">GenAI</h1>
     <p class="mb-10 text-muted-foreground">
       Skills and agents I maintain — reusable instruction sets and personas that encode my development workflows, conventions, and best practices.
-      Pulled from <a href="https://github.com/urmzd/dotfiles" target="_blank" rel="noopener noreferrer" class="underline hover:text-foreground">urmzd/dotfiles</a>.
+      Pulled from <a href="https://github.com/urmzd/dotfiles" target="_blank" rel="noopener noreferrer" class="underline hover:text-foreground">urmzd/dotfiles</a> and <a href="https://github.com/urmzd/infra" target="_blank" rel="noopener noreferrer" class="underline hover:text-foreground">urmzd/infra</a>.
     </p>
 
     {categories.map((category) => (

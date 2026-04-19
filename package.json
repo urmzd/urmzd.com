@@ -54,7 +54,6 @@
     "build": "astro build",
     "check": "astro check",
     "dev": "astro dev",
-    "fetch:skills": "npx tsx scripts/fetch-skills.ts",
     "format": "biome format --write .",
     "format:check": "biome format .",
     "generate:icons": "node scripts/generate-icons.mjs",

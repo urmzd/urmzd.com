@@ -1,6 +1,5 @@
-import { Bot, Brain, Code, ExternalLink, Eye, Hammer, Shield, Terminal } from 'lucide-react';
-import type { Skill } from '@/data/skills';
-import { getCategoryLabel } from '@/data/skills';
+import { Bot, Brain, Cloud, Code, ExternalLink, Eye, Hammer, Shield, Terminal } from 'lucide-react';
+import { getCategoryLabel, type SkillSummary } from '@/lib/skill-categories';
 
 const categoryIcons: Record<string, typeof Code> = {
   agent: Brain,
@@ -10,10 +9,11 @@ const categoryIcons: Record<string, typeof Code> = {
   security: Shield,
   visual: Eye,
   general: Hammer,
+  infrastructure: Cloud,
 };
 
 interface SkillCardProps {
-  skill: Skill;
+  skill: SkillSummary;
 }
 
 export default function SkillCard({ skill }: SkillCardProps) {

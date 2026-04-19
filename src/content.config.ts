@@ -1,5 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { skillsLoader } from './lib/skills-loader';
 
 const blog = defineCollection({
   loader: glob({ pattern: ['**/*.md', '**/*.mdx'], base: './src/blog' }),
@@ -60,11 +61,15 @@ const research = defineCollection({
 });
 
 const skills = defineCollection({
-  loader: glob({ pattern: ['**/*.md'], base: './src/skills' }),
+  loader: skillsLoader(),
   schema: z.object({
     title: z.string(),
     description: z.string(),
     category: z.string(),
+    type: z.enum(['skill', 'agent']),
+    sourceRepo: z.string(),
+    sourcePath: z.string(),
+    rawPath: z.string(),
   }),
 });
 

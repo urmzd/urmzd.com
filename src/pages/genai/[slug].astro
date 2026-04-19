@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getCategoryLabel } from '@/data/skills';
+import { getCategoryLabel } from '@/lib/skill-categories';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -17,9 +17,9 @@ if (!entry) {
 }
 
 const { Content } = await render(entry);
-const isAgent = entry.data.category === 'agent';
-const githubPath = isAgent ? `dot_agents/agents/${slug}.md` : `skills/${slug}`;
-const rawPath = isAgent ? `dot_agents/agents/${slug}.md` : `skills/${slug}/SKILL.md`;
+const { sourceRepo, sourcePath, rawPath } = entry.data;
+const githubUrl = `https://github.com/${sourceRepo}/tree/main/${sourcePath}`;
+const rawUrl = `https://raw.githubusercontent.com/${sourceRepo}/main/${rawPath}`;
 ---
 
 <BaseLayout title={`${entry.data.title} - urmzd`} description={entry.data.description}>
@@ -33,7 +33,7 @@ const rawPath = isAgent ? `dot_agents/agents/${slug}.md` : `skills/${slug}/SKILL
       <div class="mt-4">
         <code class="rounded bg-muted px-2 py-1 text-sm text-muted-foreground">{slug}</code>
         <a
-          href={`https://github.com/urmzd/dotfiles/tree/main/${githubPath}`}
+          href={githubUrl}
           target="_blank"
           rel="noopener noreferrer"
           class="ml-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -43,14 +43,12 @@ const rawPath = isAgent ? `dot_agents/agents/${slug}.md` : `skills/${slug}/SKILL
       </div>
     </div>
 
-    <div id="skill-content" data-slug={slug} data-raw-path={rawPath}>
-      <!-- Preview tab (default) -->
+    <div id="skill-content" data-slug={slug} data-raw-url={rawUrl}>
       <div id="preview-content">
         <article class="prose prose-invert max-w-none">
           <Content />
         </article>
       </div>
-      <!-- Raw tab (hidden by default, hydrated client-side) -->
       <div id="raw-content" class="hidden">
       </div>
     </div>
@@ -64,9 +62,7 @@ const rawPath = isAgent ? `dot_agents/agents/${slug}.md` : `skills/${slug}/SKILL
 
     const previewDiv = document.getElementById('preview-content')!;
     const rawDiv = document.getElementById('raw-content')!;
-    const slug = container.dataset.slug;
 
-    // Create toggle buttons
     const toggle = document.createElement('div');
     toggle.className = 'mb-6 flex gap-1 rounded-lg p-1 glass-card w-fit';
     toggle.innerHTML = `
@@ -79,7 +75,6 @@ const rawPath = isAgent ? `dot_agents/agents/${slug}.md` : `skills/${slug}/SKILL
     `;
     container.insertBefore(toggle, previewDiv);
 
-    // Fetch raw content on first click
     let rawLoaded = false;
 
     toggle.addEventListener('click', async (e) => {
@@ -88,7 +83,6 @@ const rawPath = isAgent ? `dot_agents/agents/${slug}.md` : `skills/${slug}/SKILL
 
       const view = btn.dataset.view;
 
-      // Update button styles
       for (const b of toggle.querySelectorAll('.toggle-btn')) {
         if (b === btn) {
           b.className = 'toggle-btn active inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors bg-primary text-primary-foreground';
@@ -107,8 +101,8 @@ const rawPath = isAgent ? `dot_agents/agents/${slug}.md` : `skills/${slug}/SKILL
         if (!rawLoaded) {
           rawDiv.innerHTML = '<p class="text-muted-foreground text-sm">Loading...</p>';
           try {
-            const rawPath = container.dataset.rawPath!;
-            const res = await fetch(`https://raw.githubusercontent.com/urmzd/dotfiles/main/${rawPath}`);
+            const rawUrl = container.dataset.rawUrl!;
+            const res = await fetch(rawUrl);
             const text = await res.text();
             rawDiv.innerHTML = `<pre class="overflow-x-auto rounded-xl border border-border bg-muted p-6 text-sm leading-relaxed text-foreground"><code>${escapeHtml(text)}</code></pre>`;
             rawLoaded = true;
