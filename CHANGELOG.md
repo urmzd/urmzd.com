@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.7.5 (2026-04-19)
+
+### Refactoring
+
+- **content**: load projects and research from GitHub via content loader ([89c5b7b](https://github.com/urmzd/urmzd.com/commit/89c5b7b0128df6c934917fa39c8ced1b0da1c966))
+
+### Misc
+
+- **ci**: remove unused force input from release workflow ([5eb6038](https://github.com/urmzd/urmzd.com/commit/5eb603894ed566bd19c7ada56cb47d3d2fa0befd))
+- **community**: add GitHub community-health files ([6792415](https://github.com/urmzd/urmzd.com/commit/6792415e212386088317a67b6209c13ea86ec825))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.7.4...v0.7.5)
+
+
 ## 0.7.4 (2026-04-19)
 
 ### Bug Fixes
