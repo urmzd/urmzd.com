@@ -30,7 +30,7 @@ category: "development"
 
 ## Commit Style
 
-Angular Conventional Commits, enforced via `sr commit` and `sr hook commit-msg`:
+Angular Conventional Commits (validated by CI lint; `ship` skill handles AI-assisted authoring):
 
 ```
 type(scope): lowercase imperative description (max 72 chars)

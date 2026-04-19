@@ -68,7 +68,7 @@ export const skills: Skill[] = [
     slug: 'configure-ai',
     title: 'AI Workflows',
     description:
-      'AI tools, Claude Code configuration, sr commits, AGENTS.md standard, skills-as-docs philosophy, and llms.txt. Use when setting up AI tooling, configuring projects for AI, or working with agent skills.',
+      'AI tools, Claude Code configuration, AGENTS.md standard, skills-as-docs philosophy, and llms.txt. Use when setting up AI tooling, configuring projects for AI, or working with agent skills.',
     category: 'ai',
     type: 'skill',
   },
@@ -108,7 +108,7 @@ export const skills: Skill[] = [
     slug: 'check-project',
     title: 'Check Project',
     description:
-      'Validate project structure against scaffold conventions -- check for required files, CI consistency, optional directory usage, and documentation completeness. Use to audit an existing project or verify a scaffold was applied correctly.',
+      'Validate project structure against scaffold conventions -- check for required files, CI consistency, documentation completeness, and optional directory usage. Use to audit an existing project or verify a scaffold was applied correctly.',
     category: 'development',
     type: 'skill',
   },
@@ -125,6 +125,14 @@ export const skills: Skill[] = [
     title: 'CLI Patterns',
     description:
       'CLI conventions. Output modes, TTY detection, JSON piping, stdout/stderr separation, interactivity, signal handling, visual style, and CI integration. Use when building or reviewing any CLI tool.',
+    category: 'development',
+    type: 'skill',
+  },
+  {
+    slug: 'cli-standards',
+    title: 'CLI Standards',
+    description:
+      'Mandatory CLI standards for all urmzd/* tools: argument parser selection, self-update requirement, output format flag, global flags, and install.sh. Use when building, reviewing, or auditing any CLI tool in this portfolio. These rules override build-cli where they conflict.',
     category: 'development',
     type: 'skill',
   },
@@ -161,10 +169,10 @@ export const skills: Skill[] = [
     type: 'skill',
   },
   {
-    slug: 'setup-release',
+    slug: 'sync-release',
     title: 'Release Workflow',
     description:
-      'Release pipeline conventions. sr.yaml config, sr action usage, git hooks, monorepo support, post-release patterns, and version file mapping. Language-specific build targets and publishing live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node. Use when setting up or modifying release pipelines.',
+      'Release pipeline conventions. sr.yaml config (v7), sr action usage, lifecycle hooks, monorepo support, post-release patterns, and version file mapping. Language-specific build targets and publishing live in scaffold-rust, scaffold-go, scaffold-python, scaffold-node. Use when setting up or modifying release pipelines.',
     category: 'development',
     type: 'skill',
   },
@@ -180,7 +188,7 @@ export const skills: Skill[] = [
     slug: 'scaffold-node',
     title: 'Scaffold Node/TypeScript Project',
     description:
-      'Scaffold a complete Node/TypeScript project with CI/CD, release pipeline, sr.yaml, .envrc, and standard files. Uses npm scripts and biome. Use when creating a new Node.js app, TypeScript library, or website, or when the user mentions "new Node project", "npm init", "TypeScript scaffold", or "Astro site".',
+      'Scaffold a complete Node/TypeScript project with CI/CD, release pipeline, sr.yaml, .envrc, and standard files. Uses pnpm and biome. Use when creating a new Node.js app, TypeScript library, or website, or when the user mentions "new Node project", "pnpm init", "TypeScript scaffold", or "Astro site".',
     category: 'development',
     type: 'skill',
   },
@@ -241,14 +249,6 @@ export const skills: Skill[] = [
     type: 'skill',
   },
   {
-    slug: 'get-work',
-    title: 'get-work',
-    description:
-      "Scan a folder for git repos and report GitHub status, branch divergence, and what's needed to get each repo up to date. Use when checking on multiple repos at once.",
-    category: 'general',
-    type: 'skill',
-  },
-  {
     slug: 'pr',
     title: 'pr',
     description:
@@ -281,6 +281,14 @@ export const skills: Skill[] = [
     type: 'skill',
   },
   {
+    slug: 'status',
+    title: 'status',
+    description:
+      'Check active repos for recent activity and local state. Scans a folder for git repos with commits in the last 5-7 days and reports their status including uncommitted changes.',
+    category: 'general',
+    type: 'skill',
+  },
+  {
     slug: 'update-repo-meta',
     title: 'update-repo-meta',
     description:
@@ -292,7 +300,15 @@ export const skills: Skill[] = [
     slug: 'sync-docs',
     title: 'Documentation Sync',
     description:
-      'Audit and synchronize project documentation. README, AGENTS.md, llms.txt, docs/, and fsrc markers. Use after feature changes, refactors, or when docs may be stale. Can be run as a scheduled agent or invoked manually.',
+      'Audit and synchronize project documentation. Detect staleness, fix drift, and keep cross-references consistent across whatever docs the project has. Delegates file-specific rules to the skills that own them. Use after feature changes, refactors, or when docs may be stale. Can be run as a scheduled agent or invoked manually.',
+    category: 'maintenance',
+    type: 'skill',
+  },
+  {
+    slug: 'sync-ecosystem',
+    title: 'Ecosystem Sync',
+    description:
+      "Audit a single repository against ecosystem conventions and sync findings back to chezmoi skills in the dotfiles repo. Use when onboarding a new repo, after a naming refactor, when terminology has drifted, or to ensure chezmoi skills stay current with a project's capabilities. Accepts a repo path as argument.",
     category: 'maintenance',
     type: 'skill',
   },
@@ -316,7 +332,7 @@ export const skills: Skill[] = [
     slug: 'style-brand',
     title: 'Visual Identity',
     description:
-      'Terminal theme, font, VHS demos, teasr integration, asset conventions, and branding across README/demos. Use when configuring appearance, recording demos, or maintaining visual consistency.',
+      'Terminal theme, font, teasr demo capture, asset conventions, and branding across README/demos. Use when configuring appearance, recording demos, or maintaining visual consistency.',
     category: 'visual',
     type: 'skill',
   },

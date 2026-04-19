@@ -11,7 +11,7 @@ interface Skill {
 }
 
 const REPO = 'urmzd/dotfiles';
-const SKILLS_PATH = 'skills';
+const SKILLS_PATH = 'dot_agents/skills';
 const AGENTS_PATH = 'dot_agents/agents';
 
 function parseFrontmatter(content: string): Record<string, string> {

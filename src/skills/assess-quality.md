@@ -137,14 +137,14 @@ No global state. No service locators. No magic. Follow the constructor to see ev
 
 | Dimension | Convention | Enforced By |
 |-----------|-----------|-------------|
-| Commits | Angular Conventional (`type(scope): description`) | `sr hook commit-msg` |
+| Commits | Angular Conventional (`type(scope): description`) | `ship` skill + CI lint |
 | CI | `ci.yml` + `release.yml` | `setup-ci` skill |
 | CLI output | Color semantics, symbols, 2-space indent | `build-cli` skill |
 | Error handling | `thiserror`/`anyhow` (Rust), `fmt.Errorf` (Go), `typer.Exit` (Python) | `write-code` skill |
 | File organization | `crates/` (Rust), `cmd/`+`internal/` (Go), `src/` (Python) | `scaffold-*` skills |
 | README | Centered header, badges, demo, sections | `write-readme` skill |
 | Testing | Contract-based, state coverage, per-language idioms | `test-code` skill |
-| Release | `sr.yaml`, semantic versioning, multi-platform builds | `setup-release` skill |
+| Release | `sr.yaml`, semantic versioning, multi-platform builds | `sync-release` skill |
 
 A contributor who knows one project should feel at home in any other. The skill system is itself an example; every skill has the same frontmatter format, the same section structure, the same trigger phrasing. Different authors, same format.
 

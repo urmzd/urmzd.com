@@ -32,7 +32,7 @@ Push main → release.yml:
 - Canonical filename: `sr.yaml` (not `.urmzd.sr.yml`)
 - `floating_tags: true` in all configs
 - `tag_prefix: "v"` and Angular commit pattern
-- See `setup-release` for full sr.yaml reference
+- See `sync-release` for full sr.yaml reference
 
 ## Concurrency
 
@@ -53,7 +53,7 @@ concurrency:
 Prevent infinite loops from bot commits:
 
 ```yaml
-if: github.actor != 'sr-releaser[bot]'
+if: github.actor != 'sr[bot]'
 ```
 
 ## CI Reuse Pattern

@@ -14,7 +14,6 @@ category: "development"
 
 - **teasr** automated screenshot/GIF capture (web, terminal, screen)
 - **fsrc** sync source code into markdown files
-- **vhs** terminal GIF recording with Cyberdream branding
 
 ## Code Generation
 
