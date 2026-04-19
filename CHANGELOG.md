@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.7.4 (2026-04-19)
+
+### Bug Fixes
+
+- **skills**: drop private infra source to unbreak CI build ([6ad1620](https://github.com/urmzd/urmzd.com/commit/6ad1620f8bb63cbe705c45fa2ff5b8c65ba92ffc))
+
+### Refactoring
+
+- **skills**: replace fetch-skills script with Astro content loader ([c7fc59d](https://github.com/urmzd/urmzd.com/commit/c7fc59d813d26bc64bdc4889c8e203545d4ea41a))
+
+### Misc
+
+- **fix**: standardize README format ([247329c](https://github.com/urmzd/urmzd.com/commit/247329c32cdb559181201048b175f3e7651de4e5))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.7.3...v0.7.4)
+
+
 ## 0.7.3 (2026-04-19)
 
 ### Bug Fixes
