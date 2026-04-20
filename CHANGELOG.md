@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.6 (2026-04-20)
+
+### Bug Fixes
+
+- **pages**: restore light-mode prose on GitHub-backed detail pages ([5e0bc95](https://github.com/urmzd/urmzd.com/commit/5e0bc95aca150e4c89191c0b6746ed1c7737b7c2))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.7.5...v0.7.6)
+
+
 ## 0.7.5 (2026-04-19)
 
 ### Refactoring
