@@ -7,16 +7,16 @@ const stories = await getCollection('stories');
 const sortedStories = stories.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<BaseLayout title="Stories - urmzd">
+<BaseLayout title="Creative Writing - urmzd">
   <div class="mx-auto max-w-3xl px-6 pt-24 pb-16">
-    <h1 class="mb-2 text-4xl font-bold">Stories</h1>
+    <h1 class="mb-2 text-4xl font-bold">Creative Writing</h1>
     <p class="mb-10 text-muted-foreground">Short fiction and creative writing exploring ideas through narrative.</p>
     <div class="flex flex-col gap-6">
       {
         sortedStories.map((story) => (
           <article class="group">
             <a
-              href={`/stories/${story.id}`}
+              href={`/creative-writing/${story.id}`}
               class="block rounded-xl p-6 transition-all glass-card hover:border-primary/40"
             >
               <h2 class="text-2xl font-semibold text-foreground group-hover:text-primary">

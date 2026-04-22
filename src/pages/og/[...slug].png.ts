@@ -44,7 +44,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       pubDate: story.data.pubDate,
       readTime: calculateReadTime(story.body || '').text,
       tags: story.data.tags,
-      slug: `stories/${story.id}`,
+      slug: `creative-writing/${story.id}`,
     },
   }));
 
