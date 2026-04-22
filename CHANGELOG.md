@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.7.7 (2026-04-22)
+
+### Refactoring
+
+- **pages**: rename stories route to creative-writing ([37f78c3](https://github.com/urmzd/urmzd.com/commit/37f78c3761557a65d426b65c38dc4803628fc629))
+
+### Misc
+
+- **ci**: bump sr to v8 ([0bfa8c8](https://github.com/urmzd/urmzd.com/commit/0bfa8c82c36ba764a6939ef9e1978a3400f37b38))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.7.6...v0.7.7)
+
+
 ## 0.7.6 (2026-04-20)
 
 ### Bug Fixes
