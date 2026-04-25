@@ -16,7 +16,7 @@ const sortedStories = stories.sort((a, b) => b.data.pubDate.valueOf() - a.data.p
         sortedStories.map((story) => (
           <article class="group">
             <a
-              href={`/creative-writing/${story.id}`}
+              href={`/writing/${story.id}`}
               class="block rounded-xl p-6 transition-all glass-card hover:border-primary/40"
             >
               <h2 class="text-2xl font-semibold text-foreground group-hover:text-primary">

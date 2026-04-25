@@ -18,7 +18,7 @@ const { Content } = await render(story);
 const readTime = calculateReadTime(story.body || '');
 
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://urmzd.com';
-const storyUrl = `${siteUrl}/creative-writing/${story.id}`;
+const storyUrl = `${siteUrl}/writing/${story.id}`;
 ---
 
 <BaseLayout
@@ -60,7 +60,7 @@ const storyUrl = `${siteUrl}/creative-writing/${story.id}`;
         currentId={story.id}
         currentTags={story.data.tags}
         posts={allStories}
-        basePath="/creative-writing"
+        basePath="/writing"
       />
     </div>
   </ArticleLayout>

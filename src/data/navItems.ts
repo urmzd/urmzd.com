@@ -4,6 +4,6 @@ export const navItems = [
   { href: '/research', label: 'Research' },
   { href: '/projects', label: 'Projects' },
   { href: '/genai', label: 'GenAI' },
+  { href: '/writing', label: 'Writing' },
   { href: '/about', label: 'About' },
-  { href: '/creative-writing', label: 'Creative Writing' },
 ];
