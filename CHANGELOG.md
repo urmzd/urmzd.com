@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.8 (2026-04-25)
+
+### Refactoring
+
+- **pages**: rename creative-writing route to writing ([ccb8a03](https://github.com/urmzd/urmzd.com/commit/ccb8a034134f63b33906d288574deb725b17d0de))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.7.7...v0.7.8)
+
+
 ## 0.7.7 (2026-04-22)
 
 ### Refactoring
