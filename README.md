@@ -55,12 +55,13 @@ The site will be available at `http://localhost:4321`.
 | Format | `npm run format` |
 | Format (check) | `npm run format:check` |
 | Type check | `npm run check` |
-| Sync skills | `npm run fetch:skills` |
 | Generate icons | `npm run generate:icons` |
+| Generate previews | `npm run generate:previews` |
+| Generate reposts | `npm run generate:reposts` |
 
-## Agent Skill
+## Agent Skills
 
-This repo's conventions are available as portable agent skills in [`skills/`](skills/).
+The [`/genai`](https://urmzd.com/genai) page showcases the agent skills and subagents I maintain. They are not stored in this repo — `src/lib/skills-loader.ts` pulls them from [`urmzd/dotfiles`](https://github.com/urmzd/dotfiles) at build time, so each build reflects the latest set.
 
 ## License
 
