@@ -340,11 +340,18 @@ function wrap(articleHtml: string, platform: 'twitter' | 'linkedin'): string {
     platform === 'twitter'
       ? 'h2 { font-size: 1.4rem; margin-top: 2rem; }'
       : 'h3 { font-size: 1.2rem; margin-top: 2rem; }';
+  const platformName = platform === 'twitter' ? 'X Article' : 'LinkedIn Article';
+  const emoji = platform === 'twitter' ? '𝕏' : 'in';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>${escapeHtml(frontmatter.title)}</title>
+  <title>[${platformName}] ${escapeHtml(frontmatter.title)}</title>
+  <meta name="repost-platform" content="${platform}">
+  <meta name="repost-slug" content="${slug}">
+  <link rel="icon" href="data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='${platform === 'twitter' ? '#000' : '#0a66c2'}'/><text x='16' y='22' font-size='16' font-family='sans-serif' font-weight='bold' fill='#fff' text-anchor='middle'>${emoji}</text></svg>`,
+  )}">
   <style>
     body { font-family: ${font}; max-width: 680px; margin: 2rem auto; padding: 0 1rem; line-height: 1.7; color: #1a1a1a; }
     ${headingCss}
