@@ -100,6 +100,21 @@ const imageUrlBase = `${SITE}/images/reposts/${slug}`;
 // Strip trailing --- (section divider before References) to avoid double <hr>
 let cleanBody = body.replace(/\n---\s*$/, '');
 
+// The Snippet of the Week is a collapsible bonus on the blog; inlining it
+// here would dump equations and code after the post's closing line, so the
+// reposts end with a teaser that links back to it instead.
+cleanBody = cleanBody.replace(
+  /^## Snippet of the Week\s*\n[\s\S]*?(?=^## |(?![\s\S]))/m,
+  (section) => {
+    const summary = section.match(/<summary>([\s\S]*?)<\/summary>/)?.[1]?.trim();
+    const teaser = summary ? `**${summary}**` : 'a bonus snippet';
+    return `## Snippet of the Week
+
+This post ends with a bonus: ${teaser}. [Read it on the original post →](${blogUrl}#snippet-of-the-week)
+`;
+  },
+);
+
 // Unwrap <details>/<summary>: platform editors strip the tags, so flatten
 // the summary into bold text and keep the content inline.
 cleanBody = cleanBody

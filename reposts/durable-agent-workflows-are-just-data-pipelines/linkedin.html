@@ -213,57 +213,7 @@ func Run(
 
 <h3>Snippet of the Week</h3>
 
-<p><strong>Double-Entry Bookkeeping — The 700-Year-Old Append-Only Log</strong></p>
-
-<p><strong>The Foundation</strong></p>
-
-<p>Accountants solved durable, auditable state in the 13th century. The journal is an append-only log: transactions are recorded in order, and history is never edited. Made a mistake? You don't erase it — you append a <em>correcting entry</em> that reverses it. If it's not in the journal, it didn't happen. Sound familiar?</p>
-
-<p>- <a href="https://en.wikipedia.org/wiki/Double-entry_bookkeeping">Double-Entry Bookkeeping</a><br>- <a href="https://en.wikipedia.org/wiki/Journal_entry">Journal Entry</a></p>
-
-<p><strong>The Math</strong></p>
-
-<p>Every transaction touches at least two accounts, and debits must equal credits — an invariant checkable at any point in the log:</p>
-
-<a href="https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines#snippet-of-the-week"><img src="https://urmzd.com/images/reposts/durable-agent-workflows-are-just-data-pipelines/math-1.png" alt="Equation — view on the original post" style="max-width:100%"></a>
-The ledger's running state is just a fold over the journal — the same way a workflow's state is a fold over its units:
-
-<a href="https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines#snippet-of-the-week"><img src="https://urmzd.com/images/reposts/durable-agent-workflows-are-just-data-pipelines/math-2.png" alt="Equation — view on the original post" style="max-width:100%"></a>
-<strong>The Code</strong>
-
-<pre><code data-lang="python">from dataclasses import dataclass
-from collections import defaultdict
-
-@dataclass(frozen=True)
-class Entry:
-    seq: int
-    debit: str    # account debited
-    credit: str   # account credited
-    amount: int   # cents -- never floats
-
-journal: list[Entry] = []
-
-def append(debit: str, credit: str, amount: int) -&gt; Entry:
-    entry = Entry(seq=len(journal), debit=debit, credit=credit, amount=amount)
-    journal.append(entry)  # append-only: history is never edited
-    return entry
-
-def correct(bad: Entry) -&gt; Entry:
-    # A mistake is reversed by a new entry, not by rewriting the log.
-    return append(debit=bad.credit, credit=bad.debit, amount=bad.amount)
-
-def balances() -&gt; dict[str, int]:
-    # State is a fold over the journal -- replay it from zero, any time.
-    acc: dict[str, int] = defaultdict(int)
-    for e in journal:
-        acc[e.debit] += e.amount
-        acc[e.credit] -= e.amount
-    return acc</code></pre>
-<p><em><a href="https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines#snippet-of-the-week">View this code with highlighting →</a></em></p>
-
-<p><strong>The Connection</strong></p>
-
-<p>The journal is the <code>Store</code> from the prototype: append-only, ordered, and the sole source of truth. Correcting entries are the accounting version of "settle what's owed" — you never mutate history, you append the missing entry. And the trial balance is the replay check: fold the log from zero and the invariant must hold. Durable workflows aren't a new idea; they're bookkeeping with a non-deterministic clerk.</p>
+<p>This post ends with a bonus: <strong>Double-Entry Bookkeeping — The 700-Year-Old Append-Only Log</strong>. <a href="https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines#snippet-of-the-week">Read it on the original post →</a></p>
 
 </body>
 </html>
