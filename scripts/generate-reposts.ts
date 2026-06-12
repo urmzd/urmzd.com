@@ -26,7 +26,7 @@
  * the editor drops them on paste, insert them manually from public/images/.
  */
 
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -412,6 +412,15 @@ writeFileSync(join(outDir, 'twitter.html'), wrap(twitterBody, 'twitter'));
 writeFileSync(join(outDir, 'linkedin.html'), wrap(linkedinBody, 'linkedin'));
 writeFileSync(join(outDir, 'x-post.txt'), xPost);
 writeFileSync(join(outDir, 'linkedin-post.txt'), linkedinPost);
+
+// Cover image: reuse the build's satori OG card as the article thumbnail.
+const ogPath = join(ROOT, 'dist', 'og', `${slug}.png`);
+try {
+  copyFileSync(ogPath, join(outDir, 'cover.png'));
+  console.log(`✓ reposts/${slug}/cover.png (article thumbnail, from OG card)`);
+} catch {
+  console.log(`! No cover image — run \`npm run build\` first to generate dist/og/${slug}.png`);
+}
 
 console.log(`✓ reposts/${slug}/twitter.html (X Articles editor)`);
 console.log(`✓ reposts/${slug}/linkedin.html (LinkedIn article editor)`);
