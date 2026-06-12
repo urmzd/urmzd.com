@@ -32,7 +32,7 @@
 
 <p>When we think of these systems as smaller units of work that all need completing, the fear of something sinister fades. The issue is that most people forget the patterns they've used time and time again. They tangle state, they don't define their units of work as composable pieces, and, most importantly, they forget that all systems are data pipelines.</p>
 
-<a href="https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines"><img src="https://urmzd.com/images/reposts/durable-agent-workflows-are-just-data-pipelines/mermaid-1.png" alt="Diagram — view the interactive version on urmzd.com" style="max-width:100%"></a>
+<p><em><a href="https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines">View the diagram on the original post →</a></em></p>
 
 <p>This post goes into depth on the patterns I've used, from pipelines on edge devices to building and scaling agent platforms. I fundamentally believe there's no meaningful distinction of engineers or researchers; subject expertise can be gained, but only on top of foundational problem-solving skills.</p>
 
@@ -46,111 +46,7 @@
 
 <p>What follows is a prototype, not a production system, but unlike most sketches, the ordering matters and is correct:</p>
 
-<pre><code data-lang="go">package workflow
-
-type Role string
-
-const (
-	RoleUser      Role = "user"      // a human
-	RoleAssistant Role = "assistant" // the model
-	RoleSystem    Role = "system"    // the orchestrator itself
-)
-
-type Kind string
-
-const (
-	KindMessage    Kind = "message"     // plain user or assistant text
-	KindToolCall   Kind = "tool_call"   // an assistant message: a request
-	KindToolResult Kind = "tool_result" // from system (API call) or user (HITL)
-	KindFailure    Kind = "failure"     // a failed attempt is an output too
-	KindFinal      Kind = "final"
-)
-
-// Unit is the atom: input in, output out. Role is the axis; Kind is
-// the part that lives under it, mirroring the message model every
-// provider already speaks:
-//
-//	RoleUser      -&gt; KindMessage, KindToolResult (human-in-the-loop)
-//	RoleAssistant -&gt; KindMessage, KindToolCall, KindFinal
-//	RoleSystem    -&gt; KindToolResult (API call), KindFailure
-type Unit struct {
-	Seq    int
-	Role   Role
-	Kind   Kind
-	Input  string
-	Output string
-}
-
-// Store is the entire durability contract: Append must not return until
-// the unit is durable. If a unit is in the log, it happened. If it
-// isn't, it didn't. There is no third state.
-type Store interface {
-	Load(wid string) ([]Unit, error)
-	Append(wid string, u Unit) error
-}
-
-// Run executes -- or resumes, which is the same thing -- workflow wid.
-// step produces the next unit from history: a model turn, a tool
-// execution, a subagent. The engine doesn't care which.
-func Run(
-	wid, query string,
-	store Store,
-	step func(history []Unit) (Unit, bool),
-) (&lt;-chan Unit, &lt;-chan error) {
-	units := make(chan Unit)
-	errc := make(chan error, 1)
-
-	go func() {
-		defer close(units)
-		defer close(errc)
-
-		history, err := store.Load(wid)
-		if err != nil {
-			errc &lt;- err
-			return
-		}
-
-		// Write-ahead: durable first, visible second. Intent units
-		// (tool calls) land in the log before their effects ever run.
-		commit := func(u Unit) error {
-			u.Seq = len(history)
-			if err := store.Append(wid, u); err != nil {
-				return err
-			}
-			history = append(history, u)
-			units &lt;- u
-			return nil
-		}
-
-		// Fresh workflow: the query itself is the first unit.
-		if len(history) == 0 {
-			if err := commit(Unit{Role: RoleUser, Kind: KindMessage, Input: query}); err != nil {
-				errc &lt;- err
-				return
-			}
-		}
-
-		// Resuming a finished workflow re-executes nothing.
-		if last := history[len(history)-1]; last.Kind == KindFinal {
-			units &lt;- last
-			return
-		}
-
-		for {
-			next, done := step(history)
-			if err := commit(next); err != nil {
-				errc &lt;- err
-				return
-			}
-			if done {
-				return
-			}
-		}
-	}()
-
-	return units, errc
-}</code></pre>
-<p><em><a href="https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines#the-prototype">View this code with highlighting →</a></em></p>
+<p><em><a href="https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines#the-prototype">View the Go code on the original post →</a></em></p>
 
 <p>Four decisions in here do all the work:</p>
 
@@ -186,7 +82,7 @@ func Run(
 
 <p>That gives you exactly four cases:</p>
 
-<a href="https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines#when-a-unit-of-work-writes"><img src="https://urmzd.com/images/reposts/durable-agent-workflows-are-just-data-pipelines/table-1.png" alt="Table — view on the original post" style="max-width:100%"></a>
+<p><em><a href="https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines#when-a-unit-of-work-writes">View the table on the original post →</a></em></p>
 
 <p>The last row is where most real APIs live, and it's why the write-ahead structure earlier isn't optional. For a non-idempotent effect, settling becomes check-then-act: read the target first (did a user with this request id already get created? does the table already exist?), record what you observed as a unit, and only then act or skip. This is the same reasoning distributed sagas are built on. You're not building an idempotent world; you're building a world where the log can always answer four questions: did we intend to do this, did we attempt it, did we observe success, and is the result still owed?</p>
 

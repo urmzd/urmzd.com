@@ -148,7 +148,7 @@ interface Rendered {
 }
 
 const rendered: Rendered[] = [];
-const codeFenceAnchors: string[] = [];
+const codeFences: { anchor: string; lang: string }[] = [];
 
 {
   const scanner =
@@ -171,7 +171,7 @@ const codeFenceAnchors: string[] = [];
           alt: `Diagram — view the interactive version on ${SITE.replace('https://', '')}`,
         });
       } else {
-        codeFenceAnchors.push(anchor);
+        codeFences.push({ anchor, lang: m[2] });
       }
     } else if (m[4] !== undefined) {
       mathN += 1;
@@ -293,40 +293,66 @@ async function renderImages(targets: Rendered[]): Promise<void> {
 
 await renderImages(rendered);
 
-// --- Replace unrenderable blocks with linked images. mdxToHtml passes
-// blocks that start with <a ...> through untouched.
+// --- Replace unrenderable blocks, per platform. LinkedIn keeps images
+// (insertable/upload-friendly) and <pre> code with a context link; X's
+// editor neither fetches pasted image URLs nor maps <pre>, so everything
+// becomes a reference link to its section on the original post. mdxToHtml
+// passes blocks that start with <a ...> or <p ...> through untouched.
 
-function imageBlock(r: Rendered): string {
-  const href = r.anchor ? `${blogUrl}#${r.anchor}` : blogUrl;
-  return `<a href="${href}"><img src="${imageUrlBase}/${r.file}" alt="${r.alt}" style="max-width:100%"></a>`;
+function anchorHref(anchor: string): string {
+  return anchor ? `${blogUrl}#${anchor}` : blogUrl;
 }
 
-{
+function imageBlock(r: Rendered): string {
+  return `<a href="${anchorHref(r.anchor)}"><img src="${imageUrlBase}/${r.file}" alt="${r.alt}" style="max-width:100%"></a>`;
+}
+
+function refBlock(label: string, anchor: string): string {
+  return `<p><em><a href="${anchorHref(anchor)}">${label} →</a></em></p>`;
+}
+
+const REF_LABELS: Record<Rendered['kind'], string> = {
+  mermaid: 'View the diagram on the original post',
+  math: 'View the equation on the original post',
+  table: 'View the table on the original post',
+};
+
+function buildVariant(platform: 'twitter' | 'linkedin'): string {
   const byKind = { mermaid: 0, math: 0, table: 0 };
   const next = (kind: Rendered['kind']) => {
     const r = rendered.filter((x) => x.kind === kind)[byKind[kind]];
     byKind[kind] += 1;
-    return imageBlock(r);
+    return platform === 'twitter' ? refBlock(REF_LABELS[kind], r.anchor) : imageBlock(r);
   };
-  cleanBody = cleanBody
+  let variant = cleanBody
     .replace(/^```mermaid\n[\s\S]*?^```$/gm, () => next('mermaid'))
     .replace(/^\$\$\s*\n[\s\S]*?\n\$\$\s*$/gm, () => next('math'))
     .replace(/^(?:\|.*\|\s*\n){2,}/gm, () => `${next('table')}\n\n`);
+
+  if (platform === 'twitter') {
+    let i = 0;
+    variant = variant.replace(/^```\w*\n[\s\S]*?^```$/gm, () => {
+      const fence = codeFences[i];
+      i += 1;
+      const langName = fence.lang ? `${fence.lang[0].toUpperCase()}${fence.lang.slice(1)} ` : '';
+      return refBlock(`View the ${langName}code on the original post`, fence.anchor);
+    });
+  }
+  return variant;
 }
 
 // --- Generate HTML for both platforms ---
-const twitterBody = mdxToHtml(cleanBody, { headingLevel: 2 });
-const linkedinBody = mdxToHtml(cleanBody, { headingLevel: 3 });
+const twitterBody = mdxToHtml(buildVariant('twitter'), { headingLevel: 2 });
+const linkedinBody = mdxToHtml(buildVariant('linkedin'), { headingLevel: 3 });
 
 // Code blocks survive paste as plain preformatted text at best; link each
 // one back to its section so readers can see the highlighted original.
 function addCodeContextLinks(html: string): string {
   let i = 0;
   return html.replace(/<\/pre>/g, () => {
-    const anchor = codeFenceAnchors[i];
+    const fence = codeFences[i];
     i += 1;
-    const href = anchor ? `${blogUrl}#${anchor}` : blogUrl;
-    return `</pre>\n<p><em><a href="${href}">View this code with highlighting →</a></em></p>`;
+    return `</pre>\n<p><em><a href="${anchorHref(fence?.anchor ?? '')}">View this code with highlighting →</a></em></p>`;
   });
 }
 
@@ -368,7 +394,7 @@ function wrap(articleHtml: string, platform: 'twitter' | 'linkedin'): string {
 
 <hr>
 
-${addCodeContextLinks(articleHtml)}
+${platform === 'linkedin' ? addCodeContextLinks(articleHtml) : articleHtml}
 
 </body>
 </html>`;
