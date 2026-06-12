@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.0 (2026-06-12)
+
+### Features
+
+- **blog**: publish durable agent workflows post (#18) ([0ea1d9b](https://github.com/urmzd/urmzd.com/commit/0ea1d9b5a9cdc31aeaaac25afc9e427ae07d6733))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.8.0...v0.9.0)
+
+
 ## 0.8.0 (2026-06-12)
 
 ### Features
