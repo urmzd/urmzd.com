@@ -5,6 +5,7 @@ import RelatedPosts from '@/components/RelatedPosts.astro';
 import { getCollection, render } from 'astro:content';
 import { calculateReadTime } from '@/lib/readTime';
 import CodeBlockEnhancer from '@/components/CodeBlockEnhancer';
+import MermaidRenderer from '@/components/MermaidRenderer';
 import HeadingLinkEnhancer from '@/components/HeadingLinkEnhancer';
 import MobileTOC from '@/components/MobileTOC';
 
@@ -74,6 +75,7 @@ const showTOC = tocHeadings.length >= 3;
     <Fragment slot="enhancers">
       <CodeBlockEnhancer client:idle />
       <HeadingLinkEnhancer client:load />
+      <MermaidRenderer client:idle />
     </Fragment>
   </ArticleLayout>
 </BaseLayout>

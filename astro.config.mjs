@@ -8,6 +8,7 @@ import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
 import remarkCallouts from './src/lib/remark-callouts';
 import remarkEmbeds from './src/lib/remark-embeds';
+import remarkMermaid from './src/lib/remark-mermaid';
 import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 
@@ -23,7 +24,7 @@ i18n: {
   },
   integrations: [react(), mdx(), sitemap()],
   markdown: {
-    remarkPlugins: [remarkGfm, remarkCallouts, remarkEmbeds, remarkMath],
+    remarkPlugins: [remarkGfm, remarkCallouts, remarkEmbeds, remarkMermaid, remarkMath],
     rehypePlugins: [rehypeKatex, rehypeSlug],
   },
   vite: {

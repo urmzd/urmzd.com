@@ -121,6 +121,7 @@ Import individually or via barrel export from `../components`:
 - Tags are arrays of lowercase strings.
 - Can import and use React components with `client:load` or `client:visible` hydration.
 - Support KaTeX math via `remark-math` + `rehype-katex` (`$$` for display, `$` for inline).
+- Support Mermaid diagrams via fenced ` ```mermaid ` code blocks. `src/lib/remark-mermaid.ts` converts the fence into a placeholder and `MermaidRenderer` (loaded in the blog template) lazy-loads mermaid client-side, theme-aware (re-renders on dark/light toggle).
 
 ### Stories
 
