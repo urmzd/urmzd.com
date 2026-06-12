@@ -148,7 +148,7 @@ interface Rendered {
 }
 
 const rendered: Rendered[] = [];
-const codeFences: { anchor: string; lang: string }[] = [];
+const codeFences: { anchor: string; lang: string; source: string }[] = [];
 
 {
   const scanner =
@@ -171,7 +171,7 @@ const codeFences: { anchor: string; lang: string }[] = [];
           alt: `Diagram — view the interactive version on ${SITE.replace('https://', '')}`,
         });
       } else {
-        codeFences.push({ anchor, lang: m[2] });
+        codeFences.push({ anchor, lang: m[2], source: m[3].trimEnd() });
       }
     } else if (m[4] !== undefined) {
       mathN += 1;
@@ -438,6 +438,14 @@ writeFileSync(join(outDir, 'twitter.html'), wrap(twitterBody, 'twitter'));
 writeFileSync(join(outDir, 'linkedin.html'), wrap(linkedinBody, 'linkedin'));
 writeFileSync(join(outDir, 'x-post.txt'), xPost);
 writeFileSync(join(outDir, 'linkedin-post.txt'), linkedinPost);
+
+// Each code fence as a standalone file, ready to copy into the platform's
+// native code-block dialog (X: Insert → code; LinkedIn: Ctrl/Cmd+Alt+6).
+codeFences.forEach((fence, n) => {
+  const name = `code-${n + 1}${fence.lang ? `.${fence.lang}` : '.txt'}`;
+  writeFileSync(join(outDir, name), `${fence.source}\n`);
+  console.log(`✓ reposts/${slug}/${name} (for the native code-block dialog)`);
+});
 
 // Cover image: reuse the build's satori OG card as the article thumbnail.
 const ogPath = join(ROOT, 'dist', 'og', `${slug}.png`);
