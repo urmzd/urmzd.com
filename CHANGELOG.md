@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.8.0 (2026-06-12)
+
+### Features
+
+- **blog**: add durable agent workflows draft with mermaid support (#17) ([385c27f](https://github.com/urmzd/urmzd.com/commit/385c27f675c91f1d05ab4f4a01b1b8ceef27d509))
+
+### Misc
+
+- **readme**: correct skill source and usage scripts (#16) ([f3e3d5c](https://github.com/urmzd/urmzd.com/commit/f3e3d5cdeffa8b92d8d355ffaa6ea9e049ec2c54))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.7.8...v0.8.0)
+
+
 ## 0.7.8 (2026-04-25)
 
 ### Refactoring
