@@ -1,0 +1,3 @@
+Durability is a log: persist, then emit, settle what's owed. Agents don't change the pattern — every workflow is units of work in a durable log, and resumption is the system's default mode of operation.
+
+https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines

@@ -1,0 +1,7 @@
+Durability is a log: persist, then emit, settle what's owed. Agents don't change the pattern — every workflow is units of work in a durable log, and resumption is the system's default mode of operation.
+
+Orchestrating agents at scale isn't a new problem — it's the same problem every system has: define a unit of work, persist it, and resume from the log. Durability is a logging discipline; scale and governance are different problem classes, and knowing the difference is the whole game.
+
+Read the full post: https://urmzd.com/blog/durable-agent-workflows-are-just-data-pipelines
+
+#Ai #Agents #DistributedSystems #SoftwareEngineering #Architecture #Go

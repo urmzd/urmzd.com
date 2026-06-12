@@ -1,9 +1,9 @@
 ---
 title: "Durable Agent Workflows Are Just Data Pipelines"
 description: "Orchestrating agents at scale isn't a new problem — it's the same problem every system has: define a unit of work, persist it, and resume from the log. Durability is a logging discipline; scale and governance are different problem classes, and knowing the difference is the whole game."
-pubDate: 2026-06-11
+pubDate: 2026-06-12
 tags: ["ai", "agents", "distributed-systems", "software-engineering", "architecture", "go"]
-draft: true
+draft: false
 shareText: "Durability is a log: persist, then emit, settle what's owed. Agents don't change the pattern — every workflow is units of work in a durable log, and resumption is the system's default mode of operation."
 ---
 
