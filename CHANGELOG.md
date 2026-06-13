@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.9.1 (2026-06-13)
+
+### Bug Fixes
+
+- **blog**: correct worker-tier framing in durable-agent-workflows post ([91b4ef9](https://github.com/urmzd/urmzd.com/commit/91b4ef997beacff729c146aaee2cedd2e3516bc0))
+
+### Misc
+
+- **agents**: document repost generation workflow, fix stale skills list ([eab50db](https://github.com/urmzd/urmzd.com/commit/eab50db57beefe4a3889963c372cb15940e1b961))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.9.0...v0.9.1)
+
+
 ## 0.9.0 (2026-06-12)
 
 ### Features
