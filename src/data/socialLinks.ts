@@ -1,7 +1,7 @@
 export interface SocialLink {
   title: string;
   href: string;
-  icon: 'github' | 'linkedin' | 'x' | 'email' | 'behance' | 'arxiv' | 'rss';
+  icon: 'github' | 'linkedin' | 'x' | 'email' | 'behance' | 'arxiv' | 'npm' | 'cargo' | 'pypi' | 'rss';
 }
 
 export const socialLinks: SocialLink[] = [
@@ -15,5 +15,8 @@ export const socialLinks: SocialLink[] = [
     href: 'https://arxiv.org/search/cs?searchtype=author&query=Mukhammadnaim,+U',
     icon: 'arxiv',
   },
+  { title: 'npm', href: 'https://www.npmjs.com/~urmzd', icon: 'npm' },
+  { title: 'crates.io', href: 'https://crates.io/users/urmzd', icon: 'cargo' },
+  { title: 'PyPI', href: 'https://pypi.org/user/urmzd/', icon: 'pypi' },
   { title: 'RSS', href: '/rss.xml', icon: 'rss' },
 ];

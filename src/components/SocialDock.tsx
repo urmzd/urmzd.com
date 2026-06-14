@@ -1,6 +1,14 @@
 'use client';
 
-import { SiArxiv, SiBehance, SiGithub, SiX } from '@icons-pack/react-simple-icons';
+import {
+  SiArxiv,
+  SiBehance,
+  SiGithub,
+  SiNpm,
+  SiPypi,
+  SiRust,
+  SiX,
+} from '@icons-pack/react-simple-icons';
 import { IconBrandLinkedin, IconMail, IconRss } from '@tabler/icons-react';
 import { MotionConfig } from 'motion/react';
 import { FloatingDock } from '@/components/ui/floating-dock';
@@ -13,6 +21,9 @@ const iconMap: Record<SocialLink['icon'], React.ReactNode> = {
   email: <IconMail className="h-full w-full text-muted-foreground" />,
   behance: <SiBehance className="h-full w-full text-muted-foreground" />,
   arxiv: <SiArxiv className="h-full w-full text-muted-foreground" />,
+  npm: <SiNpm className="h-full w-full text-muted-foreground" />,
+  cargo: <SiRust className="h-full w-full text-muted-foreground" />,
+  pypi: <SiPypi className="h-full w-full text-muted-foreground" />,
   rss: <IconRss className="h-full w-full text-muted-foreground" />,
 };
 
