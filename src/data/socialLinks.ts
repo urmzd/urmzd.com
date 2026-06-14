@@ -1,7 +1,17 @@
 export interface SocialLink {
   title: string;
   href: string;
-  icon: 'github' | 'linkedin' | 'x' | 'email' | 'behance' | 'arxiv' | 'npm' | 'cargo' | 'pypi' | 'rss';
+  icon:
+    | 'github'
+    | 'linkedin'
+    | 'x'
+    | 'email'
+    | 'behance'
+    | 'arxiv'
+    | 'npm'
+    | 'cargo'
+    | 'pypi'
+    | 'rss';
 }
 
 export const socialLinks: SocialLink[] = [
