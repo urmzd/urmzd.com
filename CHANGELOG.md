@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.10.0 (2026-06-14)
+
+### Features
+
+- **social**: add npm, crates.io, and PyPI profile links ([90ba116](https://github.com/urmzd/urmzd.com/commit/90ba11616a1427a7893a281bc4d82317ba392894))
+
+### Misc
+
+- **social**: wrap SocialLink icon union to satisfy biome formatter ([851b743](https://github.com/urmzd/urmzd.com/commit/851b7434a4a05ebd12c338c797934aaa9d376464))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.9.1...v0.10.0)
+
+
 ## 0.9.1 (2026-06-13)
 
 ### Bug Fixes
