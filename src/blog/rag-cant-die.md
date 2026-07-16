@@ -31,11 +31,11 @@ You're not the only one lost, and here's the truth: you're not missing out on ne
 
 Well, you might not have to remember it. Mempalace launched in April 2026 claiming a **100% LongMemEval** score and collected 20k+ stars within days. Incredible right?
 
-The 100% turned out to be hand-tuned against the exact questions the system got wrong. The corrected 96.6% turned out not to be mempalace's number at all: it's a retrieval-only recall score produced by raw ChromaDB and its default embedding model, with zero mempalace code executing. And when the community measured what the palace architecture itself contributes, every mempalace-specific feature scored _worse_ than the ChromaDB underneath it. Room routing cost 7.2 points, the "lossless" compression cost 12.4, and on end-to-end answer quality the best configuration was the one where mempalace's code doesn't run.
+The 100% turned out to be hand-tuned against the exact questions the system got wrong.[^1] The corrected 96.6% turned out not to be mempalace's number at all: it's a retrieval-only recall score produced by raw ChromaDB and its default embedding model, with zero mempalace code executing.[^2] And when the community measured what the palace architecture itself contributes, every mempalace-specific feature scored _worse_ than the ChromaDB underneath it. Room routing cost 7.2 points, the "lossless" compression cost 12.4, and on end-to-end answer quality the best configuration was the one where mempalace's code doesn't run.[^3]
 
 It's like buying a stock car, bolting a body kit onto it, clocking slower lap times, and advertising the dealership's dyno sheet as your build.
 
-I'm not bringing this up to dunk on one project; the receipts are in the sources below if you want them. I'm bringing it up because tens of thousands of people starred it, and the takes that reached you ("memory is solved," "context rot is over," "RAG is dead") were written by people who skimmed a blog about a blog. Anyone who's actually built ML systems knows you can't vibe-code your way outside a model's knowledge domain. The interesting question isn't "how dare they." It's "how do you avoid getting fooled next time?" And that turns out to be a lesson in how RAG actually works.
+I'm not bringing this up to dunk on one project; the receipts are in the footnotes if you want them.[^4][^5] I'm bringing it up because tens of thousands of people starred it, and the takes that reached you ("memory is solved," "context rot is over," "RAG is dead") were written by people who skimmed a blog about a blog. Anyone who's actually built ML systems knows you can't vibe-code your way outside a model's knowledge domain. The interesting question isn't "how dare they." It's "how do you avoid getting fooled next time?" And that turns out to be a lesson in how RAG actually works.
 
 ## How to Read a Retrieval Benchmark
 
@@ -43,11 +43,11 @@ Every memory-system benchmark you'll ever see reduces to a handful of questions.
 
 **Recall is not accuracy.** Recall@k asks: was the right document somewhere in the top k results? QA accuracy asks: did the system actually produce a correct answer? These can be wildly far apart. My own project, [mnemonist](https://github.com/urmzd/mnemonist), publishes both from the same run: 96.4% retrieval recall, 37.2% QA accuracy. That gap is normal. Finding the right chunk is the easy half; reasoning over it is where systems fall down. A README that reports recall in a column labeled like accuracy is telling you which half of the story flatters it.
 
-**Check the candidate pool against the corpus.** A 100% recall@10 means nothing if the retriever returns 50 candidates from a corpus of 30. When the haystack is barely bigger than the handful you grab, you haven't demonstrated retrieval. You've demonstrated that everything fits in your hand.
+**Check the candidate pool against the corpus.** A 100% recall@10 means nothing if the retriever returns 50 candidates from a corpus of 30.[^6][^7] When the haystack is barely bigger than the handful you grab, you haven't demonstrated retrieval. You've demonstrated that everything fits in your hand.
 
 **Held-out or tuned?** If a score improved after the team looked at the failing questions and fixed exactly those, the number measures memorization of the test set, not the system. The only number that counts is one from questions the system was never tuned against.
 
-**What code actually ran?** If a system's headline benchmark runs in a mode where its distinctive architecture is disabled, the number belongs to its dependencies. This is the mempalace lesson in one line: the 96.6% was ChromaDB's dyno sheet.
+**What code actually ran?** If a system's headline benchmark runs in a mode where its distinctive architecture is disabled, the number belongs to its dependencies. This is the mempalace lesson in one line: the 96.6% was ChromaDB's dyno sheet.[^2]
 
 > [!note] It's easy to fool yourself before you fool anyone else
 > None of this requires malice to go wrong. I once measured a +9.4-point lift from a reinforcement mechanism in mnemonist, reran it with the arms properly paired, and published the corrected result: +0.0. High recall does not imply the system does anything useful with what it retrieved, mine included. The gap isn't a scandal. Hiding it is.
@@ -204,4 +204,10 @@ If you've made it this far, you are hopefully a bit more skeptical of the next b
 
 ---
 
-**Sources:** [Issue #875](https://github.com/MemPalace/mempalace/issues/875) · [Issue #29](https://github.com/milla-jovovich/mempalace/issues/29) · [Issue #125: BEAM end-to-end results](https://github.com/MemPalace/mempalace/issues/125) · [Discussion #747](https://github.com/MemPalace/mempalace/discussions/747) · [BENCHMARKS.md](https://github.com/MemPalace/mempalace/blob/develop/benchmarks/BENCHMARKS.md) · [Source-code teardown](https://gist.github.com/MagnaCapax/748b0be92dc31d4f5b6ba13286203766) · [Vectorize review](https://vectorize.io/articles/mempalace-review) · [mnemonist](https://github.com/urmzd/mnemonist) · [saige](https://github.com/urmzd/saige)
+[^1]: "The MemPalace README.md and official website still contain misrepresentations and false benchmark claims." MemPalace/mempalace, issue #875. https://github.com/MemPalace/mempalace/issues/875
+[^2]: MemPalace source-code teardown. MagnaCapax, GitHub Gist. https://gist.github.com/MagnaCapax/748b0be92dc31d4f5b6ba13286203766
+[^3]: "BEAM 100K benchmark results - first end-to-end answer quality evaluation." MemPalace/mempalace, issue #125. https://github.com/MemPalace/mempalace/issues/125
+[^4]: "MemPalace review." Vectorize. https://vectorize.io/articles/mempalace-review
+[^5]: "Benchmark methodology review + complementary approach from agentmemory." MemPalace/mempalace, discussion #747. https://github.com/MemPalace/mempalace/discussions/747
+[^6]: "Multiple issues with benchmark methodology and scoring." milla-jovovich/mempalace, issue #29. https://github.com/milla-jovovich/mempalace/issues/29
+[^7]: `benchmarks/BENCHMARKS.md`. MemPalace/mempalace, develop branch. https://github.com/MemPalace/mempalace/blob/develop/benchmarks/BENCHMARKS.md
