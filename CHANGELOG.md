@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.12.0 (2026-07-16)
+
+### Features
+
+- **blog**: retitle rag-is-immortal draft to "RAG is Immortal" ([3a8f39d](https://github.com/urmzd/urmzd.com/commit/3a8f39dbcd7fa1eca500a9f22109f4a4dc9f1dde))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.11.0...v0.12.0)
+
+
 ## 0.11.0 (2026-07-16)
 
 ### Features
