@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.13.0 (2026-07-16)
+
+### Features
+
+- **blog**: sharpen derivative-chain line and cite LongMemEval retrieval comparison gist ([601bc33](https://github.com/urmzd/urmzd.com/commit/601bc330adbb819064f5fdfa593e0fb842c19a21))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.12.0...v0.13.0)
+
+
 ## 0.12.0 (2026-07-16)
 
 ### Features
