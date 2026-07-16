@@ -1,10 +1,10 @@
 ---
-title: "RAG Can't Die. It Was Never Alive."
-description: "RAG gets declared dead every week, but you can't kill a concept. Strip the branding off any memory system, knowledge graph, or agentic search and you find the same five jobs: ingest, index, retrieve, rank, generate. A field guide to reading retrieval benchmarks without getting fooled."
+title: "RAG is Immortal"
+description: "RAG gets declared dead every week, but concepts are immortal. Strip the branding off any memory system, knowledge graph, or agentic search and you find the same five jobs: ingest, index, retrieve, rank, generate. A field guide to reading retrieval benchmarks without getting fooled."
 pubDate: 2026-07-11
 tags: ["rag", "retrieval", "agents", "evals", "grounding", "hyde", "ai"]
 draft: true
-shareText: "RAG can't die because it was never a technique. It's a concept: retrieve something, inject it, generate. Everything shipping under a new name (memory palaces, knowledge graphs, agentic search) is the same five-job anatomy wearing a costume."
+shareText: "RAG is immortal because it was never a technique. It's a concept: retrieve something, inject it, generate. Everything shipping under a new name (memory palaces, knowledge graphs, agentic search) is the same five-job anatomy wearing a costume."
 ---
 
 RAG has been declared dead every week for the past two years. If it were actually dead, it wouldn't be "killed" again after the release of the next vibe-coded project gone viral. Yet, here we are.
