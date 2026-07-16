@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.11.0 (2026-07-16)
+
+### Features
+
+- **blog**: add draft "RAG Can't Die. It Was Never Alive." (rag-is-immortal) (#20) ([3ba6dbb](https://github.com/urmzd/urmzd.com/commit/3ba6dbbcbf82fce8b580f18efcfcf1694e31a22a))
+
+### Misc
+
+- bump GitHub Actions to Node 24 majors and switch app token to client-id ([b498377](https://github.com/urmzd/urmzd.com/commit/b498377a0c7d62f52364b101a751cc435fc274d5))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.10.0...v0.11.0)
+
+
 ## 0.10.0 (2026-06-14)
 
 ### Features
