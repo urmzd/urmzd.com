@@ -29,7 +29,9 @@ You're not the only one lost, and here's the truth: you're not missing out on ne
 
 ## A Case Study: mempalace
 
-Well, you might not have to remember it, because neither can it. mempalace launched in April 2026 claiming a **100% LongMemEval** score and collected 20k+ stars within days. The 100% turned out to be hand-tuned against the exact questions the system got wrong. The corrected 96.6% turned out not to be mempalace's number at all: it's a retrieval-only recall score produced by raw ChromaDB and its default embedding model, with zero mempalace code executing. And when the community measured what the palace architecture itself contributes, every mempalace-specific feature scored _worse_ than the ChromaDB underneath it. Room routing cost 7.2 points, the "lossless" compression cost 12.4, and on end-to-end answer quality the best configuration was the one where mempalace's code doesn't run.
+Well, you might not have to remember it. Mempalace launched in April 2026 claiming a **100% LongMemEval** score and collected 20k+ stars within days. Incredible right?
+
+The 100% turned out to be hand-tuned against the exact questions the system got wrong. The corrected 96.6% turned out not to be mempalace's number at all: it's a retrieval-only recall score produced by raw ChromaDB and its default embedding model, with zero mempalace code executing. And when the community measured what the palace architecture itself contributes, every mempalace-specific feature scored _worse_ than the ChromaDB underneath it. Room routing cost 7.2 points, the "lossless" compression cost 12.4, and on end-to-end answer quality the best configuration was the one where mempalace's code doesn't run.
 
 It's like buying a stock car, bolting a body kit onto it, clocking slower lap times, and advertising the dealership's dyno sheet as your build.
 
@@ -55,7 +57,7 @@ Every memory-system benchmark you'll ever see reduces to a handful of questions.
 Strip away the branding and every retrieval system (memory palace, knowledge graph, agentic search, whatever ships next quarter) is doing the same five jobs:
 
 ```mermaid
-flowchart LR
+flowchart TD
     A[Ingest<br/>chunking, parsing] --> B[Index<br/>vectors · inverted · graph]
     B --> C[Retrieve<br/>semantic · keyword · traversal]
     C --> D[Rank & Assemble<br/>rerank · dedup · budget]
@@ -176,7 +178,7 @@ flowchart TD
 **HyDE makes the risk symmetric.** Query-transformation techniques (HyDE, multi-query expansion, step-back prompting) put generation _inside_ retrieval: HyDE has the model hallucinate a hypothetical answer document and embeds _that_ to search with, on the theory that a fake answer is closer in embedding space to a real answer than the question is.
 
 ```mermaid
-flowchart LR
+flowchart TD
     Q[Query] --> H[LLM generates<br/>hypothetical answer]
     H --> E[Embed the<br/>hypothetical]
     E --> S[Vector search]
@@ -189,7 +191,7 @@ It works, and it means hallucination risk now enters _before a single document i
 
 ---
 
-RAG includes metadata filters. It includes aggregation. An agent leveraging retrieved data through a dozen tool calls is still RAG; the system is just holding the semantic meaning and doing the translation internally instead of you doing it by hand in a prompt template. The concept never changed; the surface area of what counts as "retrieval" and "generation" just kept growing. mempalace didn't kill RAG. It couldn't. Nothing built on top of a concept can kill the concept it's built on.
+If you've made it this far, you are hopefully a bit more skeptical of the next big claim. RAG includes metadata filters. It includes aggregation. An agent leveraging retrieved data through a dozen tool calls is still RAG; the system is just holding the semantic meaning and doing the translation internally instead of you doing it by hand in a prompt template. The concept never changed; the surface area of what counts as "retrieval" and "generation" just kept growing. mempalace didn't kill RAG, and neither did its predecessors, nor will its successors. It couldn't. Nothing built on top of a concept can kill the concept it's built on.
 
 ---
 
