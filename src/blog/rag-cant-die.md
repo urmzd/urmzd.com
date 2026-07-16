@@ -100,37 +100,46 @@ stateDiagram-v2
     Assemble --> [*]
 ```
 
-```
-retrieve(query, principal):
-    stack = [STATIC]                      # start against the batch-indexed corpus
-    candidates = []
+```python
+from enum import Enum, auto
+
+
+class Mode(Enum):
+    STATIC = auto()
+    REALTIME = auto()
+    GRAPH = auto()
+
+
+def retrieve(query: Query, principal: Principal) -> Context:
+    stack = [Mode.STATIC]  # start against the batch-indexed corpus
+    visited: set[Mode] = set()
+    candidates: list[Candidate] = []
 
     while stack:
         mode = stack.pop()
+        visited.add(mode)
 
         match mode:
-            STATIC:
+            case Mode.STATIC:
                 candidates += vector_search(query, index=static_index)
-                candidates += keyword_search(query, index=static_index)   # BM25, same corpus
+                candidates += keyword_search(query, index=static_index)  # BM25, same corpus
                 if query.needs_live_data():
-                    stack.push(REALTIME)
+                    stack.append(Mode.REALTIME)
 
-            REALTIME:
+            case Mode.REALTIME:
                 # federated tool call: a different system entirely,
                 # same interface, caller never sees the seam
                 candidates += federated_call(query, service=live_source)
 
-            GRAPH:
+            case Mode.GRAPH:
                 candidates += graph_traverse(query, entity=query.subject)
 
-        if candidates.mentions_entity() and GRAPH not in visited:
-            stack.push(GRAPH)
+        if mentions_entity(candidates) and Mode.GRAPH not in visited and Mode.GRAPH not in stack:
+            stack.append(Mode.GRAPH)
 
-    candidates = authorize(candidates, principal)      # filter BEFORE ranking, not after
-    ranked     = rerank(candidates, query)              # cross-encoder / MMR / RRF
-    context    = assemble(ranked, budget=token_budget)  # dedup, cite, drop what doesn't fit
-
-    return context
+    candidates = authorize(candidates, principal)  # filter BEFORE ranking, not after
+    ranked = rerank(candidates, query)  # cross-encoder / MMR / RRF
+    return assemble(ranked, budget=TOKEN_BUDGET)  # dedup, cite, drop what doesn't fit
 ```
 
 Now look at what that actually is: parse a query, decide which index (or three) to hit, fetch candidates from multiple sources (some static, some live, some behind another system's API), merge and rank them, return the top-k under a budget. That's a search engine with an LLM bolted onto the end for synthesis.
@@ -139,7 +148,7 @@ And yes, semantic search is not new. TF-IDF and BM25 have been doing relevance r
 
 Compaction proves the point from the other direction. One of the most useful techniques in LLM context management (deciding which messages survive when the window fills) runs on the same underlying method: rank by relevance, keep what clears the budget. LiteLLM does it with BM25, and it's far from alone, because relevancy matters just as much inside the window as outside it. Yes, you can use an LLM to pick the messages. It works. It's also paying model prices for a job a 1990s ranking function does well. Compaction is rank-and-assemble where the corpus is your own conversation: the same anatomy, pointed at the context window itself.
 
-If you want this as actual code instead of pseudocode, I already wrote it: [saige](https://github.com/urmzd/saige) has these pieces as composable primitives. Hybrid search combining vector similarity and full-text over Postgres/pgvector, re-ranking via MMR and a cross-encoder, a knowledge graph SDK with fuzzy entity dedup for the graph-traversal mode, and federated LLM providers behind one interface so "which system answered" is an implementation detail, not something the caller needs to know. It's the same DAG, just running.
+If you want this running against a real stack instead of a sketch, I already wrote it: [saige](https://github.com/urmzd/saige) has these pieces as composable primitives. Hybrid search combining vector similarity and full-text over Postgres/pgvector, re-ranking via MMR and a cross-encoder, a knowledge graph SDK with fuzzy entity dedup for the graph-traversal mode, and federated LLM providers behind one interface so "which system answered" is an implementation detail, not something the caller needs to know. It's the same DAG, just running.
 
 ## Retrieval Decides _Where_. Generation Decides _What_.
 
