@@ -35,13 +35,13 @@ The 100% turned out to be hand-tuned against the exact questions the system got 
 
 It's like buying a stock car, bolting a body kit onto it, clocking slower lap times, and advertising the dealership's dyno sheet as your build.
 
-I'm not bringing this up to dunk on one project; the receipts are in the footnotes if you want them.[^4][^5] I'm bringing it up because tens of thousands of people starred it, and the takes that reached you ("memory is solved," "context rot is over," "RAG is dead") were written by people who skimmed a blog about a blog. Anyone who's actually built ML systems knows you can't vibe-code your way outside a model's knowledge domain. The interesting question isn't "how dare they." It's "how do you avoid getting fooled next time?" And that turns out to be a lesson in how RAG actually works.
+I'm not bringing this up to dunk on one project; the receipts are in the footnotes if you want them.[^4][^5] I'm bringing it up because tens of thousands of people starred it, and the takes that reached you ("memory is solved," "context rot is over," "RAG is dead") were written by people who skimmed a blog based on a blog based on a blog; somewhere far up that chain, allegedly, was the code. Anyone who's actually built ML systems knows you can't vibe-code your way outside a model's knowledge domain. The interesting question isn't "how dare they." It's "how do you avoid getting fooled next time?" And that turns out to be a lesson in how RAG actually works.
 
 ## How to Read a Retrieval Benchmark
 
 Every memory-system benchmark you'll ever see reduces to a handful of questions. Learn them once and no README ever fools you again.
 
-**Recall is not accuracy.** Recall@k asks: was the right document somewhere in the top k results? QA accuracy asks: did the system actually produce a correct answer? These can be wildly far apart. My own project, [mnemonist](https://github.com/urmzd/mnemonist), publishes both from the same run: 96.4% retrieval recall, 37.2% QA accuracy. That gap is normal. Finding the right chunk is the easy half; reasoning over it is where systems fall down. A README that reports recall in a column labeled like accuracy is telling you which half of the story flatters it.
+**Recall is not accuracy.** Recall@k asks: was the right document somewhere in the top k results? QA accuracy asks: did the system actually produce a correct answer? These can be wildly far apart. My own project, [mnemonist](https://github.com/urmzd/mnemonist), publishes both from the same run: 96.4% retrieval recall, 37.2% QA accuracy.[^8] That gap is normal. Finding the right chunk is the easy half; reasoning over it is where systems fall down. A README that reports recall in a column labeled like accuracy is telling you which half of the story flatters it.
 
 **Check the candidate pool against the corpus.** A 100% recall@10 means nothing if the retriever returns 50 candidates from a corpus of 30.[^6][^7] When the haystack is barely bigger than the handful you grab, you haven't demonstrated retrieval. You've demonstrated that everything fits in your hand.
 
@@ -211,3 +211,4 @@ If you've made it this far, you are hopefully a bit more skeptical of the next b
 [^5]: "Benchmark methodology review + complementary approach from agentmemory." MemPalace/mempalace, discussion #747. https://github.com/MemPalace/mempalace/discussions/747
 [^6]: "Multiple issues with benchmark methodology and scoring." milla-jovovich/mempalace, issue #29. https://github.com/milla-jovovich/mempalace/issues/29
 [^7]: `benchmarks/BENCHMARKS.md`. MemPalace/mempalace, develop branch. https://github.com/MemPalace/mempalace/blob/develop/benchmarks/BENCHMARKS.md
+[^8]: "LongMemEval retrieval comparison — MemPalace vs mnemonist." Reproducible scripts running MemPalace's own ChromaDB/ONNX stack against mnemonist's HNSW index with identical methodology: 96.6% vs 96.0% recall@5, neither of which is a "LongMemEval score." urmzd, GitHub Gist. https://gist.github.com/urmzd/e9b89ec0ddca84a05be6392d099d9355
