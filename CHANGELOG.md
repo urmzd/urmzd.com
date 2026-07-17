@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.16.0 (2026-07-17)
+
+### Features
+
+- **reposts**: add X and LinkedIn drafts for rag-is-immortal (#21) ([841436b](https://github.com/urmzd/urmzd.com/commit/841436b19c5e14a838ba25c5f4e2c538d95fcd7e))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.15.0...v0.16.0)
+
+
 ## 0.15.0 (2026-07-17)
 
 ### Features

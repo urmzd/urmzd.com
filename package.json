@@ -65,5 +65,5 @@
     "sync:obsidian": "node scripts/sync-obsidian.mjs"
   },
   "type": "module",
-  "version": "0.15.0"
+  "version": "0.16.0"
 }
