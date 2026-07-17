@@ -275,22 +275,43 @@ export async function renderImages(
 
   const browser = await chromium.launch();
   const page = await browser.newPage({
-    viewport: { width: 1200, height: 1600 },
+    viewport: { width: 2600, height: 1600 },
     deviceScaleFactor: 2,
   });
   await page.goto(pathToFileURL(stagePath).href);
+
+  // X crops article images taller than ~4:5, so repost diagrams render in
+  // landscape: flowcharts flip TD/TB → LR, state diagrams get direction LR.
+  // The blog's own rendering keeps the original orientation.
+  const toLandscape = (src: string): string => {
+    if (/^(flowchart|graph)\s+(TD|TB)\b/m.test(src)) {
+      return src.replace(/^(flowchart|graph)\s+(?:TD|TB)\b/m, '$1 LR');
+    }
+    if (/^stateDiagram/m.test(src) && !/^\s*direction\s/m.test(src)) {
+      return src.replace(/^(stateDiagram(?:-v2)?)\s*$/m, '$1\n    direction LR');
+    }
+    return src;
+  };
 
   for (const target of targets) {
     if (target.kind === 'mermaid') {
       const svg = await page.evaluate(async (source) => {
         // @ts-expect-error mermaid is a page global
-        mermaid.initialize({ startOnLoad: false, theme: 'neutral' });
+        mermaid.initialize({
+          startOnLoad: false,
+          theme: 'neutral',
+          // Natural-size renders: without this, mermaid shrinks the SVG to
+          // the container and the exported PNG text becomes unreadable.
+          flowchart: { useMaxWidth: false },
+          state: { useMaxWidth: false },
+          sequence: { useMaxWidth: false },
+        });
         // @ts-expect-error mermaid is a page global
         const { svg } = await mermaid.render(`d${Date.now() % 1e6}`, source);
         const stage = document.getElementById('stage') as HTMLElement;
         stage.innerHTML = svg;
         return svg as string;
-      }, target.source);
+      }, toLandscape(target.source));
       writeFileSync(join(imageDir, target.file.replace(/\.png$/, '.svg')), svg);
     } else if (target.kind === 'math') {
       await page.evaluate((tex) => {
