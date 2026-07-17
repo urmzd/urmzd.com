@@ -61,7 +61,8 @@
     "generate:reposts": "npx tsx scripts/generate-reposts.ts",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "sync:obsidian": "node scripts/sync-obsidian.mjs"
   },
   "type": "module",
   "version": "0.13.0"
