@@ -85,7 +85,11 @@ npx tsx scripts/publish-x-article.ts <slug>             # create DRAFT
    paste), code blocks. Add the cover via "Upload from computer" →
    `reposts/<slug>/cover.png`. LinkedIn autosaves as Draft; do not press
    Publish or Next unless publishing was requested.
-5. The feed post is `linkedin-post.txt` — also a separate manual step.
+5. The feed post automates via `scripts/publish-linkedin-post.ts <slug>`
+   (preview; `--yes` posts LIVE — LinkedIn's Posts API has no draft state
+   on creation). One-time token bootstrap: `scripts/get-linkedin-token.ts`
+   (needs the app's `http://localhost:8935/callback` redirect URL and the
+   "Sign In with LinkedIn using OpenID Connect" product).
 
 ## Browser-automation gotchas (Claude in Chrome)
 
