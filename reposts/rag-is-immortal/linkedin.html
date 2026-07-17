@@ -127,7 +127,6 @@ def retrieve(query: Query, principal: Principal) -&gt; Context:
     candidates = authorize(candidates, principal)  # filter BEFORE ranking, not after
     ranked = rerank(candidates, query)  # cross-encoder / MMR / RRF
     return assemble(ranked, budget=TOKEN_BUDGET)  # dedup, cite, drop what doesn't fit</code></pre>
-<p><em><a href="https://urmzd.com/blog/rag-is-immortal#building-rag-at-scale">View this code with highlighting →</a></em></p>
 
 <p>Now look at what that actually is: parse a query, decide which index (or three) to hit, fetch candidates from multiple sources (some static, some live, some behind another system's API), merge and rank them, return the top-k under a budget. That's a search engine with an LLM bolted onto the end for synthesis.</p>
 

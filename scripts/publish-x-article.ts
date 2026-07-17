@@ -273,10 +273,6 @@ const codeRendered: Rendered[] = codeFences.map((f, i) => ({
 
 await renderImages([...rendered, ...codeRendered], ROOT, imageDir, `public/images/reposts/${slug}`);
 
-function anchorHref(anchor: string): string {
-  return anchor ? `${blogUrl}#${anchor}` : blogUrl;
-}
-
 // --- Walk the markdown into blocks ---
 
 const blocks: Block[] = [];
@@ -314,10 +310,11 @@ while (i < lines.length) {
       const r = nextRendered('mermaid');
       blocks.push(atomicBlock(addImageEntity(r.file, r.alt)));
     } else {
+      // The Articles API has no code-block type; the image's caption already
+      // points readers at the highlighted original, so no extra link block.
       const r = codeRendered[codeI];
       codeI += 1;
       blocks.push(atomicBlock(addImageEntity(r.file, r.alt)));
-      blocks.push(textBlock('unstyled', `[View this code with highlighting →](${anchorHref(r.anchor)})`));
     }
     i = j + 1;
   } else if (/^\$\$\s*$/.test(line)) {

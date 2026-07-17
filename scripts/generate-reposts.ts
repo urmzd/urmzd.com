@@ -18,7 +18,8 @@
  * rendered headlessly (playwright + the same mermaid/katex the site uses) to
  * HiDPI PNGs, embedded in the HTML as data: URIs so a copy-paste carries the
  * pixels into the editor, and each deep-links back to its section in the
- * original post. Code blocks stay as <pre><code> with a view-in-context link.
+ * original post. Code blocks stay as <pre><code> — both editors have native
+ * code blocks, so no extra context links are added.
  *
  * Open the HTML in a browser, Cmd+A, Cmd+C, paste into the platform editor.
  * For X, prefer the API route: scripts/publish-x-article.ts creates the
@@ -89,17 +90,6 @@ function buildVariant(): string {
 const twitterBody = mdxToHtml(buildVariant(), { headingLevel: 2 });
 const linkedinBody = mdxToHtml(buildVariant(), { headingLevel: 3 });
 
-// Code blocks survive paste as plain preformatted text at best; link each
-// one back to its section so readers can see the highlighted original.
-function addCodeContextLinks(html: string): string {
-  let i = 0;
-  return html.replace(/<\/pre>/g, () => {
-    const fence = codeFences[i];
-    i += 1;
-    return `</pre>\n<p><em><a href="${anchorHref(fence?.anchor ?? '')}">View this code with highlighting →</a></em></p>`;
-  });
-}
-
 function wrap(articleHtml: string, platform: 'twitter' | 'linkedin'): string {
   const font =
     platform === 'twitter'
@@ -138,7 +128,7 @@ function wrap(articleHtml: string, platform: 'twitter' | 'linkedin'): string {
 
 <hr>
 
-${addCodeContextLinks(articleHtml)}
+${articleHtml}
 
 </body>
 </html>`;
