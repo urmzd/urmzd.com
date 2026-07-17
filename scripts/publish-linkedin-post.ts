@@ -32,7 +32,7 @@ import { loadPost } from './lib/repost-core.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const API = 'https://api.linkedin.com';
-const VERSION = process.env.LINKEDIN_VERSION ?? '202506';
+const VERSION = process.env.LINKEDIN_VERSION ?? '202606';
 
 const args = process.argv.slice(2);
 const slug = args.find((a) => !a.startsWith('--'));
