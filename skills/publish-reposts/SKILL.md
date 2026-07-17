@@ -81,21 +81,22 @@ npx tsx scripts/publish-x-article.ts <slug>             # create DRAFT
 - Images upload via `POST /2/media/upload` (base64 JSON,
   `media_category: tweet_image`) before the draft references their ids.
 
-## Step 3b — LinkedIn via browser (no API exists)
+## Step 3b — LinkedIn (no article API exists)
 
-1. Serve the repo: `python3 -m http.server 8931 --bind 127.0.0.1` — the
-   Chrome extension refuses `file://` URLs.
-2. Open `http://127.0.0.1:8931/reposts/<slug>/linkedin.html`, Cmd+A, Cmd+C.
-3. Open `https://www.linkedin.com/article/new/`, click the body, Cmd+V.
-4. Verify: headings, bold/italic, blockquote, images (data URIs upload on
-   paste), code blocks. Add the cover via "Upload from computer" →
-   `reposts/<slug>/cover.png`. LinkedIn autosaves as Draft; do not press
-   Publish or Next unless publishing was requested.
-5. The feed post automates via `scripts/publish-linkedin-post.ts <slug>`
+1. **Feed share (API)**: `scripts/publish-linkedin-post.ts <slug>`
    (preview; `--yes` posts LIVE — LinkedIn's Posts API has no draft state
    on creation). One-time token bootstrap: `scripts/get-linkedin-token.ts`
    (needs the app's `http://localhost:8935/callback` redirect URL and the
    "Sign In with LinkedIn using OpenID Connect" product).
+2. **Article draft (Playwright)**: `scripts/publish-linkedin-article.ts <slug>`
+   drives the editor: pastes `linkedin.html` (data-URI images) via a
+   synthetic clipboard event, attaches the cover, and leaves an autosaved
+   DRAFT. One-time `--login` saves the session to
+   `~/.config/broadcast/linkedin-state.json`. Never publishes; a human
+   reviews the draft in Manage → Drafts.
+3. Manual fallback: serve the repo (`python3 -m http.server 8931`), open
+   `http://127.0.0.1:8931/reposts/<slug>/linkedin.html`, Cmd+A/C, paste
+   into `linkedin.com/article/new`, add cover, leave as draft.
 
 ## Browser-automation gotchas (Claude in Chrome)
 
