@@ -1,0 +1,3 @@
+RAG is immortal because it was never a technique. It's a concept: retrieve something, inject it, generate. Everything shipping under a new name (memory palaces, graph traversal, agentic search) is the same five-job anatomy wearing a costume.
+
+https://urmzd.com/blog/rag-is-immortal

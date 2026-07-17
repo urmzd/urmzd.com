@@ -1,0 +1,39 @@
+from enum import Enum, auto
+
+
+class Mode(Enum):
+    STATIC = auto()
+    REALTIME = auto()
+    GRAPH = auto()
+
+
+def retrieve(query: Query, principal: Principal) -> Context:
+    stack = [Mode.STATIC]  # start against the batch-indexed corpus
+    visited: set[Mode] = set()
+    candidates: list[Candidate] = []
+
+    while stack:
+        mode = stack.pop()
+        visited.add(mode)
+
+        match mode:
+            case Mode.STATIC:
+                candidates += vector_search(query, index=static_index)
+                candidates += keyword_search(query, index=static_index)  # BM25, same corpus
+                if query.needs_live_data():
+                    stack.append(Mode.REALTIME)
+
+            case Mode.REALTIME:
+                # federated tool call: a different system entirely,
+                # same interface, caller never sees the seam
+                candidates += federated_call(query, service=live_source)
+
+            case Mode.GRAPH:
+                candidates += graph_traverse(query, entity=query.subject)
+
+        if mentions_entity(candidates) and Mode.GRAPH not in visited and Mode.GRAPH not in stack:
+            stack.append(Mode.GRAPH)
+
+    candidates = authorize(candidates, principal)  # filter BEFORE ranking, not after
+    ranked = rerank(candidates, query)  # cross-encoder / MMR / RRF
+    return assemble(ranked, budget=TOKEN_BUDGET)  # dedup, cite, drop what doesn't fit
