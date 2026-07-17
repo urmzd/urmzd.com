@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.15.0 (2026-07-17)
+
+### Features
+
+- **blog**: tighten LLM/AI analogy in rag-is-immortal ([1b4b665](https://github.com/urmzd/urmzd.com/commit/1b4b6656e62027cb832c73947afa8085c358cd68))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.14.0...v0.15.0)
+
+
 ## 0.14.0 (2026-07-17)
 
 ### Features
