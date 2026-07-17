@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.16.1 (2026-07-17)
+
+### Bug Fixes
+
+- **reposts**: bump default LinkedIn-Version to 202606 ([a7d28c0](https://github.com/urmzd/urmzd.com/commit/a7d28c08adbd335429692e40fddbbca18966e3d2))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.16.0...v0.16.1)
+
+
 ## 0.16.0 (2026-07-17)
 
 ### Features
