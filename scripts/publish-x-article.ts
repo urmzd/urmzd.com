@@ -61,22 +61,33 @@ interface OAuthCreds {
   accessSecret: string;
 }
 
-function oauthCreds(): OAuthCreds {
-  const env = (name: string): string => {
-    const v = process.env[name];
-    if (!v) {
-      console.error(`Missing env var ${name}. Set X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET`);
-      console.error('(console.x.com → your app → Keys and tokens; keep them in .envrc, never commit)');
-      process.exit(1);
-    }
-    return v;
-  };
-  return {
-    consumerKey: env('X_API_KEY'),
-    consumerSecret: env('X_API_SECRET'),
-    accessToken: env('X_ACCESS_TOKEN'),
-    accessSecret: env('X_ACCESS_TOKEN_SECRET'),
-  };
+/**
+ * Auth, in order of preference:
+ * 1. OAuth 2.0 user token (X_ACCESS_TOKEN as Bearer; scopes tweet.read
+ *    tweet.write users.read media.write). X_REFRESH_TOKEN is not used here —
+ *    refresh with your client when the token expires.
+ * 2. OAuth 1.0a user context (X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN,
+ *    X_ACCESS_TOKEN_SECRET).
+ */
+type XAuth = { kind: 'bearer'; token: string } | { kind: 'oauth1'; creds: OAuthCreds };
+
+function xAuth(): XAuth {
+  const { X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET } = process.env;
+  if (X_API_KEY && X_API_SECRET && X_ACCESS_TOKEN && X_ACCESS_TOKEN_SECRET) {
+    return {
+      kind: 'oauth1',
+      creds: {
+        consumerKey: X_API_KEY,
+        consumerSecret: X_API_SECRET,
+        accessToken: X_ACCESS_TOKEN,
+        accessSecret: X_ACCESS_TOKEN_SECRET,
+      },
+    };
+  }
+  if (X_ACCESS_TOKEN) return { kind: 'bearer', token: X_ACCESS_TOKEN };
+  console.error('Set X_ACCESS_TOKEN (OAuth2 user token), or the full OAuth 1.0a set:');
+  console.error('X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET');
+  process.exit(1);
 }
 
 function oauthHeader(method: string, url: string, creds: OAuthCreds): string {
@@ -102,14 +113,13 @@ function oauthHeader(method: string, url: string, creds: OAuthCreds): string {
     .join(', ')}`;
 }
 
-async function apiPost(path: string, body: unknown, creds: OAuthCreds): Promise<any> {
+async function apiPost(path: string, body: unknown, auth: XAuth): Promise<any> {
   const url = `${API}${path}`;
+  const authorization =
+    auth.kind === 'bearer' ? `Bearer ${auth.token}` : oauthHeader('POST', url, auth.creds);
   const res = await fetch(url, {
     method: 'POST',
-    headers: {
-      Authorization: oauthHeader('POST', url, creds),
-      'Content-Type': 'application/json',
-    },
+    headers: { Authorization: authorization, 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
   });
   const json = await res.json().catch(() => ({}));
@@ -396,7 +406,7 @@ if (dryRun) {
   process.exit(0);
 }
 
-const creds = oauthCreds();
+const creds = xAuth();
 
 for (const [idx, { file }] of pendingMedia) {
   const b64 = readFileSync(join(imageDir, file)).toString('base64');
