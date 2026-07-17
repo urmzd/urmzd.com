@@ -1,17 +1,17 @@
 ---
 title: "RAG is Immortal"
-description: "RAG gets declared dead every week, but concepts are immortal. Strip the branding off any memory system, knowledge graph, or agentic search and you find the same five jobs: ingest, index, retrieve, rank, generate. A field guide to reading retrieval benchmarks without getting fooled."
+description: "RAG gets declared dead every week, but concepts are immortal. Strip the branding off any memory system, graph-backed retrieval, or agentic search and you find the same five jobs: ingest, index, retrieve, rank, generate. A field guide to reading retrieval benchmarks without getting fooled."
 pubDate: 2026-07-11
 tags: ["rag", "retrieval", "agents", "evals", "grounding", "hyde", "ai"]
 draft: true
-shareText: "RAG is immortal because it was never a technique. It's a concept: retrieve something, inject it, generate. Everything shipping under a new name (memory palaces, knowledge graphs, agentic search) is the same five-job anatomy wearing a costume."
+shareText: "RAG is immortal because it was never a technique. It's a concept: retrieve something, inject it, generate. Everything shipping under a new name (memory palaces, graph traversal, agentic search) is the same five-job anatomy wearing a costume."
 ---
 
 RAG has been declared dead every week for the past two years. If it were actually dead, it wouldn't be "killed" again after the release of the next vibe-coded project gone viral. Yet, here we are.
 
-Let me be clear: RAG cannot die, and it's not because it's a word. It definitely isn't a technique either. At its heart, it's a concept, no matter how often everyone insists on treating it otherwise. My argument for that? Its definition. RAG stands for Retrieval-Augmented Generation. Effectively, any system that retrieves something from the outside world and injects it into a system that generates content is performing RAG. Take a piece of content that isn't in the model's training data, drop it in, and hit enter. Congratulations, you have RAG'd (no, I don't know the correct past tense either). Introduced a knowledge graph as an alternative to a traditional vector database? RAG. You didn't kill RAG, and you're not going to.
+Let me be clear: RAG cannot die, and it's not because it's a word. It definitely isn't a technique either. At its heart, it's a concept, no matter how often everyone insists on treating it otherwise. My argument for that? Its definition. RAG stands for Retrieval-Augmented Generation. Effectively, any system that retrieves something from the outside world and injects it into a system that generates content is performing RAG. Take a piece of content that isn't in the model's training data, drop it in, and hit enter. Congratulations, you have RAG'd (no, I don't know the correct past tense either). Replaced a vector index with a knowledge graph and traversed it at query time? You changed the retrieval backend, not the underlying RAG architecture. You didn't kill RAG, and you're not going to.
 
-Now, there's obviously one interpretation you can argue: when people refer to "RAG," they mean the typical document-chunking-and-retrieval pipeline. That's one application of RAG, not RAG itself. It's like calling AI "LLMs." The inverse relationship holds (every LLM product is doing AI) but the reverse doesn't, and neither does it for RAG. Chunk-and-embed is a RAG pipeline. It is not the whole of RAG.
+Now, there's obviously one interpretation you can argue: when people refer to "RAG," they mean the familiar document-chunking, embedding, and vector-retrieval setup. That's one implementation of RAG, not RAG itself. Treating the two as interchangeable is like treating AI as synonymous with LLMs: an LLM is one category within AI, not the entire field. Likewise, chunking is part of ingestion, while embedding is part of indexing. Together, they prepare a corpus for retrieval; they are not a complete RAG pipeline, much less the whole concept.
 
 Everything needs context. Even if we built AGI, it too would need context, because, like everything else in this world, context is the environment in which knowledge is generated.
 
@@ -19,7 +19,7 @@ But what if I told you I killed RAG and solved the memory problem?
 
 ## A Confession
 
-I'd be a liar, that's what. I mean, I wish I did, don't get me wrong. It's just not really possible. Certain systems can't be generalized into a closed-form solution, and that's exactly why much of math and physics relies on approximations or series and sequences. If I had actually solved it, you'd probably never hear from me again. I'd be on a beach somewhere sipping coconut water, or somewhere in Switzerland enjoying the fresh air.
+I'd be a liar, that's what. I mean, I wish I did, don't get me wrong. It's just not really possible. Certain systems cannot be reduced to a useful closed-form solution. When that happens, mathematics and physics often rely on iterative methods, series expansions, sequences, and numerical approximations: descriptions of a process for constructing or approaching a result rather than a single expression that can always be evaluated in one step. If I had actually solved it, you'd probably never hear from me again. I'd be on a beach somewhere sipping coconut water, or somewhere in Switzerland enjoying the fresh air.
 
 ## The Flow of Information
 
@@ -70,7 +70,7 @@ flowchart TD
 4. **Rank and assemble**: merge candidates, re-rank them (cross-encoder, MMR, reciprocal rank fusion), deduplicate, and pack the best of them into a token budget, with the discipline to drop a chunk instead of stuffing it in because it technically cleared the similarity threshold.
 5. **Generate**: hand the assembled context to a model for synthesis.
 
-That's it. That's RAG. A "memory system" is RAG where the corpus is your conversation history. "Agentic retrieval" is RAG where the model decides which index to hit. A knowledge graph is RAG with a different index. The vocabulary keeps changing because vocabulary is free; the anatomy hasn't changed because it can't.
+That's it. That's RAG. A "memory system" is RAG where the corpus is your conversation history. "Agentic retrieval" is RAG where the model decides which source or index to query. A knowledge graph is not itself RAG; it is a data model and indexing structure, while graph traversal is one retrieval strategy a RAG system can use. The backend changes, but the overall anatomy does not. The vocabulary keeps changing because vocabulary is free; the anatomy hasn't changed because it can't.
 
 ## Building RAG at Scale
 
