@@ -320,9 +320,12 @@ export async function renderImages(
         katex.render(tex, stage, { displayMode: true, throwOnError: false });
       }, target.source);
     } else if (target.kind === 'code') {
-      await page.evaluate((html) => {
-        (document.getElementById('stage') as HTMLElement).innerHTML = html;
-      }, `<pre class="code-stage">${escapeHtml(target.source)}</pre>`);
+      await page.evaluate(
+        (html) => {
+          (document.getElementById('stage') as HTMLElement).innerHTML = html;
+        },
+        `<pre class="code-stage">${escapeHtml(target.source)}</pre>`,
+      );
     } else {
       await page.evaluate((html) => {
         (document.getElementById('stage') as HTMLElement).innerHTML = html;

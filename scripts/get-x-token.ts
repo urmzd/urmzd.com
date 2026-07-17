@@ -34,7 +34,9 @@ const SCOPES = 'tweet.read tweet.write users.read media.write offline.access';
 const clientId = process.env.X_CLIENT_ID;
 const clientSecret = process.env.X_CLIENT_SECRET; // only for confidential clients
 if (!clientId) {
-  console.error('Set X_CLIENT_ID (console.x.com → app → User authentication settings → OAuth 2.0 Client ID).');
+  console.error(
+    'Set X_CLIENT_ID (console.x.com → app → User authentication settings → OAuth 2.0 Client ID).',
+  );
   process.exit(1);
 }
 
@@ -63,11 +65,15 @@ const server = createServer(async (req, res) => {
   const code = url.searchParams.get('code');
   if (!code || url.searchParams.get('state') !== state) {
     res.writeHead(400).end('Missing code or state mismatch — check the terminal.');
-    console.error(`Callback error: ${url.searchParams.get('error_description') ?? 'state mismatch'}`);
+    console.error(
+      `Callback error: ${url.searchParams.get('error_description') ?? 'state mismatch'}`,
+    );
     process.exit(1);
   }
 
-  const headers: Record<string, string> = { 'Content-Type': 'application/x-www-form-urlencoded' };
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
   if (clientSecret) {
     headers.Authorization = `Basic ${Buffer.from(`${clientId}:${clientSecret}`).toString('base64')}`;
   }
@@ -89,7 +95,9 @@ const server = createServer(async (req, res) => {
     process.exit(1);
   }
 
-  res.writeHead(200, { 'Content-Type': 'text/html' }).end('<h3>Done — you can close this tab.</h3>');
+  res
+    .writeHead(200, { 'Content-Type': 'text/html' })
+    .end('<h3>Done — you can close this tab.</h3>');
 
   if (save) {
     const envPath = join(homedir(), '.envrc.local');
@@ -103,7 +111,9 @@ const server = createServer(async (req, res) => {
     console.log(`export X_ACCESS_TOKEN=${token.access_token}`);
     console.log(`export X_REFRESH_TOKEN=${token.refresh_token ?? ''}`);
   }
-  console.log(`(scopes: ${token.scope ?? SCOPES}; expires in ${Math.round((token.expires_in ?? 7200) / 3600)}h — refresh with X_REFRESH_TOKEN)`);
+  console.log(
+    `(scopes: ${token.scope ?? SCOPES}; expires in ${Math.round((token.expires_in ?? 7200) / 3600)}h — refresh with X_REFRESH_TOKEN)`,
+  );
   server.close();
   process.exit(0);
 });

@@ -33,9 +33,9 @@ import { mdxToHtml } from '../src/lib/mdxToHtml.js';
 import {
   loadPost,
   preprocessBody,
+  type Rendered,
   renderImages,
   scanBlocks,
-  type Rendered,
 } from './lib/repost-core.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

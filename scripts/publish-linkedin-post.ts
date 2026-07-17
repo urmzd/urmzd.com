@@ -74,7 +74,9 @@ if (!confirmed) {
 const token = process.env.LINKEDIN_ACCESS_TOKEN;
 const author = process.env.LINKEDIN_PERSON_URN;
 if (!token || !author) {
-  console.error('Set LINKEDIN_ACCESS_TOKEN and LINKEDIN_PERSON_URN (run scripts/get-linkedin-token.ts).');
+  console.error(
+    'Set LINKEDIN_ACCESS_TOKEN and LINKEDIN_PERSON_URN (run scripts/get-linkedin-token.ts).',
+  );
   process.exit(1);
 }
 
@@ -131,7 +133,11 @@ const body = {
   isReshareDisabledByAuthor: false,
 };
 
-const res = await fetch(`${API}/rest/posts`, { method: 'POST', headers, body: JSON.stringify(body) });
+const res = await fetch(`${API}/rest/posts`, {
+  method: 'POST',
+  headers,
+  body: JSON.stringify(body),
+});
 if (!res.ok) {
   throw new Error(`POST /rest/posts → ${res.status}: ${await res.text()}`);
 }

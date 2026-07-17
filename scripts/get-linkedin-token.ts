@@ -19,9 +19,9 @@
  * copy into your environment (.envrc — never commit). Tokens live ~2 months.
  */
 
-import { createServer } from 'node:http';
 import { randomBytes } from 'node:crypto';
 import { appendFileSync } from 'node:fs';
+import { createServer } from 'node:http';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
@@ -58,7 +58,9 @@ const server = createServer(async (req, res) => {
   const gotState = url.searchParams.get('state');
   if (!code || gotState !== state) {
     res.writeHead(400).end('Missing code or state mismatch — check the terminal.');
-    console.error(`Callback error: ${url.searchParams.get('error_description') ?? 'state mismatch'}`);
+    console.error(
+      `Callback error: ${url.searchParams.get('error_description') ?? 'state mismatch'}`,
+    );
     process.exit(1);
   }
 
@@ -85,11 +87,13 @@ const server = createServer(async (req, res) => {
     headers: { Authorization: `Bearer ${token.access_token}` },
   });
   const me = await meRes.json();
-  const personUrn = me.sub ? `urn:li:person:${me.sub}` : '(userinfo failed — set LINKEDIN_PERSON_URN manually)';
+  const personUrn = me.sub
+    ? `urn:li:person:${me.sub}`
+    : '(userinfo failed — set LINKEDIN_PERSON_URN manually)';
 
-  res.writeHead(200, { 'Content-Type': 'text/html' }).end(
-    '<h3>Done — you can close this tab.</h3>',
-  );
+  res
+    .writeHead(200, { 'Content-Type': 'text/html' })
+    .end('<h3>Done — you can close this tab.</h3>');
 
   if (save) {
     const envPath = join(homedir(), '.envrc.local');

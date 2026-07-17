@@ -29,9 +29,9 @@ import { fileURLToPath } from 'node:url';
 import {
   loadPost,
   preprocessBody,
+  type Rendered,
   renderImages,
   scanBlocks,
-  type Rendered,
 } from './lib/repost-core.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -51,7 +51,10 @@ if (!slug) {
 // --- OAuth 1.0a (user context) ---
 
 function percentEncode(str: string): string {
-  return encodeURIComponent(str).replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
+  return encodeURIComponent(str).replace(
+    /[!'()*]/g,
+    (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`,
+  );
 }
 
 interface OAuthCreds {
@@ -113,13 +116,21 @@ function oauthHeader(method: string, url: string, creds: OAuthCreds): string {
     .join(', ')}`;
 }
 
-async function apiPost(path: string, body: unknown, auth: XAuth): Promise<any> {
+interface ApiResponse {
+  data?: { id?: string; title?: string; media_id?: string };
+  [key: string]: unknown;
+}
+
+async function apiPost(path: string, body: unknown, auth: XAuth): Promise<ApiResponse> {
   const url = `${API}${path}`;
   const authorization =
     auth.kind === 'bearer' ? `Bearer ${auth.token}` : oauthHeader('POST', url, auth.creds);
   const res = await fetch(url, {
     method: 'POST',
-    headers: { Authorization: authorization, 'Content-Type': 'application/json' },
+    headers: {
+      Authorization: authorization,
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(body),
   });
   const json = await res.json().catch(() => ({}));
@@ -170,8 +181,7 @@ function parseInline(md: string): Inline {
   const re =
     /\[([^\]]+)\]\(([^)\s]+)\)|\*\*((?:[^*]|\*(?!\*))+)\*\*|(?<![\w*])\*([^*\n]+)\*(?![\w*])|(?<![\w_])_([^_\n]+)_(?![\w_])|`([^`\n]+)`|\[\^(\d+)\]/g;
   let last = 0;
-  let m: RegExpExecArray | null;
-  while ((m = re.exec(md))) {
+  for (const m of md.matchAll(re)) {
     out.text += md.slice(last, m.index);
     const base = out.text.length;
     if (m[1] !== undefined) {
@@ -181,11 +191,19 @@ function parseInline(md: string): Inline {
     } else if (m[3] !== undefined) {
       const inner = parseInline(m[3]);
       merge(inner, base);
-      out.styles.push({ offset: base, length: inner.text.length, style: 'bold' });
+      out.styles.push({
+        offset: base,
+        length: inner.text.length,
+        style: 'bold',
+      });
     } else if (m[4] !== undefined || m[5] !== undefined) {
       const inner = parseInline((m[4] ?? m[5]) as string);
       merge(inner, base);
-      out.styles.push({ offset: base, length: inner.text.length, style: 'italic' });
+      out.styles.push({
+        offset: base,
+        length: inner.text.length,
+        style: 'italic',
+      });
     } else if (m[6] !== undefined) {
       out.text += m[6]; // inline code: no DraftJS style; keep the text
     } else {
@@ -201,7 +219,10 @@ const entities: Entity[] = [];
 const pendingMedia = new Map<number, { file: string }>(); // entity index → image file
 
 function addLinkEntity(url: string): number {
-  entities.push({ key: String(entities.length), value: { type: 'link', mutability: 'mutable', data: { url } } });
+  entities.push({
+    key: String(entities.length),
+    value: { type: 'link', mutability: 'mutable', data: { url } },
+  });
   return entities.length - 1;
 }
 
@@ -213,7 +234,10 @@ function addImageEntity(file: string, caption: string): number {
       type: 'image',
       mutability: 'immutable',
       // media_items is filled with a real media_id after upload
-      data: { media_items: [{ media_category: 'TWEET_IMAGE', media_id: '' }], caption },
+      data: {
+        media_items: [{ media_category: 'TWEET_IMAGE', media_id: '' }],
+        caption,
+      },
     },
   });
   pendingMedia.set(idx, { file });
@@ -225,8 +249,7 @@ function makeBlock(type: string, inl: Inline): Block {
   blockN += 1;
   // Bare URLs (footnote references) become links too, unless already inside one.
   const urlRe = /https?:\/\/[^\s)\]"']+/g;
-  let m: RegExpExecArray | null;
-  while ((m = urlRe.exec(inl.text))) {
+  for (const m of inl.text.matchAll(urlRe)) {
     const [start, len] = [m.index, m[0].length];
     const covered = inl.links.some((l) => start < l.offset + l.length && l.offset < start + len);
     if (!covered) inl.links.push({ offset: start, length: len, url: m[0] });
@@ -236,7 +259,11 @@ function makeBlock(type: string, inl: Inline): Block {
     text: inl.text,
     type,
     inline_style_ranges: inl.styles,
-    entity_ranges: inl.links.map((l) => ({ offset: l.offset, length: l.length, key: addLinkEntity(l.url) })),
+    entity_ranges: inl.links.map((l) => ({
+      offset: l.offset,
+      length: l.length,
+      key: addLinkEntity(l.url),
+    })),
   };
 }
 
@@ -283,7 +310,11 @@ blocks.push(
       'unstyled',
       `For the full experience with interactive visuals and citations, read the original at ${blogUrl}`,
     );
-    b.inline_style_ranges.push({ offset: 0, length: b.text.length, style: 'italic' });
+    b.inline_style_ranges.push({
+      offset: 0,
+      length: b.text.length,
+      style: 'italic',
+    });
     return b;
   })(),
 );
@@ -333,7 +364,11 @@ while (i < lines.length) {
       const title = m[1].trim();
       const rest = m[2].trim();
       const b = textBlock('blockquote', `${title}: ${rest}`);
-      b.inline_style_ranges.push({ offset: 0, length: title.length + 1, style: 'bold' });
+      b.inline_style_ranges.push({
+        offset: 0,
+        length: title.length + 1,
+        style: 'bold',
+      });
       blocks.push(b);
     }
     i += 1;
@@ -363,7 +398,12 @@ while (i < lines.length) {
     const ordered = /^\d+\.\s+/.test(line);
     let item = line.replace(/^(?:\d+\.|-)\s+/, '');
     i += 1;
-    while (i < lines.length && lines[i].trim() !== '' && !/^(?:\d+\.|-)\s+/.test(lines[i]) && !/^#{2,3}\s/.test(lines[i])) {
+    while (
+      i < lines.length &&
+      lines[i].trim() !== '' &&
+      !/^(?:\d+\.|-)\s+/.test(lines[i]) &&
+      !/^#{2,3}\s/.test(lines[i])
+    ) {
       item += ` ${lines[i].trim()}`;
       i += 1;
     }
@@ -399,7 +439,9 @@ const draft = {
 
 if (dryRun) {
   console.log(JSON.stringify(draft, null, 2));
-  console.log(`\n--dry-run: ${blocks.length} blocks, ${entities.length} entities, ${pendingMedia.size} images to upload`);
+  console.log(
+    `\n--dry-run: ${blocks.length} blocks, ${entities.length} entities, ${pendingMedia.size} images to upload`,
+  );
   process.exit(0);
 }
 
@@ -407,27 +449,39 @@ const creds = xAuth();
 
 for (const [idx, { file }] of pendingMedia) {
   const b64 = readFileSync(join(imageDir, file)).toString('base64');
-  const res = await apiPost('/media/upload', {
-    media: b64,
-    media_category: 'tweet_image',
-    media_type: 'image/png',
-  }, creds);
+  const res = await apiPost(
+    '/media/upload',
+    {
+      media: b64,
+      media_category: 'tweet_image',
+      media_type: 'image/png',
+    },
+    creds,
+  );
   const mediaId = res.data?.id ?? res.data?.media_id;
-  if (!mediaId) throw new Error(`No media id in upload response for ${file}: ${JSON.stringify(res)}`);
+  if (!mediaId)
+    throw new Error(`No media id in upload response for ${file}: ${JSON.stringify(res)}`);
   (entities[idx].value.data.media_items as { media_id: string }[])[0].media_id = String(mediaId);
   console.log(`✓ uploaded ${file} → media_id ${mediaId}`);
 }
 
 const coverPath = join(ROOT, 'dist', 'og', `${slug}.png`);
 if (existsSync(coverPath)) {
-  const res = await apiPost('/media/upload', {
-    media: readFileSync(coverPath).toString('base64'),
-    media_category: 'tweet_image',
-    media_type: 'image/png',
-  }, creds);
+  const res = await apiPost(
+    '/media/upload',
+    {
+      media: readFileSync(coverPath).toString('base64'),
+      media_category: 'tweet_image',
+      media_type: 'image/png',
+    },
+    creds,
+  );
   const mediaId = res.data?.id ?? res.data?.media_id;
   if (mediaId) {
-    draft.cover_media = { media_category: 'TWEET_IMAGE', media_id: String(mediaId) };
+    draft.cover_media = {
+      media_category: 'TWEET_IMAGE',
+      media_id: String(mediaId),
+    };
     console.log(`✓ uploaded cover → media_id ${mediaId}`);
   }
 } else {

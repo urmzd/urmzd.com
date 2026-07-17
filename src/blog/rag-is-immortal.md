@@ -3,7 +3,7 @@ title: "RAG is Immortal"
 description: "RAG gets declared dead every week, but concepts are immortal. Strip the branding off any memory system, graph-backed retrieval, or agentic search and you find the same five jobs: ingest, index, retrieve, rank, generate. A field guide to reading retrieval benchmarks without getting fooled."
 pubDate: 2026-07-11
 tags: ["rag", "retrieval", "agents", "evals", "grounding", "hyde", "ai"]
-draft: true
+draft: false
 shareText: "RAG is immortal because it was never a technique. It's a concept: retrieve something, inject it, generate. Everything shipping under a new name (memory palaces, graph traversal, agentic search) is the same five-job anatomy wearing a costume."
 ---
 
