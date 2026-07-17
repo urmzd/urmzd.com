@@ -5,7 +5,7 @@
  * scopes publish-x-article.ts needs (media upload included).
  *
  * Usage:
- *   X_CLIENT_ID=... npx tsx scripts/get-x-token.ts [--save]
+ *   X_CLIENT_ID=... npx tsx scripts/get-x-token.ts
  *
  * Prereqs (console.x.com → your app → Authentication settings):
  *   - Type of App: Native App (public client) or Web App (confidential)
@@ -14,18 +14,16 @@
  *   - X_CLIENT_ID is the OAuth 2.0 Client ID from Keys & Tokens. If your app
  *     is a confidential (Web App) client, also set X_CLIENT_SECRET.
  *
- * Prints the authorization URL, waits for the callback, exchanges the code.
- * --save appends X_ACCESS_TOKEN / X_REFRESH_TOKEN to ~/.envrc.local
- * (overwriting any previous values by appending later lines).
+ * Prints the authorization URL, waits for the callback, exchanges the code,
+ * and prints `export X_ACCESS_TOKEN` / `export X_REFRESH_TOKEN` to stdout.
+ * Storage is not this script's job: the broadcast launcher captures these
+ * lines and upserts them into its encrypted store (see ../broadcast). To use
+ * them by hand, copy the two lines into your environment (never commit).
  */
 
 import { createHash, randomBytes } from 'node:crypto';
-import { appendFileSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { homedir } from 'node:os';
-import { join } from 'node:path';
 
-const save = process.argv.includes('--save');
 // Must match a Callback URI registered in the app's authentication settings.
 const PORT = Number(process.env.X_OAUTH_PORT ?? 8935);
 const REDIRECT_URI = `http://localhost:${PORT}/callback`;
@@ -99,18 +97,9 @@ const server = createServer(async (req, res) => {
     .writeHead(200, { 'Content-Type': 'text/html' })
     .end('<h3>Done — you can close this tab.</h3>');
 
-  if (save) {
-    const envPath = join(homedir(), '.envrc.local');
-    appendFileSync(
-      envPath,
-      `\nexport X_ACCESS_TOKEN="${token.access_token}"\nexport X_REFRESH_TOKEN="${token.refresh_token ?? ''}"\n`,
-    );
-    console.log(`\n✓ appended X_ACCESS_TOKEN and X_REFRESH_TOKEN to ${envPath}`);
-  } else {
-    console.log('\nAdd to your environment (.envrc — never commit):\n');
-    console.log(`export X_ACCESS_TOKEN=${token.access_token}`);
-    console.log(`export X_REFRESH_TOKEN=${token.refresh_token ?? ''}`);
-  }
+  console.log('\nTokens (captured by the broadcast launcher, or copy by hand):\n');
+  console.log(`export X_ACCESS_TOKEN=${token.access_token}`);
+  console.log(`export X_REFRESH_TOKEN=${token.refresh_token ?? ''}`);
   console.log(
     `(scopes: ${token.scope ?? SCOPES}; expires in ${Math.round((token.expires_in ?? 7200) / 3600)}h — refresh with X_REFRESH_TOKEN)`,
   );

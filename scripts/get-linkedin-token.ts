@@ -15,17 +15,16 @@
  *       http://localhost:8935/callback
  *
  * Starts a localhost callback server, prints the authorization URL for you
- * to open, exchanges the code, and prints the access token + person URN to
- * copy into your environment (.envrc — never commit). Tokens live ~2 months.
+ * to open, exchanges the code, and prints `export LINKEDIN_ACCESS_TOKEN` /
+ * `export LINKEDIN_PERSON_URN` to stdout. Storage is not this script's job:
+ * the broadcast launcher captures these lines and upserts them into its
+ * encrypted store (see ../broadcast). To use by hand, copy the two lines into
+ * your environment (never commit). Tokens live ~2 months.
  */
 
 import { randomBytes } from 'node:crypto';
-import { appendFileSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { homedir } from 'node:os';
-import { join } from 'node:path';
 
-const save = process.argv.includes('--save'); // append to ~/.envrc.local instead of printing
 const PORT = 8935;
 const REDIRECT_URI = `http://localhost:${PORT}/callback`;
 const SCOPES = 'openid profile w_member_social';
@@ -95,18 +94,9 @@ const server = createServer(async (req, res) => {
     .writeHead(200, { 'Content-Type': 'text/html' })
     .end('<h3>Done — you can close this tab.</h3>');
 
-  if (save) {
-    const envPath = join(homedir(), '.envrc.local');
-    appendFileSync(
-      envPath,
-      `\nexport LINKEDIN_ACCESS_TOKEN="${token.access_token}"\nexport LINKEDIN_PERSON_URN="${personUrn}"\n`,
-    );
-    console.log(`\n✓ appended LINKEDIN_ACCESS_TOKEN and LINKEDIN_PERSON_URN to ${envPath}`);
-  } else {
-    console.log('\nAdd to your environment (.envrc — never commit):\n');
-    console.log(`export LINKEDIN_ACCESS_TOKEN=${token.access_token}`);
-    console.log(`export LINKEDIN_PERSON_URN=${personUrn}`);
-  }
+  console.log('\nTokens (captured by the broadcast launcher, or copy by hand):\n');
+  console.log(`export LINKEDIN_ACCESS_TOKEN=${token.access_token}`);
+  console.log(`export LINKEDIN_PERSON_URN=${personUrn}`);
   console.log(`(token expires in ${Math.round((token.expires_in ?? 0) / 86400)} days)`);
   server.close();
   process.exit(0);
