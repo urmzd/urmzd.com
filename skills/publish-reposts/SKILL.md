@@ -54,9 +54,15 @@ npx tsx scripts/publish-x-article.ts <slug> --dry-run   # inspect content_state
 npx tsx scripts/publish-x-article.ts <slug>             # create DRAFT
 ```
 
-- Needs env: `X_API_KEY`, `X_API_SECRET`, `X_ACCESS_TOKEN`,
-  `X_ACCESS_TOKEN_SECRET` (console.x.com → app → Keys and tokens; access
-  token must be Read & Write). Keep them in `.envrc`; never commit.
+- Needs env: `X_ACCESS_TOKEN` (OAuth2 user token). Bootstrap with
+  `scripts/get-x-token.ts --save` (PKCE; needs `X_CLIENT_ID` +
+  `X_CLIENT_SECRET` from console.x.com and the registered
+  `http://localhost:8935/callback`). Console-generated tokens LACK
+  `media.write` — the helper requests it explicitly. Tokens last 2h;
+  rerun the helper (zero-click once pre-authorized). OAuth 1.0a
+  (`X_API_KEY` + 3 more) also works as a fallback. Never commit secrets.
+- The app is Pay-Per-Use: a 402 "credits depleted" means top up in
+  console.x.com → Billing → Credits.
 - Creates a **draft only** and prints the `x.com/compose/articles/edit/<id>`
   URL. Review in the editor, add the cover if needed, publish by hand — or
   rerun with `--publish` only after the draft has been reviewed.
