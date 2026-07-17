@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.14.0 (2026-07-17)
+
+### Features
+
+- **scripts**: sync blog posts to Obsidian vault with launchd watcher ([38642d5](https://github.com/urmzd/urmzd.com/commit/38642d558275cfa91b6ee70e39cfef86a7a2a4e4))
+- **blog**: correct knowledge-graph and pipeline framing in rag-is-immortal ([45fdeed](https://github.com/urmzd/urmzd.com/commit/45fdeedb268fbf044c404102189bff3e930d1669))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.13.0...v0.14.0)
+
+
 ## 0.13.0 (2026-07-16)
 
 ### Features
