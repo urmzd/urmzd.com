@@ -1,4 +1,37 @@
+# urmzd.com — all crawlers and AI agents welcome.
+# LLM-friendly index: https://urmzd.com/llms.txt
+# Full text corpus:    https://urmzd.com/llms-full.txt
+# Any article/project/research/writing URL also serves clean Markdown at .md
+
 User-agent: *
+Allow: /
+
+# Explicitly welcome major AI crawlers.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
 Allow: /
 
 Sitemap: https://urmzd.com/sitemap-index.xml

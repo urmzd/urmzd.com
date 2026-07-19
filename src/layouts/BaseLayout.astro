@@ -16,6 +16,8 @@ interface Props {
   ogType?: 'website' | 'article';
   publishedTime?: Date;
   tags?: string[];
+  /** URL of a plain-Markdown representation of this page, for LLMs and agents. */
+  mdHref?: string;
 }
 
 const {
@@ -27,6 +29,7 @@ const {
   ogType = 'website',
   publishedTime,
   tags = [],
+  mdHref,
 } = Astro.props;
 ---
 
@@ -53,6 +56,7 @@ const {
       crossorigin="anonymous"
     />
     <link rel="alternate" type="application/rss+xml" title="urmzd.com RSS Feed" href="/rss.xml" />
+    {mdHref && <link rel="alternate" type="text/markdown" title="Markdown source" href={mdHref} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

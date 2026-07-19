@@ -20,7 +20,7 @@ const { Content } = await render(entry);
 const hasBody = (entry.body ?? '').trim().length > 0;
 ---
 
-<BaseLayout title={`${entry.data.title} - urmzd`} description={entry.data.description}>
+<BaseLayout title={`${entry.data.title} - urmzd`} description={entry.data.description} mdHref={`/projects/${entry.id}.md`}>
   <div class="mx-auto max-w-3xl px-6 pb-16">
     <ProjectHero project={entry.data} client:load />
 
