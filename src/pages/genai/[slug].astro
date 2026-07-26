@@ -22,7 +22,7 @@ const githubUrl = `https://github.com/${sourceRepo}/tree/main/${sourcePath}`;
 const rawUrl = `https://raw.githubusercontent.com/${sourceRepo}/main/${rawPath}`;
 ---
 
-<BaseLayout title={`${entry.data.title} - urmzd`} description={entry.data.description}>
+<BaseLayout title={`${entry.data.title} - urmzd`} description={entry.data.description} mdHref={rawUrl}>
   <div class="mx-auto max-w-3xl px-6 pt-24 pb-16">
     <div class="mb-8">
       <span class="mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-muted-foreground glass-pill">

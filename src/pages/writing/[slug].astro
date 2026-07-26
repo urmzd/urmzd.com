@@ -27,6 +27,7 @@ const storyUrl = `${siteUrl}/writing/${story.id}`;
   ogType="article"
   publishedTime={story.data.pubDate}
   tags={story.data.tags}
+  mdHref={`/writing/${story.id}.md`}
 >
   <ArticleLayout
     title={story.data.title}
