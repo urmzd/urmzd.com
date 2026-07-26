@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.17.0 (2026-07-26)
+
+### Features
+
+- **llm**: serve auto-generated llms.txt and Markdown endpoints (#24) ([361e300](https://github.com/urmzd/urmzd.com/commit/361e300f1067bb1d184618fed64a4e8b3c9fe317))
+- **reposts**: drive LinkedIn article drafts with Playwright ([7d0ee12](https://github.com/urmzd/urmzd.com/commit/7d0ee12ba196084afb51b86b5a6bbd1de974f851))
+
+### Misc
+
+- **reposts**: move the publish pipeline out to broadcast (#23) ([51a97ee](https://github.com/urmzd/urmzd.com/commit/51a97eef23697016acee32ea0699e9e9e7ea6748))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.16.1...v0.17.0)
+
+
 ## 0.16.1 (2026-07-17)
 
 ### Bug Fixes
