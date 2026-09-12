@@ -1,9 +1,9 @@
 ---
 title: "Stop Calling LLMs Non-Deterministic"
-description: "The model is a fixed function. What varies is the serving layer, and somebody made that trade-off on your behalf without telling you it was being made."
+description: "The model is a fixed function. Reproducible serving is possible, but throughput has an immediate price and reproducibility needs a business case."
 pubDate: 2026-09-16
 tags: ["ai", "critical-thinking", "inference", "evals", "architecture"]
-shareText: "LLMs aren't non-deterministic. Serving them is. Your prompt gets batched with whatever else is in flight, the batch shape picks the reduction order, float addition isn't associative, and one flipped token never comes back."
+shareText: "Deterministic LLM serving is possible. Thinking Machines explained the mechanism; vLLM exposes a switch. The harder question is why a provider would trade throughput for reproducibility unless someone values the guarantee."
 draft: true
 ---
 
@@ -17,7 +17,7 @@ The question came at me twice, from two different people: if everything else is 
 
 My answer both times was that the premise was false. Everything else *wasn't* the same. Something upstream had changed: a tool call returned different data, a timestamp moved, a retrieved document was updated, a system prompt got tweaked. I was searching the input space for the variable that shifted, because the alternative was that identical inputs produce different outputs, and that is not a thing functions do.
 
-And I was right about the amplifier. One token's difference cascades unrecoverably. Each token conditions every token after it, the space of possible continuations is astronomically large, and two trajectories that diverge at token forty never converge again. You don't need a big perturbation to get a completely different essay. You need one token, once.
+And I was right about the amplifier. One token's difference can cascade. Each token conditions every token after it, so a different token changes the prefix used for later predictions. The continuations may overlap or reach the same conclusion, but they can also become completely different responses. You don't need a big perturbation to get a completely different essay. You need one token, once.
 
 What I had wrong was where to look for it. I searched the inputs exhaustively and never searched the execution, because I'd modelled the system as a function of its declared inputs: the prompt, the parameters, the weights. That's what the documentation describes. That's what the API signature says. That's what a model *is*.
 
@@ -33,7 +33,7 @@ Batch size changes the arithmetic. Here's the chain:
 2. **Every layer is full of long sums**: a matrix multiply row, a normalisation average, an attention softmax. Each has an order.
 3. **That order is not fixed in the model.** It's chosen at runtime by the kernel, from the shape of the tensor: how to divide work across cores, what tile size to use, whether to split the inner dimension into chunks and combine partial sums afterwards.
 4. **The shape depends on the batch. The batch depends on load. The load depends on other people.**
-5. **A shift in the seventh decimal place meets a discontinuity.** Picking the highest-scoring token is a hard cut-off. If two candidates were nearly tied, the winner flips, and now you're in my cascade, on a trajectory that never comes back.
+5. **A shift in the seventh decimal place meets a discontinuity.** Picking the highest-scoring token is a hard cut-off. If two candidates were nearly tied, the winner flips, and now you're in my cascade, conditioning later predictions on a different prefix.
 
 The whole chain, and where in it you stop having visibility:
 
@@ -46,12 +46,12 @@ flowchart TD
     F --> T{"Top two tokens<br/>nearly tied?"}
     T -- no --> S["Same token.<br/>You never notice."]
     T -- yes --> D["Winner flips, and every later token<br/>is conditioned on a different prefix"]
-    D --> X["Trajectories never reconverge"]
+    D --> X["Later predictions can diverge"]
 ```
 
 So the answer to the question I was asked is: the inputs weren't identical, and I was right about that. I just couldn't have found the difference, because concurrent traffic doesn't appear in any interface I have access to.
 
-One correction to the folk version of this story, which I believed for a while: this is not about GPU parallelism or race conditions. Forward passes don't rely on the kind of contended operations that produce genuine races, and the individual kernels are perfectly repeatable for a fixed shape. Endpoints served from CPUs and TPUs have the same problem. It's batch variation, not concurrency, and that matters because the fix is different. You don't have to stop distributing work, you have to make the kernels behave identically regardless of batch size.
+One correction to the folk version of this story, which I believed for a while: parallel execution does not by itself explain the variation. Thinking Machines describes how common forward-pass kernels can be repeatable for a fixed shape while giving different results across batch shapes. That distinction matters because the fix is different. You don't have to stop distributing work, you have to make the kernels behave identically regardless of batch size.
 
 ## Three layers, and only one of them is a fault
 
@@ -59,60 +59,60 @@ The reason "LLMs are probabilistic, so of course they vary" keeps getting said i
 
 **Structure.** The forward pass is a deterministic function. Same weights, same input, same output, every time. What it emits is a probability distribution over the next token, but it produces that distribution deterministically. The model represents a likelihood; it does not compute by chance.
 
-**Choice.** A sampler then draws from that distribution. This is deliberate randomness, added on purpose, because we generally want variety. It's also fully controllable: greedy decoding or a fixed seed switches it off.
+**Choice.** A sampler then draws from that distribution. This is deliberate randomness, added on purpose, because we generally want variety. Greedy decoding removes the random draw. A fixed seed makes the pseudorandom sequence repeatable, provided the sampler and execution remain stable; it does not repair changing numerics.
 
-**Defect.** Then the serving layer introduces variation nobody asked for, nobody documented, and nobody currently lets you turn off.
+**Execution.** The serving layer can change that distribution as batch shapes change, even when you requested greedy decoding. There are documented ways to prevent this. Whether you can enable them depends on who controls the deployment.
 
-Stacked, the difference is which row you are allowed to touch:
+The serving variation happens before the sampler chooses a token:
 
 ```mermaid
 flowchart TD
-    subgraph One["1 · Structure: the forward pass"]
-        A["Same weights, same input"] --> B["Same distribution, every time"]
-    end
-
-    subgraph Two["2 · Choice: the sampler"]
-        C[Draw a token from<br/>that distribution] --> D[Variation you asked for]
-    end
-
-    subgraph Three["3 · Defect: the serving layer"]
-        E[Batch shape moves with load] --> F[Variation nobody asked for]
-    end
-
-    B --> C
-    D --> E
-    B -.-> V1([Deterministic by construction<br/>nothing to switch off])
-    D -.-> V2([Controllable<br/>greedy decoding or a fixed seed])
-    F -.-> V3([Not controllable<br/>no switch is exposed to you])
+    P["Prompt and weights"] --> E["Forward-pass execution"]
+    B["Batch shape and kernel choices"] --> E
+    E --> D["Next-token distribution"]
+    D --> S["Sampler: greedy or random draw"]
+    R["Seed and sampler state"] --> S
+    S --> T["Selected token"]
 ```
 
-You wouldn't blame the house's collapse on the structure if the ground beneath it folded in. The architecture is sound. Nothing about how these models are built produces this behaviour. It's introduced entirely below them, by the substrate we chose to stand them on, for reasons that have nothing to do with the models themselves.
+## The fix exists
 
-The metaphor has one limit worth naming: unlike subsidence, this ground can be fixed, and the fix is known. Batch-invariant kernels, which force one reduction strategy regardless of batch size, restore bit-exact reproducibility. Both major open-source inference engines shipped this within weeks of the problem being properly diagnosed. It costs roughly 60% of throughput in a naive implementation and about a third once optimised.
+In September 2025, Thinking Machines published [Defeating Nondeterminism in LLM Inference](https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/). It explains the batch-shape mechanism and demonstrates batch-invariant kernels: arithmetic whose results do not depend on which other requests share the batch. With those kernels enabled, all 1,000 completions in its test were identical.
 
-Which brings us to the interesting question. If the fix exists and has existed, why is this still how everything works?
+This is available in serving software, too. [vLLM documents an opt-in batch-invariance mode](https://docs.vllm.ai/en/stable/features/batch_invariance/), enabled with `VLLM_BATCH_INVARIANT=1`. Its documentation marks the feature as beta, describes supported hardware and tested models, and warns of a possible performance impact. It is a supported path with constraints, not a guarantee for every deployment.
 
-## Nobody in a position to fix it wanted it fixed
+And vLLM is established production infrastructure. [LinkedIn reported more than 50 GenAI use cases across thousands of hosts](https://www.linkedin.com/blog/engineering/ai/how-we-leveraged-vllm-to-power-our-genai-applications) in August 2025. That establishes the engine's production relevance; it does not establish how many operators enable batch invariance.
 
-Not a conspiracy. Just an incentive structure where the people who bear the cost and the people who control the decision are different people.
+The distinction is between an operator having a switch and an API customer receiving a guarantee. The first does not automatically give you the second.
 
-| Who | Position | Why |
+## Why the fix isn't the default
+
+There is a cost to constraining execution. In the Thinking Machines experiment, the same workload took 26 seconds with default vLLM, 55 seconds with unoptimized deterministic kernels, and 42 seconds after improving attention. For that workload, those times imply approximately 53% and 38% less throughput. They are measurements of one setup, not a universal price for reproducibility.
+
+Still, the incentive is straightforward. If an operator serves fewer requests on the same hardware, maintaining capacity can require more hardware. That cost shows up directly. The benefit of reproducibility may show up elsewhere: less debugging time, more reliable regression investigations, or fewer failed training runs.
+
+My argument is that this split helps explain why an available fix remains opt-in. I do not have an industry-wide adoption count. But when customers buy price, latency, and response quality without requiring exact replay, an operator has little immediate commercial reason to accept a throughput penalty for it.
+
+| Workload | Reason to pay for reproducibility | Competing pressure |
 |---|---|---|
-| Chat product teams | Against | "Regenerate" is a core interaction. A deterministic regenerate button returns the same answer and looks broken. |
-| Anyone using best-of-n or self-consistency | Against | Sampling several times and voting requires the samples to differ. Free variance is free diversity. |
-| Infrastructure teams | Against | It costs a third of serving capacity, minimum. |
-| Model providers | Against | See below. |
-| RL training teams | For | Numerical drift between training and inference silently turns on-policy methods off-policy. |
-| Evaluation, audit, compliance | For | You cannot attest to an output you cannot reproduce. |
+| Interactive chat | Investigating regressions and reproducing reported failures | Cost and latency on every request |
+| Evaluation and debugging | Isolating changes without serving variation obscuring the comparison | Extra serving cost and maintenance of a controlled environment |
+| Reinforcement learning | Keeping rollout and training numerics aligned | Engineering effort across both stacks |
 
-The provider row is the one nobody says out loud. Non-reproducibility is cover. If outputs can't be reproduced, you cannot demonstrate that a provider swapped weights, quantised the model, routed you to a cheaper variant, or degraded quality under peak load. Every one of those complaints becomes unfalsifiable, indistinguishable from the noise you've already been told to expect.
+This does not mean deterministic serving prevents variety. Regeneration and best-of-n can still use different random draws. Repeatable arithmetic removes accidental variation; it does not require every sample to be identical.
 
-I'm not claiming anyone engineered it for that purpose. I'm pointing out that the incentive runs one direction and there was no countervailing pressure until reinforcement learning made the cost visible from the inside. That's what finally moved it: not user complaints, not auditors, but researchers discovering their training runs had been quietly broken for years by a numerical gap nobody was measuring.
+The case for paying changes when numerical drift breaks something measurable. Thinking Machines demonstrated an RL setup where aligning sampling and training numerics enabled stable on-policy training. The economic inference is mine: once reproducibility prevents expensive failures, its cost has something concrete to be weighed against.
 
-Which is the pattern. Not that the problem was hard. That nobody was measuring the thing the problem was breaking.
+So I would not claim that nobody wants it fixed, or that providers need non-reproducibility as cover. The narrower argument is enough: throughput savings are immediate, while the value of reproducibility depends on the workload and who bears the cost of its absence.
 
 ## What I'd say now
 
-Stop saying LLMs are non-deterministic. Say that serving an LLM is non-deterministic, because the serving layer introduces an input you can't see and can't control.
+When identical requests produce different outputs, ask which layer varied: the inputs, the sampler, or the execution. Batch-dependent numerics are one documented cause, and deterministic serving is one available answer.
 
-If it's the model, you're stuck and there's nothing to discuss. If it's the deployment, it's an engineering trade-off with a published price, and somebody made it on your behalf without telling you it was being made.
+The fix exists. Making it the default means someone must value the guarantee enough to pay for the constraints it imposes. Until then, a switch in a serving engine is not a promise from the endpoint you call.
+
+## References
+
+1. Horace He et al. [Defeating Nondeterminism in LLM Inference](https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/). Thinking Machines Lab, September 10, 2025.
+2. vLLM. [Batch Invariance](https://docs.vllm.ai/en/stable/features/batch_invariance/). Documentation, accessed September 12, 2026.
+3. Yingjiao (Shirley) Zhai et al. [How we leveraged vLLM to power our GenAI applications at LinkedIn](https://www.linkedin.com/blog/engineering/ai/how-we-leveraged-vllm-to-power-our-genai-applications). LinkedIn Engineering, August 26, 2025.
