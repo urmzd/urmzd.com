@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.17.2 (2026-09-27)
+
+### Bug Fixes
+
+- let visual embeds share the page scroll ([c792c92](https://github.com/urmzd/urmzd.com/commit/c792c927473a22b15f479f524109b485455decfd))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.17.1...v0.17.2)
+
+
 ## 0.17.1 (2026-09-27)
 
 ### Bug Fixes
