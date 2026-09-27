@@ -1,148 +1,109 @@
 ---
 title: "To Route Or Not To Route? For That Is the Question"
-description: "Route work to specialized agents. Test model choice within each harness, and optimize the complete workflow for speed, cost, and correctness."
+description: "Define the use case and its evals first. Test whether model routing improves cost, latency, and correctness over the best fixed configuration."
 pubDate: 2026-09-18
 tags: ["tech", "ai", "agents", "architecture", "cost"]
-shareText: "Your business does not need to solve every problem. Route work to specialized agents, give each the context it needs, and test model choice against cost per successful task."
+shareText: "Can a router choose a better model for each request? Start with the work you need to solve and the evals that define success. Then measure whether selection beats the best fixed configuration, including its mistakes and overhead."
 draft: true
 ---
 
 Your business does not need to solve AGI. It needs to solve the problems customers pay it to solve, quickly, cheaply, and correctly.
 
-That is the argument for routing work to specialized agents. Give each a narrow responsibility, relevant context, appropriate tools, and explicit checks. Then treat model choice as a parameter to test within that system. The competitive advantage comes from how well the complete workflow performs.
+Before asking which model should handle a request, decide what a successful result looks like. Build the evals for that use case. Then compare the systems that might deliver it.
 
-## The idea
+That ordering changes the routing question. Can an LLM predict which model will do better than a human can? Perhaps, on a particular workload. But a human usually chooses a model for a workflow once; a router makes a choice for each request. Those are different decisions, and the selector need not be an LLM at all.
 
-There is something to be said for a dedicated service that every model call goes through. PII redaction, message flagging, fallback on provider outage, online evals: all of that wants a single egress point, and building it once is straightforward engineering. None of it requires automatic routing at the model level.
+The question I care about is more concrete: **does request-by-request selection improve outcomes over the best fixed configuration that meets our requirements, after paying for the selection and its mistakes?**
 
-```mermaid
-flowchart TD
-    App[Your app] --> GW["Gateway<br/>PII redaction · flagging<br/>online evals · provider fallback"]
-    GW --> Pin["One pinned model, per agent"]
-    GW -. "shipped in the same box" .-> RT{"Auto model router<br/>scores price · latency · difficulty"}
-    RT -.-> Any[Selected model<br/>under the routing policy]
-```
+## Start with the disputed invoice
 
-Model routing and a model gateway are two different products that keep arriving in the same box. Each solves a different problem. A gateway centralizes access and operational policy; a model router chooses which model handles a request. Either has to justify its overhead.
+Consider a customer disputing an invoice. A useful answer needs the invoice, account terms, payment history, and possibly shipment records. It must identify the disputed charge, apply the right policy, and either resolve the issue or hand it to someone authorized to act.
 
-## Specialize the work first
+A fluent explanation is insufficient. The refund amount must be correct. The evidence must support the decision. An unauthorized refund is a failure even if the customer likes the response.
 
-Agent routing chooses which workflow owns a request. A coordinator can also invoke a specialist as a subagent for one bounded part of a larger task. Neither requires a different model: two agents using the same weights can behave differently because their instructions, tools, context, and checks differ.
+Write those requirements into cases before choosing an architecture:
 
-Consider a disputed invoice. A billing specialist needs the invoice, account terms, and payment tools. A delivery specialist needs shipment records. They can return concise findings and supporting evidence to a coordinator, without each receiving the entire conversation and every other specialist’s tool history. Independent checks can run in parallel; dependent actions must wait for their prerequisites.
-
-That separation can reduce irrelevant context and repeated processing of large tool outputs. It can also shorten elapsed time when work is independent. Anthropic describes subagents exploring in separate context windows and compressing their findings for a lead agent. Its research system also used substantially more total tokens than ordinary chat: context isolation is not itself a guarantee of lower total usage. [13]
-
-The savings come from disciplined boundaries: send only the required context, bound the task and tool budget, and return the result with enough evidence to verify it. Spawning several agents that each reread the same history and repeat the same search can erase the benefit. Measure all calls, including coordination and retries.
-
-Specialization also makes correctness concrete. An invoice total can be checked with code; a refund can be checked against account policy; a delivery claim can be checked against a source record. A narrower agent gives you fewer responsibilities to validate and more specific failure cases to improve.
-
-## The model is a parameter inside the harness
-
-**The unit you ship is the model plus its harness.** By harness, I mean the prompts, tools, context management, execution loop, checks, and recovery behavior around the model. Those conditions affect what the model can accomplish. A lower-ranked model can still be the better choice for a particular workflow; a general benchmark ranking cannot settle that comparison for you. Measure the complete agent on your tasks.
-
-Staying with a model lets you accumulate validated improvements to those conditions. You learn which tool descriptions it follows, when it needs a check, how to compact its context, and which failures require recovery. That is an engineering reason for stickiness. Changing the model introduces another variable into a system whose behavior you have already tuned.
-
-### Astra makes the coupling concrete
-
-**GPT-6 Astra** illustrates this coupling. Its model guide documents several behaviors that need application-specific prompting: it may ask for clarification when the user expects continued work, react strongly to instructions in skills and `AGENTS.md`, delegate less often than desired, or test more broadly than a small change warrants. The guide recommends adjusting those instructions to match the harness. Its asynchronous tool calls also require the application to execute tools and manage pending work. [1]
-
-That is a concrete example of model-specific integration work. It is not a controlled demonstration that a weaker model outperforms Astra, or a measurement of the benefit of any one prompt. The narrower point is sufficient: changing the model can change what a suitable harness looks like.
-
-**Routing expands what you must validate.** A router is another policy whose behavior can change outcomes. You can evaluate it: run the production routing policy, exercise each supported model and harness configuration, test fallback paths, and record which configuration handled each request. The problem is assuming that an evaluation of one pinned model also validates the routed system.
-
-A shared harness may work across several models. Where it does not, you maintain adaptations for each. If routing happens mid-session, you also have to validate how the next model interprets the accumulated tool results and conversation state. Those are costs that a token-price comparison leaves out.
-
-**Stickiness also affects cache economics.** Long sessions accumulate reusable prefixes: instructions, tool definitions, history, and retrieved context. Changing models or providers can lose cache reuse and introduce new input-processing costs. The exact rules depend on the serving service; a cache hit is not guaranteed merely because the model name stays fixed. OpenRouter documents provider stickiness for prompt caching and separate session stickiness for its automatic model router. Its automatic router can still change models when its ranking calls for it. [2][3]
-
-**Specialization includes tools and context.** Selecting a billing agent can choose domain rules, permissions, retrieval, and a tested model together. That gives you a useful boundary for evaluation. Model selection can also be useful inside that boundary, but it needs evidence of its own.
-
-Model routing chooses a model within a defined workflow:
-
-```mermaid
-flowchart TD
-    U1[Request] --> R1{"Which model meets<br/>quality and cost targets?"}
-    R1 --> M1[Small model]
-    R1 --> M2[Mid model]
-    R1 --> M3[Frontier model]
-    M1 --> O1[Answer]
-    M2 --> O1
-    M3 --> O1
-    O1 --> E1["Evaluate the router<br/>and every supported<br/>model configuration"]
-```
-
-Agent routing selects the workflow, including its tools, context, and validation:
-
-```mermaid
-flowchart TD
-    U2[Request] --> R2{"Which domain<br/>owns this?"}
-    R2 --> A1["Billing agent<br/>own tools · rules · pinned model"]
-    R2 --> A2["Support agent<br/>own tools · rules · pinned model"]
-    R2 --> A3["Escalation agent<br/>defined limits · human handoff"]
-    A1 --> O2[Answer]
-    A2 --> O2
-    A3 --> O2
-    O2 --> E2["Your eval suite describes<br/>each supported branch<br/>and the selection policy"]
-```
-
-When an answer is poor, diagnose the failing step. Missing context, an unsuitable tool, or a weak recovery loop calls for a different fix than insufficient model capability. Start with a tested model per agent; add model selection when measurements justify it.
-
-### Test model choice deliberately
-
-A model is a useful experimental parameter. Establish a baseline for each specialist, then compare candidate models on the same representative tasks, with explicit quality checks and a cost and latency budget. Start with the harness fixed to see what changing the model does. If a candidate needs different prompts or tools, test that adapted configuration separately and record the whole configuration that produced the result.
-
-You can then test a model-routing policy within that specialist: a cheaper model for a validated subset of work, escalation for harder cases, or selection based on observed task features. Evaluate that policy end to end, including selection errors and fallback costs. This is compatible with agent routing. It adds a decision inside a workflow whose responsibility is already clear.
-
-### Specialization is a business advantage to earn
-
-A focused system can be faster because it performs fewer irrelevant steps and parallelizes independent work. It can be cheaper because it carries less unnecessary context and uses an adequate model for each task. It can be more correct because its retrieval, tools, and checks match the domain. Those are mechanisms to exploit, not automatic rewards for adding agents.
-
-Compete on the work customers actually bring you. Measure completion time, total cost per successful task, and task-specific correctness against the current system and credible alternatives. Improve the specialist that limits those results. You do not need general superiority over every model or every competitor to build a better product for a particular job.
-
-## What the tools actually do
-
-These projects occupy different layers, and their adoption does not establish that automatic model routing is the default:
-
-| Project | What happens in the request path | Why use it, and what you take on |
+| Case | What success requires | Failure to catch |
 |---|---|---|
-| Anyscale / Ray Serve | Anyscale manages Ray infrastructure; Ray Serve runs and scales application deployments, which can contain inference engines and routing logic. | Useful for distributed applications and managed operations. You still design the application and pay for its compute and operational choices. [4] |
-| vLLM | An inference engine schedules requests and runs model weights, using batching and efficient attention-memory management. | Useful for serving supported open models efficiently. You own capacity, model configuration, and deployment behavior. It is not inherently a quality-based model router. [5] |
-| SGLang | A serving runtime reuses shared prefixes and schedules inference; its surrounding tooling supports distributed serving. | Useful for workloads with reusable context and high serving demand. Hardware and feature compatibility still constrain deployment. [6] |
-| RouteLLM | A learned policy selects between a stronger and weaker model using a configurable threshold. | Can reduce expensive-model calls when its predictions transfer to your workload. Router evaluation, training-data fit, and misrouted requests matter. [7] |
-| OpenRouter | A unified API routes requests to providers, supports model fallbacks, and optionally chooses models through an automatic router. | Useful for provider access and operational flexibility. Explicitly configure which provider or model decisions you delegate. [2][3][8] |
+| Duplicate charge | Identify the duplicate and follow the permitted refund process | Refunding both charges |
+| Delivery dispute | Use shipment evidence and the applicable account terms | Treating a customer claim as verified delivery evidence |
+| Missing records | Request the missing evidence or escalate | Inventing a payment or shipment status |
+| Policy exception | Recognize the authorization boundary and hand off with context | Taking an action outside the agent's permissions |
 
-LMSYS, the Large Model Systems Organization, is the research organization associated with projects including SGLang and RouteLLM. It is not another interchangeable serving product. [9]
+Build a representative set from the work you expect, with a separate set of difficult and high-impact cases. Track results by case type as well as overall. A good average should not hide unauthorized actions in a small category.
 
-vLLM is already used in production. LinkedIn reported more than 50 generative-AI use cases across thousands of hosts in 2025. That is concrete deployment evidence, not a count of all vLLM users and not evidence that those applications switch models automatically. Public download totals cannot tell us how many people or production systems use it. [10]
+Use code to check amounts and tool actions, source records to check factual claims, and explicit review criteria where judgment is required. Define acceptable completion time and cost alongside correctness. These are the conditions a candidate must meet, including a candidate that uses no router.
 
-RouteLLM provides evidence that model routing can work: its paper reports substantial cost reductions while preserving a target level of quality on evaluated benchmarks. Those findings concern specified models, datasets, and routing policies. They do not establish savings for a long-running agent with model-specific tools, cached context, and recovery behavior. [7]
+Keep development cases separate from held-out evaluation cases. Tune prompts and routing thresholds on the former; use the latter to assess whether the improvement survives unfamiliar requests. Keep related versions of the same dispute together so the test does not become a memory exercise.
 
-## The cost incentive has to survive the whole system
+## Evaluate the thing you would ship
 
-Compare **cost per successful task** at an acceptable quality and latency level. Include router calls, input and output tokens, cache misses, retries, escalation, and the engineering work needed to maintain and evaluate each supported configuration. Amortize that engineering work over the actual workload.
+**The unit you ship is the model plus its harness.** By harness, I mean the prompts, tools, context management, execution loop, checks, and recovery behavior around the model.
 
-At sufficient volume, routing savings can outweigh those costs. For a modest workload with a well-tuned agent, the savings may be too small to justify another moving part. The relevant claim is conditional: routing needs a demonstrated net benefit. There is no basis here for declaring either universal savings or universal lack of incentive.
+For the invoice workflow, start with a fixed model and the tools needed to finish the task. Run the cases. Record whether the task succeeded, which actions it took, elapsed time, and total cost, including failed attempts and retries.
 
-The same distinction matters for [deterministic serving](/blog/stop-calling-llms-non-deterministic). vLLM and SGLang offer opt-in mechanisms, but availability is not adoption. Their constraints and performance trade-offs must be evaluated on the deployed stack. Serving reproducibility and application-level model selection are separate decisions. [11][12]
+Then compare candidate models on the same cases. Holding the harness fixed initially helps isolate the effect of changing the model. If a candidate needs different instructions or tool descriptions, evaluate that adapted configuration separately. Record the configuration that produced each result so the comparison can be repeated.
+
+Two questions matter here: what happens when I swap a model into this system, and what is the best system I can build with each candidate? A fixed-harness experiment answers the first. Allowing adaptation addresses the second and adds engineering effort to the comparison.
+
+When a run fails, inspect the failing step. Missing shipment records call for a retrieval fix. An incorrect total may call for a calculation tool. Misreading an exception may call for clearer policy context or a more capable model. Changing the model is one intervention to test.
+
+Choose a fixed baseline that meets the quality and latency requirements at an acceptable cost. If none does, improve the workflow or test additional configurations. Adding selection among inadequate candidates does not by itself solve the task.
+
+## Is there anything useful to route?
+
+Look at where the candidates succeed and fail, rather than only their average scores.
+
+Suppose a cheaper configuration reliably handles duplicate charges, while another handles policy exceptions more accurately. That creates a possible opportunity: send routine disputes to the cheaper configuration and reserve the more expensive one for cases that need it.
+
+The difficult part is knowing which case has arrived. The router sees the information available at the decision point. It does not get to inspect the eventual correct answer before selecting a model.
+
+An offline comparison can estimate the opportunity by asking what would happen if you always selected the cheapest successful configuration for each case. That is an optimistic reference, based on observed runs, rather than a deployable policy. Repeated runs matter when outcomes vary. If even this hindsight selection offers little benefit over the fixed baseline, there is little room to pay for a router.
+
+If there is room, test whether a policy can capture it using information actually available when the request arrives. A known dispute category might support a simple rule. Less obvious distinctions might require a learned selector. An LLM is another candidate for that job, and its own cost and selection errors belong in the evaluation.
+
+[RouteLLM](https://arxiv.org/abs/2406.18665) provides evidence that learned selection can reduce costs while maintaining response quality on evaluated benchmarks. It trains routers using preference data and selects between stronger and weaker models. Those results justify testing the idea; they do not establish the outcome for our invoice workflow. [1]
+
+## Compare the policy with the baseline
+
+Run the complete routing policy on the held-out cases, alongside the fixed baseline. Include the router's input processing, any additional retrieval, the selected model's work, retries, and escalation.
+
+For the disputed invoice, a cheap first attempt followed by an expensive retry may cost more and take longer than using the stronger configuration immediately. An incorrect refund that escapes detection is worse: the system has failed even though its token bill looks excellent.
+
+Use **cost per successful task** alongside success rate and latency. Divide the cost of all attempts, including failures, by the number of successful tasks. Report critical failure categories separately. A lower cost per success cannot excuse crossing an authorization boundary.
+
+Decide what would count as a worthwhile improvement before looking at the final results. Test enough cases and repeat variable runs to distinguish a useful gain from noise. If you change the policy after inspecting held-out failures, evaluate the revision on fresh cases.
+
+If the question really is whether an LLM selects better than humans, give both the same request information, candidate configurations, and decision criteria. Measure the resulting task outcomes and the cost of selection. That is a separate experiment from beating a model an engineer chose once for the entire workflow.
+
+For deployment, the fixed baseline is the first comparison to beat. A simple routing rule is a useful additional baseline when the task already exposes categories. The more elaborate selector has to earn its extra work.
+
+## Where specialization fits
+
+Agent routing chooses a workflow with its own responsibilities, tools, context, and checks. Model routing chooses a model within a workflow. A gateway centralizes access and operational policy. These decisions can coexist, but an eval should tell you which one helps.
+
+In the invoice example, separating billing from delivery investigation might reduce irrelevant context and make each responsibility easier to validate. A coordinator could ask a delivery specialist for shipment evidence while a billing specialist checks the charge. Both specialists could use the same model.
+
+That architecture also creates new failure modes. The coordinator might choose the wrong specialist, omit account terms, or receive a summary that drops an important exception. Run the complete dispute through the evals, including handoffs. Better isolated specialist scores are insufficient if the customer-facing workflow gets worse.
+
+Specialize when the boundaries improve measured outcomes. Add model selection within a specialist when the cases show a further benefit. The evals come before either architectural commitment.
+
+## The savings must survive deployment
+
+A routing result also has to survive the conditions of the service you operate.
+
+Long sessions may reuse cached instructions, tool definitions, and conversation history. Switching models or providers can change cache reuse and input-processing costs. If selection happens mid-session, test how the next model interprets prior tool results and unresolved actions. Measure those effects in the actual deployment rather than assuming a per-token price captures them.
+
+Include the engineering work needed to maintain and evaluate each supported configuration, amortized over the expected workload. A small saving per request can justify that work at sufficient volume. At lower volume, the fixed configuration may remain cheaper overall.
+
+After deployment, record routing decisions and task outcomes. Recheck the policy as the request mix, models, prices, or harnesses change. Keep the fixed baseline available for comparison and rollback. A policy that worked on last month's disputes still needs evidence that it works on this month's.
 
 ## The decision
 
-Route work to the specialist that owns it. Invoke subagents where bounded context or parallel work improves the workflow. Treat model choice, including a routing policy, as a parameter to evaluate inside that specialist.
+Start with the work customers bring you and the evals that define success. Establish a fixed baseline. Inspect where alternative configurations offer a useful advantage, then test whether a selector can recognize those cases cheaply and reliably enough to improve the whole workflow.
 
-Keeping a tested model stable lets harness improvements accumulate. Changing it is justified when the complete system improves. The target is a specialized business workflow that delivers faster, cheaper, and more correct results, measured on the tasks that matter.
+The answer to whether we should route belongs in those results.
 
 ## References
 
-1. [OpenAI. Model guidance: Using GPT-6 Astra.](https://developers.openai.com/api/docs/guides/latest-model)
-2. [OpenRouter. Prompt caching.](https://openrouter.ai/docs/guides/best-practices/prompt-caching)
-3. [OpenRouter. Auto Router, including session stickiness.](https://openrouter.ai/docs/guides/routing/routers/auto-router)
-4. [Anyscale. Architecture.](https://docs.anyscale.com/get-started/architecture) See also [Anyscale Services](https://docs.anyscale.com/services).
-5. [vLLM. Paged attention.](https://docs.vllm.ai/en/stable/design/paged_attention/)
-6. [Zheng et al. SGLang: Efficient Execution of Structured Language Model Programs.](https://arxiv.org/abs/2312.07104)
-7. [Ong et al. RouteLLM: Learning to Route LLMs from Preference Data.](https://arxiv.org/abs/2406.18665)
-8. [OpenRouter. Provider routing.](https://openrouter.ai/docs/guides/routing/provider-selection)
-9. [LMSYS. About.](https://www.lmsys.org/about/)
-10. [LinkedIn Engineering. How we leveraged vLLM to power our GenAI applications, 2025.](https://www.linkedin.com/blog/engineering/ai/how-we-leveraged-vllm-to-power-our-genai-applications)
-11. [vLLM. Batch invariance.](https://docs.vllm.ai/en/stable/features/batch_invariance/)
-12. [SGLang. Deterministic inference.](https://docs.sglang.io/docs/advanced_features/deterministic_inference)
-13. [Anthropic. How we built our multi-agent research system, 2025.](https://www.anthropic.com/engineering/multi-agent-research-system)
+1. Ong et al. [RouteLLM: Learning to Route LLMs with Preference Data](https://arxiv.org/abs/2406.18665). Revised February 2025.
