@@ -50,6 +50,39 @@ When a run fails, inspect the failing step. Missing shipment records call for a 
 
 Choose a fixed baseline that meets the quality and latency requirements at an acceptable cost. If none does, improve the workflow or test additional configurations. Adding selection among inadequate candidates does not by itself solve the task.
 
+## The harness is where the comparison gets interesting
+
+Public benchmarks can help explain why the configuration matters. ARC Prize distinguishes its Standard harness, which carries forward model-selected notes, from its Provider Adapter harness, which preserves reasoning state and compacts longer conversations. Those are materially different ways of giving a model access to its prior work. [2]
+
+The earlier draft captured the following Astra results for ARC-AGI-3 Semi-Private:
+
+> Draft verification note: these figures are restored from the earlier draft. Confirm the exact leaderboard snapshot, score definition, and cost units before publication; the currently accessible page text does not expose these rows.
+
+| Reasoning effort | Standard harness | Provider Adapter harness |
+|---|---|---|
+| max | 62.7%, $26,098 | 98.6%, $17,332 |
+| xhigh | 59.3%, $37,317 | 98.4%, $18,147 |
+| high | 54.8%, $40,705 | 99.9%, $18,817 |
+| medium | 38.6%, $48,090 | 98.4%, $19,285 |
+| low | 17.5%, $38,166 | 98.0%, $21,298 |
+| none | 35.2%, $49,791 | 96.7%, $23,457 |
+
+Taking those recorded figures at face value, the `high` row moves from 54.8% to 99.9%, while the listed cost falls from $40,705 to $18,817. Within the Provider Adapter column, scores stay between 96.7% and 99.9%. Within the Standard column, both score and cost vary much more. The configuration changes the apparent value of the reasoning-effort setting.
+
+That is the idea worth preserving: a setting with a lower reasoning budget need not produce a cheaper completed task. More attempts, repeated tool calls, and lost context can consume the saving. To explain a particular benchmark result, inspect its execution traces and accounting rather than inferring the cause from the score alone.
+
+This comparison motivates testing the harness. It cannot establish that harness work usually beats model swaps, or predict the gain for an invoice workflow. Our evals still have to answer that question. A public score tells us what a particular system achieved under particular conditions.
+
+### Model-specific integration is part of the experiment
+
+The practical work lives in details: which tool descriptions the model follows, when it asks for clarification, how much testing it performs, when it delegates, what survives context compaction, and how it recovers from a failed action. Each behavior can affect correctness, tokens, and elapsed time.
+
+For the invoice workflow, asking for clarification when the records already settle the dispute adds delay. Acting without clarification when essential evidence is missing creates a different failure. The harness needs to distinguish those situations, and the eval cases need to catch both.
+
+Keeping a model stable lets you accumulate validated improvements. Changing it may require retuning prompts, tools, or recovery behavior. That is a reason to account for integration effort, rather than a reason to rule out switching. Some improvements will transfer; others will not.
+
+Routing expands this experiment. Every supported model-and-harness configuration needs coverage, along with the selection policy and fallback paths. A passing eval for one pinned configuration does not validate the entire routed system.
+
 ## Is there anything useful to route?
 
 Look at where the candidates succeed and fail, rather than only their average scores.
@@ -88,6 +121,24 @@ That architecture also creates new failure modes. The coordinator might choose t
 
 Specialize when the boundaries improve measured outcomes. Add model selection within a specialist when the cases show a further benefit. The evals come before either architectural commitment.
 
+## What the tools actually do
+
+Once the evals expose a bottleneck, the tooling comparison becomes useful. Are we trying to run inference more efficiently, centralize access and operational policy, or select a different model for each request? Those changes affect different parts of the system.
+
+A gateway can centralize redaction, logging, provider access, and outage handling while an application keeps its model fixed. Adopting that operational boundary does not require delegating model selection.
+
+| Project | What happens in the request path | What to evaluate for our use case |
+|---|---|---|
+| Anyscale / Ray Serve | Anyscale manages Ray infrastructure; Ray Serve runs and scales application deployments, which can include inference engines and routing logic. [3] | Capacity, scaling, reliability, and operational cost for the deployed workflow. |
+| vLLM | An inference engine runs model weights with request scheduling and efficient attention-memory management. [4] | Throughput, latency, memory use, and task outcomes under the chosen serving configuration. |
+| SGLang | A runtime executes language-model programs and reuses shared prefixes through its serving machinery. [5] | Whether context reuse and scheduling improve the workload's serving efficiency. |
+| RouteLLM | A learned policy selects between stronger and weaker models. [1] | Whether its selection behavior transfers to our cases and saves money at the required quality. |
+| OpenRouter | A unified API provides model/provider access; its optional Auto Router selects models for requests. [6] | Which choices we delegate, selection errors, fallback behavior, and total cost and latency. |
+
+A serving engine's throughput improvement and a router's selection improvement need different experiments. We can test an engine with a fixed model, then test selection across configurations. If we change both together, the complete system may improve, but we have less evidence about which change produced the gain.
+
+These tools can compose. Ray Serve can host an application with a routing policy; a selected model can run on an inference engine. The existence or popularity of any one layer does not establish that automatic model selection benefits our workflow.
+
 ## The savings must survive deployment
 
 A routing result also has to survive the conditions of the service you operate.
@@ -107,3 +158,8 @@ The answer to whether we should route belongs in those results.
 ## References
 
 1. Ong et al. [RouteLLM: Learning to Route LLMs with Preference Data](https://arxiv.org/abs/2406.18665). Revised February 2025.
+2. ARC Prize. [ARC-AGI leaderboard and harness descriptions](https://arcprize.org/leaderboard). Exact figures in the restored table require snapshot verification.
+3. Anyscale. [Platform architecture](https://docs.anyscale.com/get-started/architecture) and [Services](https://docs.anyscale.com/services).
+4. vLLM. [Paged Attention](https://docs.vllm.ai/en/stable/design/paged_attention/).
+5. Zheng et al. [SGLang: Efficient Execution of Structured Language Model Programs](https://arxiv.org/abs/2312.07104).
+6. OpenRouter. [Auto Router](https://openrouter.ai/docs/guides/routing/routers/auto-router).

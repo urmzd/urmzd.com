@@ -224,20 +224,15 @@ import References from '../components/References';
 
 ## Reposts
 
-Platform-optimized copies of a blog post live in `reposts/<slug>/` and are **generated, never hand-edited**. Regenerate them whenever the post body changes — including small wording fixes to an already-published post:
+The repost generation and publishing pipeline lives in [urmzd/broadcast](https://github.com/urmzd/broadcast). Broadcast reads this repository through `BROADCAST_BLOG_DIR`; use its documentation for setup and publishing workflows.
+
+To generate platform drafts with Broadcast installed and configured:
 
 ```bash
-npm run generate:reposts <slug>   # e.g. durable-agent-workflows-are-just-data-pipelines
+broadcast generate <slug>
 ```
 
-`scripts/generate-reposts.ts` reads `src/blog/<slug>.{md,mdx}` and writes:
-
-- `reposts/<slug>/twitter.html` / `linkedin.html` — full-body article HTML to paste into the X / LinkedIn article editors.
-- `reposts/<slug>/x-post.txt` / `linkedin-post.txt` — short feed posts, derived from frontmatter `shareText`, `description`, and `tags`.
-- `reposts/<slug>/code-*.<lang>` — each code fence as a standalone file for the platform's native code-block dialog.
-- `public/images/reposts/<slug>/` — mermaid diagrams, display math, and tables rendered to HiDPI PNGs (neither platform renders them inline), each deep-linked back to its section.
-
-Needs the `playwright` chromium browser for image rendering; `cover.png` reuses the Satori OG card, so run `npm run build` first if it is missing. Re-rendering a mermaid diagram only rewrites the nondeterministic element id in `mermaid-*.svg` — `git checkout` that file when the diagram itself is unchanged, to keep the diff clean.
+Repost generation is a separate workflow from editing blog content in this repository.
 
 ## License
 
@@ -251,7 +246,6 @@ Any contributed images must be compatible with CC BY-NC-ND 4.0 or be original wo
 - **visual-audit** (`skills/visual-audit/SKILL.md`): Audit visuals for replacements, feel consistency, reference integrity, and credit compliance. Use when adding, changing, or reviewing images and media.
 - **authoring-showcase** (`skills/authoring-showcase/SKILL.md`): Author a `SHOWCASE.md` so a GitHub repo renders on urmzd.com/projects or /research. Use when adding a repo to the portfolio or curating how it appears.
 
-Turning a post into X/LinkedIn reposts is a script, not a skill — run `npm run generate:reposts <slug>` (see [Reposts](#reposts)). It replaced the former `blog-to-tweet` and `blog-to-twitter-article` skills.
 
 ## Do not
 
@@ -259,7 +253,6 @@ Turning a post into X/LinkedIn reposts is a script, not a skill — run `npm run
 - Add images without credit entries for third-party work.
 - Modify `content.config.ts` schemas without updating all existing content to match.
 - Use `git add -A` — stage specific files to avoid committing `.env` or build artifacts.
-- Hand-edit files in `reposts/<slug>/` or `public/images/reposts/<slug>/` — they are generated; rerun `npm run generate:reposts <slug>` after editing a post.
 - Skip the Snippet of the Week in new blog posts without explicit instruction.
 - Use `client:load` for heavy visualization components — prefer `client:visible` for anything with animations or WebGL.
 - Add React components, images, or embeds to stories — stories are pure Markdown prose.

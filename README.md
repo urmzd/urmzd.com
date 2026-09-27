@@ -57,7 +57,8 @@ The site will be available at `http://localhost:4321`.
 | Type check | `npm run check` |
 | Generate icons | `npm run generate:icons` |
 | Generate previews | `npm run generate:previews` |
-| Generate reposts | `npm run generate:reposts` |
+
+Repost generation and publishing live in [urmzd/broadcast](https://github.com/urmzd/broadcast), which reads this blog through `BROADCAST_BLOG_DIR`. See that repository for the `broadcast generate <slug>` workflow.
 
 ## Agent Skills
 
