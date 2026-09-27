@@ -1,9 +1,10 @@
 'use client';
 
-import { ArrowRight, Moon, Search, Sun } from 'lucide-react';
+import { ArrowRight, Moon, Search, Sun, X } from 'lucide-react';
 import { AnimatePresence, MotionConfig, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Button } from '@/components/ui/button';
 import { navItems } from '@/data/navItems';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 
@@ -27,6 +28,7 @@ function PalettePortal({
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
   const items = useMemo<PaletteItem[]>(() => {
@@ -71,11 +73,33 @@ function PalettePortal({
   }, [query]);
 
   useEffect(() => {
-    if (open) {
-      setQuery('');
-      setActiveIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 0);
-    }
+    if (!open) return;
+    const previousFocus = document.activeElement as HTMLElement | null;
+    setQuery('');
+    setActiveIndex(0);
+    const timer = setTimeout(() => inputRef.current?.focus(), 0);
+    document.body.classList.add('command-palette-open');
+    const trapFocus = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const controls = panelRef.current?.querySelectorAll<HTMLElement>('input, button');
+      if (!controls?.length) return;
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', trapFocus);
+    return () => {
+      clearTimeout(timer);
+      document.body.classList.remove('command-palette-open');
+      document.removeEventListener('keydown', trapFocus);
+      previousFocus?.focus();
+    };
   }, [open]);
 
   const runItem = useCallback(
@@ -91,6 +115,7 @@ function PalettePortal({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
+      if (filtered.length === 0) return;
       if (e.key === 'ArrowDown') {
         e.preventDefault();
         setActiveIndex((i) => (i + 1) % filtered.length);
@@ -139,7 +164,7 @@ function PalettePortal({
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
-            className="fixed inset-0 z-modal flex items-start justify-center pt-[20vh] bg-background/60 backdrop-blur-sm"
+            className="fixed inset-0 z-modal flex items-start justify-center overflow-y-auto py-4 sm:pt-[20vh] bg-background/60 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -149,7 +174,8 @@ function PalettePortal({
             }}
           >
             <motion.div
-              className="w-full max-w-lg mx-4 overflow-hidden rounded-xl border border-border/50 bg-background/80 backdrop-blur-xl shadow-2xl"
+              ref={panelRef}
+              className="flex max-h-[calc(100dvh-2rem)] w-full max-w-lg flex-col mx-4 overflow-hidden rounded-xl border border-border/50 bg-background/80 backdrop-blur-xl shadow-2xl"
               initial={{ opacity: 0, scale: 0.96, y: -8 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.96, y: -8 }}
@@ -164,15 +190,22 @@ function PalettePortal({
                   placeholder="Search pages and actions..."
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
+                  className="min-w-0 flex-1 bg-transparent text-base sm:text-sm text-foreground placeholder:text-muted-foreground outline-none"
                   aria-label="Search commands"
                 />
                 <kbd className="hidden sm:inline-flex items-center gap-0.5 rounded border border-border/50 px-1.5 py-0.5 text-[0.65rem] text-muted-foreground">
                   esc
                 </kbd>
+                <Button variant="ghost" size="icon" onClick={close} aria-label="Close search">
+                  <X />
+                </Button>
               </div>
 
-              <div ref={listRef} className="max-h-[300px] overflow-y-auto p-2" role="listbox">
+              <div
+                ref={listRef}
+                className="min-h-0 max-h-[300px] overflow-y-auto p-2"
+                role="listbox"
+              >
                 {filtered.length === 0 ? (
                   <p className="py-6 text-center text-sm text-muted-foreground">
                     No results found.

@@ -30,7 +30,7 @@ export default function MobileTOC({ headings }: MobileTOCProps) {
   };
 
   return (
-    <div className="mb-6 rounded-lg border border-border bg-card">
+    <div className="mb-6 glass-card">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center justify-between px-4 py-3 text-sm font-medium text-foreground"
@@ -61,7 +61,7 @@ export default function MobileTOC({ headings }: MobileTOCProps) {
                 <li key={slug} style={{ paddingLeft: `${(depth - 2) * 12}px` }}>
                   <button
                     onClick={() => handleClick(slug)}
-                    className="block w-full py-2 text-left text-muted-foreground transition-colors hover:text-foreground"
+                    className="block min-h-11 w-full py-2 text-left text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {text}
                   </button>
