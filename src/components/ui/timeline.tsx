@@ -1,6 +1,15 @@
 'use client';
-import { type MotionValue, motion, useScroll, useTransform } from 'motion/react';
+import { type MotionValue, motion, useMotionValue, useTransform } from 'motion/react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+// Local embeds grow to their content height, so the containing page owns scroll.
+function scrollContext() {
+  const frame = window.frameElement;
+  return {
+    viewport: frame?.ownerDocument.defaultView ?? window,
+    top: frame ? frame.getBoundingClientRect().top + frame.clientTop : 0,
+  };
+}
 
 interface Subsection {
   label: string;
@@ -138,13 +147,14 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
   useEffect(() => {
     const handleScroll = () => {
       const viewportTop = 0;
-      const viewportBottom = window.innerHeight;
-      const activationPoint = window.innerHeight * 0.4; // Dot activates when it reaches 40% from top
+      const { viewport, top } = scrollContext();
+      const viewportBottom = viewport.innerHeight;
+      const activationPoint = viewport.innerHeight * 0.4; // Dot activates when it reaches 40% from top
 
       const newIntensities = entryRefs.current.map((el) => {
         if (!el) return 0;
         const rect = el.getBoundingClientRect();
-        const dotCenter = rect.top + 20; // Approximate dot position
+        const dotCenter = rect.top + top + 20; // Approximate dot position
 
         // If dot is above the viewport (scrolled past), keep it lit
         if (dotCenter < activationPoint) {
@@ -168,15 +178,41 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
       setGlowIntensities(newIntensities);
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial calculation
-    return () => window.removeEventListener('scroll', handleScroll);
+    const { viewport } = scrollContext();
+    viewport.addEventListener('scroll', handleScroll, { passive: true });
+    viewport.addEventListener('resize', handleScroll);
+    handleScroll();
+    return () => {
+      viewport.removeEventListener('scroll', handleScroll);
+      viewport.removeEventListener('resize', handleScroll);
+    };
   }, [data?.length]);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start 10%', 'end 50%'],
-  });
+  const scrollYProgress = useMotionValue(0);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    const { viewport } = scrollContext();
+    const updateProgress = () => {
+      const rect = container.getBoundingClientRect();
+      const top = rect.top + scrollContext().top;
+      // Same start/end offsets as the standalone timeline: 10% and 50%.
+      const distance = rect.height - viewport.innerHeight * 0.4;
+      const progress = distance > 0 ? (viewport.innerHeight * 0.1 - top) / distance : 0;
+      scrollYProgress.set(Math.max(0, Math.min(1, progress)));
+    };
+    const observer = new ResizeObserver(updateProgress);
+    observer.observe(container);
+    viewport.addEventListener('scroll', updateProgress, { passive: true });
+    viewport.addEventListener('resize', updateProgress);
+    updateProgress();
+    return () => {
+      observer.disconnect();
+      viewport.removeEventListener('scroll', updateProgress);
+      viewport.removeEventListener('resize', updateProgress);
+    };
+  }, [scrollYProgress]);
 
   const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 

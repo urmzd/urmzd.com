@@ -29,9 +29,10 @@ const remarkEmbeds: Plugin<[], Root> = () => {
 
       const iframe = `<div class="not-prose my-8">
   <iframe
+    data-visual-embed
     src="/embed/${name}"
     title="${meta.alt}"
-    class="w-full rounded-lg border border-border"
+    class="block w-full rounded-lg border border-border"
     style="height: 500px;"
     loading="lazy"
     sandbox="allow-scripts allow-same-origin"
