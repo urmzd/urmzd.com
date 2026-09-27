@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.17.1 (2026-09-27)
+
+### Bug Fixes
+
+- improve mobile layouts navigation and touch controls ([256ff25](https://github.com/urmzd/urmzd.com/commit/256ff2509d8c6103c1131f72e064d6a833d76d7d))
+
+### Misc
+
+- restore routing analysis and retire stale repost instructions ([4ca0bfe](https://github.com/urmzd/urmzd.com/commit/4ca0bfe225a36909813e6b1699e1d03fd35bc07d))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.17.0...v0.17.1)
+
+
 ## 0.17.0 (2026-07-26)
 
 ### Features
