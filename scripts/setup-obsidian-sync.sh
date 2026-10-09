@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Installs a launchd agent that syncs src/blog/ to the Obsidian vault
-# whenever a post changes (and once at login). Re-run to update; pass
-# --uninstall to remove.
+# Installs a launchd agent that mirrors the Obsidian vault's Blog folder into
+# src/blog/ whenever a post changes in the vault (and once at login). Re-run
+# to update; pass --uninstall to remove.
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -21,6 +21,13 @@ fi
 NODE="$HOME/.local/share/fnm/aliases/default/bin/node"
 [[ -x "$NODE" ]] || NODE="$(command -v node)"
 
+VAULT_BLOG="$("$NODE" -e '
+const fs = require("fs"), os = require("os"), p = require("path");
+const r = JSON.parse(fs.readFileSync(p.join(os.homedir(), "Library/Application Support/obsidian/obsidian.json"), "utf8"));
+const v = Object.values(r.vaults).find((v) => p.basename(v.path) === "Documents");
+process.stdout.write(p.join(v.path, "Blog"));
+')"
+
 OBSIDIAN_BIN_DIR="$(dirname "$(command -v obsidian)")"
 
 mkdir -p "$(dirname "$PLIST")"
@@ -38,7 +45,7 @@ cat > "$PLIST" <<EOF
   </array>
   <key>WatchPaths</key>
   <array>
-    <string>$REPO_ROOT/src/blog</string>
+    <string>$VAULT_BLOG</string>
   </array>
   <key>RunAtLoad</key>
   <true/>
@@ -61,5 +68,5 @@ launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
 launchctl bootstrap "gui/$(id -u)" "$PLIST"
 
 echo "Installed $LABEL"
-echo "  watches: $REPO_ROOT/src/blog"
+echo "  watches: $VAULT_BLOG"
 echo "  log:     $LOG"
