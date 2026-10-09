@@ -1,6 +1,6 @@
 ---
 title: How to Trust a Nondeterministic System
-description: The model is a fixed function. Reproducible serving is possible. Its performance cost depends on the implementation, and its value depends on the workload.
+description: Understanding why identical requests diverge helps you build meaningful evals. Trust depends on reproducibility, judge quality, and test coverage.
 pubDate: 2026-09-16
 tags:
   - ai
@@ -11,7 +11,9 @@ tags:
 shareText: Understanding how your models run gives you more control over their behaviour.
 draft: true
 ---
-People keep telling me that large language models are non-deterministic, as though variation were inevitable. It isn't. The mathematical model is a fixed function. Sampling can deliberately introduce randomness, and the machinery we've built to serve the model at scale can introduce variation of its own. A response that passed your eval, or just your vibe check, can fail on another run even when your request hasn't changed.
+Other people's traffic was one place I hadn't looked.
+
+A response that passed your eval, or just your vibe check, can fail on another run even when your request hasn't changed. Understanding why is part of learning to trust the system. Exact replay helps isolate regressions; confidence also depends on the quality of your judge and whether your tests cover the situations your system will face.
 
 ## Being wrong in public
 
@@ -21,7 +23,7 @@ My answer both times was that the premise was false. Everything else *wasn't* th
 
 Autoregressive LLMs generate text one token at a time, using the preceding tokens to predict the next. One token's difference can cascade because it changes the prefix used for later predictions. The continuations may overlap or reach the same conclusion, but they can also become completely different responses. You don't need a big perturbation to get a completely different essay. You need one token, once.
 
-What I had wrong was where to look for it. I searched the inputs exhaustively and never searched the execution, because I was thinking about the LLM as a mathematical function, not the LLM as a deployed system. The variable could have been in the execution. Other people's traffic was one place I hadn't looked.
+What I had wrong was where to look for it. I searched the inputs exhaustively and never searched the execution, because I was thinking about the LLM as a mathematical function, not the LLM as a deployed system. The variable could have been in the execution.
 
 ## Your prompt does not arrive alone
 
@@ -39,6 +41,12 @@ For example, Python's integers preserve the exact result. Its floats can lose th
 ```
 
 The two float expressions use the same values. In the first, the `1.0` is lost when added to the large number. In the second, the large numbers cancel first, preserving it.
+
+How does that become a different answer? Greedy decoding, usually selected with temperature 0, picks the token with the highest score: the argmax. If two token scores are nearly tied, a tiny numerical difference can reverse their order. A different token wins, changes the prefix, and can send the rest of the answer in a different direction. The Python example exaggerates the scale to make rounding visible; a token flip only needs a change large enough to cross the gap between the leading scores.
+
+Sampling variance and execution variance are different things. With nonzero temperature and fresh random draws, the sampler can choose different tokens even from identical scores. That deliberate randomness can overshadow numerical effects, but temperature alone doesn't tell you which source dominates for your workload. At temperature 0, greedy decoding removes the random draw; execution can still change the scores it chooses from. A fixed seed helps repeat sampling, but doesn't repair changing arithmetic.
+
+You may not even get those controls. [Anthropic documents models that accept only default sampling settings, alongside adaptive thinking that decides when and how much to reason](https://platform.claude.com/docs/en/build-with-claude/thinking). An effort setting can steer that behaviour where available; it doesn't fix the exact computation performed on every request. As architectures and serving systems change, the controls exposed to you change too. A provider's general-purpose configuration may not give you the controls your particular workflow needs. Your eval has to test the system you can actually call.
 
 Batch size isn't the only moving part. Processing a prompt in chunks or reusing a cached prefix can also change where sums are split and combined. Reproducible execution needs to handle those boundaries consistently, too.
 
@@ -58,7 +66,7 @@ The distinction is between an operator having a switch and an API customer recei
 
 *Disclosure: I work at Fireworks. The views in this post are my own.*
 
-This is one of the reasons open source matters. It gives you the ability to inspect and change the software, manage your infrastructure, and control how your models are served. That ownership lets you tailor workflows to your use case, including what you hold fixed and what you test. But making those decisions requires understanding the systems you depend on and ingest outputs from: how they run, where variation enters, and what can go wrong. Meaningful evals start with that understanding.
+Open source matters here because it lets you inspect and change the serving software, giving you more control over what your workflow holds fixed and what your evals test.
 
 ## What I'd say now
 
@@ -66,7 +74,15 @@ Understanding what can go wrong, and why, is how you write meaningful evals. Bat
 
 And if your evaluator is itself an LLM, there's another moving part. Your system can produce a different answer, and your judge can give the same answer a different score. When a score changes, you need to know which one moved before calling it an improvement or a regression.
 
-That means repeating runs, holding the answer fixed while checking the judge, and comparing its judgments against examples you've already reviewed. Use direct checks where you can: a total either matches the source records or it doesn't. Save judgment for the parts that actually need it. Those checks take compute, time, and human attention. This is one reason meaningful evals are expensive.
+Consider an invoice assistant that must identify a duplicate $40 charge. Freeze the invoice, policy, prompt, model version, and tool responses. Where the model supports it, use greedy decoding, commonly temperature 0, to remove deliberate sampling. Otherwise, hold the exposed settings fixed and treat sampling or adaptive reasoning as part of the system being measured. On a deployment you control, run the same case 100 times under a fixed low-load configuration, then 100 times while varying background traffic. Interleave the conditions and log the actual batch shapes where possible: steady request traffic alone doesn't guarantee identical batches. Check the refund amount and permitted action with code, and record exact-output agreement separately from task success.
+
+Suppose 99 of the first 100 runs pass and 94 of the second 100 pass. Those are hypothetical numbers, not measurements. They flag a difference to investigate, not proof that batching caused it. Repeat the comparison and estimate uncertainty before calling it a load effect; then repeat across representative cases. One invoice and 100 runs are an illustration, not a universal sample-size rule.
+
+Now hold one saved answer fixed and ask the same LLM judge to score it 100 times in independent calls, keeping its rubric, model, and any exposed sampling or reasoning settings fixed. If it passes the answer 87 times and fails it 13, the answer didn't change: the evaluation did. Compare the judge against human-reviewed examples too. A judge that repeats the same wrong verdict is consistent, but still wrong.
+
+For a closed API, you may not control or even observe batching. Measure variation across repeated calls at different times and client concurrency levels, recording the model version and settings the provider exposes, along with reasoning-token usage when available. These tests measure the endpoint's observed behaviour; they don't reveal its internal batch sizes or isolate the cause. Measure that uncertainty rather than assuming it away, and evaluate with the same configuration you deploy, including provider-managed defaults and adaptive reasoning. Rerun the eval when that configuration or the model changes.
+
+All of this takes compute, time, and human attention. Direct checks reduce dependence on a judge where an answer can be verified mechanically. Repeated runs help separate a stable pattern from a lucky result. This is one reason meaningful evals are expensive.
 
 Even then, your results describe the cases and conditions you tested. Production brings different inputs, traffic, tool results, and combinations you didn't anticipate. Repeating the same test helps measure variation within that test; it doesn't make the test representative of everything your system will encounter.
 
@@ -77,3 +93,4 @@ Exact replay helps isolate regressions by removing one source of variation. It d
 1. Horace He et al. [Defeating Nondeterminism in LLM Inference](https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/). Thinking Machines Lab, September 10, 2025.
 2. vLLM. [Batch Invariance](https://docs.vllm.ai/en/stable/features/batch_invariance/). Documentation, accessed September 12, 2026.
 3. Fireworks AI. [Frontier-lab Training Infrastructure, Available Now as a Managed Service for GLM 5.2](https://fireworks.ai/blog/frontier-lab-training-infrastructure-as-a-service). June 24, 2026.
+4. Anthropic. [Thinking](https://platform.claude.com/docs/en/build-with-claude/thinking). Documentation, accessed October 8, 2026.
