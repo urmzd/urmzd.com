@@ -45,18 +45,60 @@ jobs:
   deploy:
     name: Deploy
     needs: release
-    uses: urmzd/infra/.github/workflows/deploy-site.yml@main
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
-    with:
-      source_repo: ${{ github.repository }}
-      ref: ${{ github.sha }}
-      domain: urmzd.com
-      package_manager: npm
-      build_command: npm run build
-      s3_bucket: urmzd.com
-      s3_sync_delete_exclude: ""
-    secrets:
-      aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
-      aws_region: ${{ secrets.AWS_REGION }}
+    environment:
+      name: production
+      url: https://urmzd.com
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    env:
+      BUCKET: urmzd.com
+      DOMAIN: urmzd.com
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Verify build output
+        run: test -n "$(ls -A dist 2>/dev/null)" || { echo "::error::dist is empty"; exit 1; }
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # Hashed assets are immutable; HTML and feeds must revalidate.
+      - name: Upload to S3
+        run: |
+          aws s3 sync dist "s3://$BUCKET" --delete \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "*.html" --exclude "*.xml" --exclude "*.json" --exclude "*.txt" \
+            --exclude "sw.js" --exclude "manifest.webmanifest"
+          aws s3 sync dist "s3://$BUCKET" \
+            --cache-control "public, max-age=0, must-revalidate" \
+            --exclude "*" --include "*.html" --include "*.xml" --include "*.json" --include "*.txt"
+          if [ -f dist/sw.js ]; then
+            aws s3 cp dist/sw.js "s3://$BUCKET/sw.js" --cache-control "no-cache, no-store, must-revalidate"
+          fi
+          if [ -f dist/manifest.webmanifest ]; then
+            aws s3 cp dist/manifest.webmanifest "s3://$BUCKET/manifest.webmanifest" \
+              --cache-control "public, max-age=0, must-revalidate" --content-type "application/manifest+json"
+          fi
+
+      - name: Invalidate CloudFront
+        run: |
+          id=$(aws cloudfront list-distributions \
+            --query "DistributionList.Items[?Aliases.Items && contains(Aliases.Items, '$DOMAIN')].Id | [0]" --output text)
+          [ -n "$id" ] && [ "$id" != "None" ] || { echo "::error::No distribution for $DOMAIN"; exit 1; }
+          aws cloudfront create-invalidation --distribution-id "$id" --paths "/*"
