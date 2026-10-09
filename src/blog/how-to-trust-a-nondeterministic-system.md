@@ -54,6 +54,12 @@ This is available in serving software, too. vLLM runs language models and schedu
 
 The distinction is between an operator having a switch and an API customer receiving a guarantee. The first does not automatically give you the second.
 
+[Fireworks provides one example of this in practice](https://fireworks.ai/blog/frontier-lab-training-infrastructure-as-a-service): batch-invariant serving and matching training and inference numerics for GLM 5.2 LoRA training. It illustrates how controlling execution can support a workflow built for a specific use case.
+
+*Disclosure: I work at Fireworks. The views in this post are my own.*
+
+This is one of the reasons open source matters. It gives you the ability to inspect and change the software, manage your infrastructure, and control how your models are served. That ownership lets you tailor workflows to your use case, including what you hold fixed and what you test. But making those decisions requires understanding the systems you depend on and ingest outputs from: how they run, where variation enters, and what can go wrong. Meaningful evals start with that understanding.
+
 ## What I'd say now
 
 Understanding what can go wrong, and why, is how you write meaningful evals. Batch-dependent numerics are one example. Once you understand the mechanism, you can test whether failure rates change under different serving loads instead of treating every changed answer as the same kind of failure.
@@ -70,3 +76,4 @@ Exact replay helps isolate regressions by removing one source of variation. It d
 
 1. Horace He et al. [Defeating Nondeterminism in LLM Inference](https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/). Thinking Machines Lab, September 10, 2025.
 2. vLLM. [Batch Invariance](https://docs.vllm.ai/en/stable/features/batch_invariance/). Documentation, accessed September 12, 2026.
+3. Fireworks AI. [Frontier-lab Training Infrastructure, Available Now as a Managed Service for GLM 5.2](https://fireworks.ai/blog/frontier-lab-training-infrastructure-as-a-service). June 24, 2026.
