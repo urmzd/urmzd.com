@@ -41,3 +41,22 @@ jobs:
     outputs:
       released: ${{ steps.sr.outputs.released }}
       tag: ${{ steps.sr.outputs.tag }}
+
+  deploy:
+    name: Deploy
+    needs: release
+    uses: urmzd/infra/.github/workflows/deploy-site.yml@main
+    permissions:
+      contents: read
+      id-token: write
+    with:
+      source_repo: ${{ github.repository }}
+      ref: ${{ github.sha }}
+      domain: urmzd.com
+      package_manager: npm
+      build_command: npm run build
+      s3_bucket: urmzd.com
+      s3_sync_delete_exclude: ""
+    secrets:
+      aws_role_arn: ${{ secrets.AWS_ROLE_ARN }}
+      aws_region: ${{ secrets.AWS_REGION }}
