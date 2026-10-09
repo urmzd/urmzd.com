@@ -66,7 +66,7 @@ The distinction is between an operator having a switch and an API customer recei
 
 *Disclosure: I work at Fireworks. The views in this post are my own.*
 
-Open source matters here because it lets you inspect and change the serving software, giving you more control over what your workflow holds fixed and what your evals test.
+Open source matters here because it lets you inspect and change the serving software. Ownership gives you the ability to hold a version steady, investigate a failure, and decide when to change how your system runs. That control matters over time, as the systems underneath your workflow evolve. Even when you don't own the infrastructure, you still need to understand what you're consuming. Writing tests against a database without understanding its transaction guarantees or retry behaviour is how you end up surprised in production. Agent workflows deserve the same scrutiny. At the scale they execute, a rare failure can become a recurring problem, especially when each run can take actions beyond generating text. Your evals need to reflect those consequences.
 
 ## What I'd say now
 
