@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.17.3 (2026-10-09)
+
+### Bug Fixes
+
+- **blog**: keep drafts out of the sitemap, blog index, and search engines ([25f8c03](https://github.com/urmzd/urmzd.com/commit/25f8c03b950c842b508e5c26d29fb5bfebd29680))
+
+### Misc
+
+- deploy from this repo through OIDC instead of infra's workflow ([240af90](https://github.com/urmzd/urmzd.com/commit/240af9092438f62b0cab2153b4302e998b43c737))
+- deploy to S3 and CloudFront on every push to main ([2312618](https://github.com/urmzd/urmzd.com/commit/2312618e357bf10289e8d81211b09370948284ee))
+- **blog**: expand open source and ownership paragraph in trust post ([4fc2846](https://github.com/urmzd/urmzd.com/commit/4fc2846e73ce99bc0b3f9db57d91650c161fa416))
+- **blog**: expand trust post with sampling controls and invoice eval walkthrough ([e7a2a71](https://github.com/urmzd/urmzd.com/commit/e7a2a71dabbd3c9d95210875b033f0de4623364d))
+- **blog**: add Fireworks example and open source section to trust post ([b6b59ec](https://github.com/urmzd/urmzd.com/commit/b6b59ec435c8dcc20e21ea25d01508f2b63c5d99))
+- **blog**: tighten routing intro and add unicorn developer draft ([30a1377](https://github.com/urmzd/urmzd.com/commit/30a13776004cb0ce258955614d2282e2e447fb7a))
+- **scripts**: mirror Obsidian vault Blog folder into src/blog ([551aa02](https://github.com/urmzd/urmzd.com/commit/551aa028d11ef758a93e16e1dcf8a39b320f265d))
+- **blog**: rename nondeterminism draft to how-to-trust-a-nondeterministic-system ([a5d4fa3](https://github.com/urmzd/urmzd.com/commit/a5d4fa3e674c050010429e83c491f64383522a38))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.17.2...v0.17.3)
+
+
 ## 0.17.2 (2026-09-27)
 
 ### Bug Fixes
