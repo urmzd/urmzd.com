@@ -4,7 +4,9 @@ import BlogSearch from '@/components/BlogSearch';
 import { getCollection } from 'astro:content';
 import { calculateReadTime } from '@/lib/readTime';
 
-const allPosts = await getCollection('blog');
+// Drafts stay out of the production page, toggle included, so their titles and
+// slugs never ship in the HTML. `npm run dev` still lists them.
+const allPosts = await getCollection('blog', ({ data }) => import.meta.env.DEV || data.draft !== true);
 const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const blogPosts = sortedPosts.map((post) => ({

@@ -35,7 +35,8 @@ const showTOC = tocHeadings.length >= 3;
   ogType="article"
   publishedTime={post.data.pubDate}
   tags={post.data.tags}
-  mdHref={`/blog/${post.id}.md`}
+  mdHref={post.data.draft ? undefined : `/blog/${post.id}.md`}
+  noindex={post.data.draft === true}
 >
   <ArticleLayout
     title={post.data.title}
