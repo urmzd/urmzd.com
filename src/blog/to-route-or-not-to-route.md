@@ -7,13 +7,7 @@ shareText: "Can a router choose a better model for each request? Start with the 
 draft: true
 ---
 
-Your business does not need to solve AGI. It needs to solve the problems customers pay it to solve, quickly, cheaply, and correctly.
-
-Before asking which model should handle a request, decide what a successful result looks like. Build the evals for that use case. Then compare the systems that might deliver it.
-
-That ordering changes the routing question. Can an LLM predict which model will do better than a human can? Perhaps, on a particular workload. But a human usually chooses a model for a workflow once; a router makes a choice for each request. Those are different decisions, and the selector need not be an LLM at all.
-
-The question I care about is more concrete: **does request-by-request selection improve outcomes over the best fixed configuration that meets our requirements, after paying for the selection and its mistakes?**
+Your business does not need to solve AGI. It needs to solve the problems customers pay it to solve correctly, at a profitable price point fast. Before asking which model should handle a request, decide what a successful result looks like. Build the evals for that use case. Then compare the systems that might deliver it. That ordering changes the routing question. Can an LLM predict which model will do better than a human can? Perhaps, but do you really need that for your use case? 
 
 ## Start with the disputed invoice
 
