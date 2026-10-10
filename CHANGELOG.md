@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.18.0 (2026-10-10)
+
+### Features
+
+- **seo**: put the brand first in page titles (urmzd | Page) ([9456216](https://github.com/urmzd/urmzd.com/commit/9456216d4a735bbf70b8016a572fe83d432307f4))
+
+### Misc
+
+- upgrade urmzd/sr action to v9 (#27) ([f8e0a77](https://github.com/urmzd/urmzd.com/commit/f8e0a7784847499c2281d81492e949f2422de88d))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.17.3...v0.18.0)
+
+
 ## 0.17.3 (2026-10-09)
 
 ### Bug Fixes
