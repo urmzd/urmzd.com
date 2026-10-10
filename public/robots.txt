@@ -1,7 +1,7 @@
 # urmzd.com — all crawlers and AI agents welcome.
 # LLM-friendly index: https://urmzd.com/llms.txt
 # Full text corpus:    https://urmzd.com/llms-full.txt
-# Any article/project/research/writing URL also serves clean Markdown at .md
+# Any article/project/research URL also serves clean Markdown at .md
 
 User-agent: *
 Allow: /

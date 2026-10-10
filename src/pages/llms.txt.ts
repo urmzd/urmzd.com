@@ -1,18 +1,12 @@
 import type { APIContext } from 'astro';
-import { getBlog, getProjects, getResearch, getSkills, getWriting, SITE } from '@/lib/llmsContent';
+import { getBlog, getProjects, getResearch, SITE } from '@/lib/llmsContent';
 
 /**
  * Spec: https://llmstxt.org. Regenerated on every build from the same content
  * collections that render the site, so it never drifts from what's published.
  */
 export async function GET(_context: APIContext) {
-  const [blog, writing, projects, research, skills] = await Promise.all([
-    getBlog(),
-    getWriting(),
-    getProjects(),
-    getResearch(),
-    getSkills(),
-  ]);
+  const [blog, projects, research] = await Promise.all([getBlog(), getProjects(), getResearch()]);
 
   const lines: string[] = [];
 
@@ -51,15 +45,6 @@ export async function GET(_context: APIContext) {
     lines.push('');
   }
 
-  if (writing.length > 0) {
-    lines.push('## Writing');
-    lines.push('');
-    for (const story of writing) {
-      lines.push(`- [${story.data.title}](${SITE}/writing/${story.id}): ${story.data.description}`);
-    }
-    lines.push('');
-  }
-
   if (projects.length > 0) {
     lines.push('## Projects');
     lines.push('');
@@ -75,15 +60,6 @@ export async function GET(_context: APIContext) {
     for (const r of research) {
       const paper = r.data.paperUrl ? ` [Paper](${r.data.paperUrl})` : '';
       lines.push(`- [${r.data.title}](${SITE}/research/${r.id}): ${r.data.description}${paper}`);
-    }
-    lines.push('');
-  }
-
-  if (skills.length > 0) {
-    lines.push('## GenAI Skills');
-    lines.push('');
-    for (const s of skills) {
-      lines.push(`- [${s.data.title}](${SITE}/genai/${s.id}): ${s.data.description}`);
     }
     lines.push('');
   }

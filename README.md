@@ -20,10 +20,8 @@
 ## Features
 
 - **Blog** posts in MDX with interactive components, KaTeX math, and citations
-- **Stories** in Markdown with literary prose formatting
 - **Research** showcase with paper links, tech stacks, and demo galleries
 - **Projects** portfolio with live descriptions synced from GitHub
-- **Agent Skills** catalog synced from [urmzd/dotfiles](https://github.com/urmzd/dotfiles)
 - **3D plexus background** via React Three Fiber
 - **Glassmorphism UI** with Tailwind CSS v4
 - **Dynamic OG images** generated with Satori
@@ -59,10 +57,6 @@ The site will be available at `http://localhost:4321`.
 | Generate previews | `npm run generate:previews` |
 
 Repost generation and publishing live in [urmzd/broadcast](https://github.com/urmzd/broadcast), which reads this blog through `BROADCAST_BLOG_DIR`. See that repository for the `broadcast generate <slug>` workflow.
-
-## Agent Skills
-
-The [`/genai`](https://urmzd.com/genai) page showcases the agent skills and subagents I maintain. They are not stored in this repo — `src/lib/skills-loader.ts` pulls them from [`urmzd/dotfiles`](https://github.com/urmzd/dotfiles) at build time, so each build reflects the latest set.
 
 ## License
 
