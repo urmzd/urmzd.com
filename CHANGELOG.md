@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.19.0 (2026-10-10)
+
+### Features
+
+- **site**: remove the GenAI and Writing sections (#29) ([c017309](https://github.com/urmzd/urmzd.com/commit/c0173093e9059668bf60caa6d083cab4bb85adfb))
+
+### Misc
+
+- **release**: read the sr-releaser key from the release environment (#28) ([a239932](https://github.com/urmzd/urmzd.com/commit/a239932e9068a58c218d1de966857866467c896e))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.18.0...v0.19.0)
+
+
 ## 0.18.0 (2026-10-10)
 
 ### Features
