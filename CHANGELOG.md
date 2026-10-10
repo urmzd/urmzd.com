@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.19.1 (2026-10-10)
+
+### Bug Fixes
+
+- **ci**: authenticate the build and prune removed pages on deploy (#30) ([b6cd634](https://github.com/urmzd/urmzd.com/commit/b6cd63449acd029944ec0efff4c09bd211a0038d))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.19.0...v0.19.1)
+
+
 ## 0.19.0 (2026-10-10)
 
 ### Features
