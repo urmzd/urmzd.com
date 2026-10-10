@@ -22,12 +22,6 @@ export async function getBlog() {
   return posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 }
 
-/** Published short-form "writing" pieces (stories collection), newest first. */
-export async function getWriting() {
-  const stories = await getCollection('stories', ({ data }) => data.draft !== true);
-  return stories.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-}
-
 /** Projects (kind=project), most recently pushed first. */
 export async function getProjects() {
   const entries = await getCollection('projects', ({ data }) => data.kind === 'project');
@@ -38,12 +32,6 @@ export async function getProjects() {
 export async function getResearch() {
   const entries = await getCollection('projects', ({ data }) => data.kind === 'research');
   return entries.sort((a, b) => (b.data.year ?? 0) - (a.data.year ?? 0));
-}
-
-/** Agent skills, alphabetical by title. */
-export async function getSkills() {
-  const entries = await getCollection('skills');
-  return entries.sort((a, b) => a.data.title.localeCompare(b.data.title));
 }
 
 export function blogLink(id: string): LinkedEntry['url'] {

@@ -1,33 +1,21 @@
 import type { APIContext } from 'astro';
-import {
-  getBlog,
-  getProjects,
-  getResearch,
-  getWriting,
-  projectToMarkdown,
-  SITE,
-} from '@/lib/llmsContent';
+import { getBlog, getProjects, getResearch, projectToMarkdown, SITE } from '@/lib/llmsContent';
 import { mdxToMarkdown } from '@/lib/mdxToMarkdown';
 
 /**
- * The full text of the site in one file: every published blog post and writing
- * piece rendered as clean Markdown, plus every project and research entry.
+ * The full text of the site in one file: every published blog post
+ * rendered as clean Markdown, plus every project and research entry.
  * Convention companion to /llms.txt for single-fetch ingestion by LLMs.
  */
 export async function GET(_context: APIContext) {
-  const [blog, writing, projects, research] = await Promise.all([
-    getBlog(),
-    getWriting(),
-    getProjects(),
-    getResearch(),
-  ]);
+  const [blog, projects, research] = await Promise.all([getBlog(), getProjects(), getResearch()]);
 
   const parts: string[] = [];
 
   parts.push('# urmzd.com — Full Content');
   parts.push('');
   parts.push(
-    '> Complete text of urmzd.com. Sections: Blog, Writing, Projects, Research. Source index at https://urmzd.com/llms.txt.',
+    '> Complete text of urmzd.com. Sections: Blog, Projects, Research. Source index at https://urmzd.com/llms.txt.',
   );
 
   const section = (title: string) => {
@@ -56,22 +44,6 @@ export async function GET(_context: APIContext) {
           updatedDate: post.data.updatedDate?.toISOString().split('T')[0],
           heroImage: post.data.heroImage,
           tags: post.data.tags,
-        }),
-      );
-    }
-  }
-
-  if (writing.length > 0) {
-    section('Writing');
-    for (const story of writing) {
-      doc(
-        `${SITE}/writing/${story.id}`,
-        mdxToMarkdown(story.body ?? '', {
-          title: story.data.title,
-          description: story.data.description,
-          pubDate: story.data.pubDate.toISOString().split('T')[0],
-          updatedDate: story.data.updatedDate?.toISOString().split('T')[0],
-          tags: story.data.tags,
         }),
       );
     }
