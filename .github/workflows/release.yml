@@ -69,7 +69,11 @@ jobs:
 
       - run: npm ci
 
+      # The projects loader lists repos through the GitHub API; anonymous calls
+      # share the runner IP's 60 req/hr limit and fail the build when it is spent.
       - run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Verify build output
         run: test -n "$(ls -A dist 2>/dev/null)" || { echo "::error::dist is empty"; exit 1; }
@@ -79,14 +83,15 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # Hashed assets are immutable; HTML and feeds must revalidate.
+      # Hashed assets are immutable; HTML and feeds must revalidate. Both passes
+      # delete, so a removed page's HTML does not stay live in the bucket.
       - name: Upload to S3
         run: |
           aws s3 sync dist "s3://$BUCKET" --delete \
             --cache-control "public, max-age=31536000, immutable" \
             --exclude "*.html" --exclude "*.xml" --exclude "*.json" --exclude "*.txt" \
             --exclude "sw.js" --exclude "manifest.webmanifest"
-          aws s3 sync dist "s3://$BUCKET" \
+          aws s3 sync dist "s3://$BUCKET" --delete \
             --cache-control "public, max-age=0, must-revalidate" \
             --exclude "*" --include "*.html" --include "*.xml" --include "*.json" --include "*.txt"
           if [ -f dist/sw.js ]; then

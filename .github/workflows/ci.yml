@@ -69,6 +69,8 @@ jobs:
 
       - name: Build site
         run: npm run build
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Verify build output
         run: |
