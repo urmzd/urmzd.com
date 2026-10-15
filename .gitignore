@@ -5,7 +5,6 @@ next-env.d.ts
 # generated types
 .astro/
 
-# skills-loader cache (cloned source repos)
 .cache/
 
 # dependencies

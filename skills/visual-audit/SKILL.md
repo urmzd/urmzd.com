@@ -46,11 +46,7 @@ See [references/snippet-of-the-week.md](references/snippet-of-the-week.md) for t
 
 See [references/citations.md](references/citations.md) for `Cite` and `References` component usage.
 
-### 6. Story conventions
-
-See [references/stories.md](references/stories.md) for story formatting, writing style, and rendering details.
-
-### 7. References and credits
+### 6. References and credits
 
 **Image credits are mandatory for third-party photos.** The system uses `src/data/imageCredits.ts`.
 
@@ -66,13 +62,12 @@ When adding or replacing a credited image:
 - Social links in `src/data/socialLinks.ts`: confirm profiles are current
 - Behance portfolio links in `src/data/welcomeTimeline.tsx`: confirm galleries are public
 
-### 8. Important notes
+### 7. Important notes
 
 - **License:** Content is CC BY-NC-ND 4.0. Any image added must be compatible or be the author's own work.
 - **OG images:** Generated dynamically via Satori. Adding new pages may require verifying OG image generation works.
 - **Font dependency:** OG image generation uses `public/fonts/Inter-Regular.ttf` and `Inter-Bold.ttf`. Do not remove these.
 - **Blog hero images** are optional. Not every post needs one.
-- **Stories have no image support** — text-only content.
 - **KaTeX support:** Blog posts support LaTeX math via `remark-math` and `rehype-katex`.
 
 ## Output format

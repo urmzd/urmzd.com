@@ -25,7 +25,11 @@ export default function AutoHideHeader() {
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
         <div className="container mx-auto flex h-14 items-center justify-between px-4">
-          <a href="/" className="text-foreground" aria-label="Home">
+          <a
+            href="/"
+            className="flex size-11 items-center justify-center text-foreground"
+            aria-label="Home"
+          >
             <LogoMark className="h-7 w-7" />
           </a>
 
@@ -61,6 +65,9 @@ export default function AutoHideHeader() {
 
           {/* Mobile hamburger + theme toggle */}
           <div className="flex items-center gap-2 md:hidden">
+            <Button variant="outline" size="icon" onClick={openPalette} aria-label="Search site">
+              <Search />
+            </Button>
             <ModeToggle />
             <MobileMenu />
           </div>

@@ -16,6 +16,10 @@ interface Props {
   ogType?: 'website' | 'article';
   publishedTime?: Date;
   tags?: string[];
+  /** URL of a plain-Markdown representation of this page, for LLMs and agents. */
+  mdHref?: string;
+  /** Keep this page out of search engines, e.g. drafts shared by direct link. */
+  noindex?: boolean;
 }
 
 const {
@@ -27,6 +31,8 @@ const {
   ogType = 'website',
   publishedTime,
   tags = [],
+  mdHref,
+  noindex = false,
 } = Astro.props;
 ---
 
@@ -38,6 +44,7 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
     <SEOMeta
       title={title}
       description={description}
@@ -53,6 +60,7 @@ const {
       crossorigin="anonymous"
     />
     <link rel="alternate" type="application/rss+xml" title="urmzd.com RSS Feed" href="/rss.xml" />
+    {mdHref && <link rel="alternate" type="text/markdown" title="Markdown source" href={mdHref} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -89,6 +97,16 @@ const {
   </head>
   <body class:list={["min-h-screen bg-background text-foreground antialiased", fullScreen && "h-dvh overflow-hidden"]}>
     <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground focus:shadow-lg focus:ring-2 focus:ring-ring">Skip to main content</a>
+    <script>
+      import { resizeEmbeds } from '@/lib/resizeEmbeds';
+
+      let cleanup = resizeEmbeds();
+      document.addEventListener('astro:before-swap', () => cleanup());
+      document.addEventListener('astro:page-load', () => {
+        cleanup();
+        cleanup = resizeEmbeds();
+      });
+    </script>
     <AutoHideHeader client:load />
     <CommandPalette client:load />
     <main id="main-content">

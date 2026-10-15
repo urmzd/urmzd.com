@@ -97,9 +97,9 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
               <button
                 type="button"
                 onClick={() => setShowDrafts((v) => !v)}
-                className={`rounded-full px-3 py-1 text-sm transition-all ${
+                className={`min-h-11 rounded-full px-3 py-2 text-sm transition-all ${
                   showDrafts
-                    ? 'border border-primary bg-primary text-primary-foreground'
+                    ? 'glass-pill border-primary bg-primary text-primary-foreground'
                     : 'glass-pill text-muted-foreground hover:border-foreground/20 hover:text-foreground'
                 }`}
               >
@@ -111,9 +111,9 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
                 key={tag}
                 type="button"
                 onClick={() => handleTagClick(tag)}
-                className={`rounded-full px-3 py-1 text-sm transition-all ${
+                className={`min-h-11 rounded-full px-3 py-2 text-sm transition-all ${
                   activeTag === tag
-                    ? 'border border-primary bg-primary text-primary-foreground'
+                    ? 'glass-pill border-primary bg-primary text-primary-foreground'
                     : 'glass-pill text-muted-foreground hover:border-foreground/20 hover:text-foreground'
                 }`}
               >

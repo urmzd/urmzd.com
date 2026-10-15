@@ -45,8 +45,8 @@ export default function LandingExperience() {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.5 }}
         >
-          <div className="relative flex flex-col items-center">
-            <div className="px-4 sm:px-0">
+          <div className="relative flex w-full min-w-0 flex-col items-center">
+            <div className="w-full max-w-3xl">
               <div className="landing-hero pointer-events-auto">
                 <h1 ref={nameRef} className="landing-hero-name" aria-label="Urmzd Mukhammadnaim">
                   {NAME_CHARS.map((char, i) => {
@@ -110,7 +110,7 @@ export default function LandingExperience() {
             >
               <SocialDock
                 mobileClassName="z-40"
-                desktopClassName="fixed bottom-16 left-1/2 -translate-x-1/2 z-40"
+                desktopClassName="landing-social-desktop fixed bottom-16 left-1/2 -translate-x-1/2 z-40"
               />
             </motion.div>
           </div>

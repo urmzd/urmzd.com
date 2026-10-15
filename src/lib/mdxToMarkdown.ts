@@ -9,7 +9,13 @@ export interface PostFrontmatter {
   tags: string[];
 }
 
-export function mdxToMarkdown(body: string, frontmatter: PostFrontmatter): string {
+/**
+ * Convert an MDX body into clean, portable Markdown by unwrapping the custom
+ * components used across the site. Shared by the "Copy as Markdown" button, the
+ * per-page `.md` endpoints, and `llms-full.txt` so all three emit identical
+ * output. Returns the transformed body without frontmatter.
+ */
+export function mdxBodyToMarkdown(body: string): string {
   let md = body;
 
   // 1. Strip import lines
@@ -118,7 +124,14 @@ export function mdxToMarkdown(body: string, frontmatter: PostFrontmatter): strin
   // 14. Collapse 3+ consecutive blank lines to 2
   md = md.replace(/\n{3,}/g, '\n\n');
 
-  // Build frontmatter YAML
+  return md;
+}
+
+/**
+ * Serialize a `PostFrontmatter` object to a YAML frontmatter block (including
+ * the `---` fences).
+ */
+export function buildFrontmatter(frontmatter: PostFrontmatter): string {
   const yamlLines = ['---'];
   yamlLines.push(`title: ${JSON.stringify(frontmatter.title)}`);
   yamlLines.push(`description: ${JSON.stringify(frontmatter.description)}`);
@@ -134,5 +147,12 @@ export function mdxToMarkdown(body: string, frontmatter: PostFrontmatter): strin
   }
   yamlLines.push('---');
 
-  return yamlLines.join('\n') + '\n' + md.trim() + '\n';
+  return yamlLines.join('\n');
+}
+
+/**
+ * Render a full Markdown document (frontmatter + unwrapped body) for a post.
+ */
+export function mdxToMarkdown(body: string, frontmatter: PostFrontmatter): string {
+  return `${buildFrontmatter(frontmatter)}\n${mdxBodyToMarkdown(body).trim()}\n`;
 }

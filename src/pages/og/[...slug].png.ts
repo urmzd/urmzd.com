@@ -22,7 +22,6 @@ const authorDataUriPromise = sharp(join(process.cwd(), 'public/images/author.png
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getCollection('blog');
-  const stories = await getCollection('stories');
 
   const blogPaths = posts.map((post) => ({
     params: { slug: post.id },
@@ -33,18 +32,6 @@ export const getStaticPaths: GetStaticPaths = async () => {
       readTime: calculateReadTime(post.body || '').text,
       tags: post.data.tags,
       slug: `blog/${post.id}`,
-    },
-  }));
-
-  const storyPaths = stories.map((story) => ({
-    params: { slug: story.id },
-    props: {
-      title: story.data.title,
-      description: story.data.description,
-      pubDate: story.data.pubDate,
-      readTime: calculateReadTime(story.body || '').text,
-      tags: story.data.tags,
-      slug: `writing/${story.id}`,
     },
   }));
 
@@ -59,7 +46,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     },
   };
 
-  return [indexPath, ...blogPaths, ...storyPaths];
+  return [indexPath, ...blogPaths];
 };
 
 interface OGImageProps {

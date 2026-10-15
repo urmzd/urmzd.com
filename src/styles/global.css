@@ -250,7 +250,8 @@
     font-family: "elza-text", sans-serif;
   }
 
-  body.mobile-menu-open {
+  body.mobile-menu-open,
+  body.command-palette-open {
     overflow: hidden;
   }
 
@@ -1455,5 +1456,79 @@
 
   .landing-hero-quote {
     font-size: 0.85rem;
+  }
+}
+
+/* Keep content readable without making the whole page scroll sideways. */
+@layer base {
+  main {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .prose pre,
+  .prose .katex-display {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-wrap: normal;
+  }
+
+  .prose table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+}
+
+.mobile-navigation {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+}
+
+@media (max-width: 767px) {
+  [data-slot="button"] {
+    min-height: 44px;
+  }
+
+  [data-slot="button"][data-size^="icon"] {
+    min-width: 44px;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  textarea,
+  select {
+    font-size: max(1rem, 1em);
+  }
+
+  .final-card-container {
+    position: relative;
+    min-height: 100dvh;
+    padding: 5rem 1rem 6rem;
+  }
+}
+
+@media (max-height: 600px) {
+  body.h-dvh {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .final-card-container {
+    position: relative;
+    min-height: 100dvh;
+    padding: 5rem 1rem 6rem;
+  }
+
+  .landing-social-desktop {
+    position: static;
+    transform: none;
+    translate: none;
+  }
+
+  body.h-dvh > footer {
+    position: relative;
   }
 }

@@ -33,7 +33,7 @@ const FloatingDockMobile = ({
       role="toolbar"
       aria-label="Social links"
       className={cn(
-        'mx-auto flex flex-nowrap items-center justify-center gap-1.5 rounded-2xl px-2.5 py-2 md:hidden',
+        'mx-auto grid w-fit max-w-full grid-cols-5 gap-1.5 rounded-2xl p-2 md:hidden',
         className,
       )}
     >
@@ -42,7 +42,7 @@ const FloatingDockMobile = ({
           key={item.title}
           href={item.href}
           aria-label={item.title}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-background/60 backdrop-blur-sm transition-colors hover:bg-accent/50"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-background/60 backdrop-blur-sm transition-colors hover:bg-accent/50"
         >
           <div className="h-4 w-4">{item.icon}</div>
         </a>

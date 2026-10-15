@@ -1,5 +1,164 @@
 # Changelog
 
+## 0.19.1 (2026-10-10)
+
+### Bug Fixes
+
+- **ci**: authenticate the build and prune removed pages on deploy (#30) ([b6cd634](https://github.com/urmzd/urmzd.com/commit/b6cd63449acd029944ec0efff4c09bd211a0038d))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.19.0...v0.19.1)
+
+
+## 0.19.0 (2026-10-10)
+
+### Features
+
+- **site**: remove the GenAI and Writing sections (#29) ([c017309](https://github.com/urmzd/urmzd.com/commit/c0173093e9059668bf60caa6d083cab4bb85adfb))
+
+### Misc
+
+- **release**: read the sr-releaser key from the release environment (#28) ([a239932](https://github.com/urmzd/urmzd.com/commit/a239932e9068a58c218d1de966857866467c896e))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.18.0...v0.19.0)
+
+
+## 0.18.0 (2026-10-10)
+
+### Features
+
+- **seo**: put the brand first in page titles (urmzd | Page) ([9456216](https://github.com/urmzd/urmzd.com/commit/9456216d4a735bbf70b8016a572fe83d432307f4))
+
+### Misc
+
+- upgrade urmzd/sr action to v9 (#27) ([f8e0a77](https://github.com/urmzd/urmzd.com/commit/f8e0a7784847499c2281d81492e949f2422de88d))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.17.3...v0.18.0)
+
+
+## 0.17.3 (2026-10-09)
+
+### Bug Fixes
+
+- **blog**: keep drafts out of the sitemap, blog index, and search engines ([25f8c03](https://github.com/urmzd/urmzd.com/commit/25f8c03b950c842b508e5c26d29fb5bfebd29680))
+
+### Misc
+
+- deploy from this repo through OIDC instead of infra's workflow ([240af90](https://github.com/urmzd/urmzd.com/commit/240af9092438f62b0cab2153b4302e998b43c737))
+- deploy to S3 and CloudFront on every push to main ([2312618](https://github.com/urmzd/urmzd.com/commit/2312618e357bf10289e8d81211b09370948284ee))
+- **blog**: expand open source and ownership paragraph in trust post ([4fc2846](https://github.com/urmzd/urmzd.com/commit/4fc2846e73ce99bc0b3f9db57d91650c161fa416))
+- **blog**: expand trust post with sampling controls and invoice eval walkthrough ([e7a2a71](https://github.com/urmzd/urmzd.com/commit/e7a2a71dabbd3c9d95210875b033f0de4623364d))
+- **blog**: add Fireworks example and open source section to trust post ([b6b59ec](https://github.com/urmzd/urmzd.com/commit/b6b59ec435c8dcc20e21ea25d01508f2b63c5d99))
+- **blog**: tighten routing intro and add unicorn developer draft ([30a1377](https://github.com/urmzd/urmzd.com/commit/30a13776004cb0ce258955614d2282e2e447fb7a))
+- **scripts**: mirror Obsidian vault Blog folder into src/blog ([551aa02](https://github.com/urmzd/urmzd.com/commit/551aa028d11ef758a93e16e1dcf8a39b320f265d))
+- **blog**: rename nondeterminism draft to how-to-trust-a-nondeterministic-system ([a5d4fa3](https://github.com/urmzd/urmzd.com/commit/a5d4fa3e674c050010429e83c491f64383522a38))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.17.2...v0.17.3)
+
+
+## 0.17.2 (2026-09-27)
+
+### Bug Fixes
+
+- let visual embeds share the page scroll ([c792c92](https://github.com/urmzd/urmzd.com/commit/c792c927473a22b15f479f524109b485455decfd))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.17.1...v0.17.2)
+
+
+## 0.17.1 (2026-09-27)
+
+### Bug Fixes
+
+- improve mobile layouts navigation and touch controls ([256ff25](https://github.com/urmzd/urmzd.com/commit/256ff2509d8c6103c1131f72e064d6a833d76d7d))
+
+### Misc
+
+- restore routing analysis and retire stale repost instructions ([4ca0bfe](https://github.com/urmzd/urmzd.com/commit/4ca0bfe225a36909813e6b1699e1d03fd35bc07d))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.17.0...v0.17.1)
+
+
+## 0.17.0 (2026-07-26)
+
+### Features
+
+- **llm**: serve auto-generated llms.txt and Markdown endpoints (#24) ([361e300](https://github.com/urmzd/urmzd.com/commit/361e300f1067bb1d184618fed64a4e8b3c9fe317))
+- **reposts**: drive LinkedIn article drafts with Playwright ([7d0ee12](https://github.com/urmzd/urmzd.com/commit/7d0ee12ba196084afb51b86b5a6bbd1de974f851))
+
+### Misc
+
+- **reposts**: move the publish pipeline out to broadcast (#23) ([51a97ee](https://github.com/urmzd/urmzd.com/commit/51a97eef23697016acee32ea0699e9e9e7ea6748))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.16.1...v0.17.0)
+
+
+## 0.16.1 (2026-07-17)
+
+### Bug Fixes
+
+- **reposts**: bump default LinkedIn-Version to 202606 ([a7d28c0](https://github.com/urmzd/urmzd.com/commit/a7d28c08adbd335429692e40fddbbca18966e3d2))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.16.0...v0.16.1)
+
+
+## 0.16.0 (2026-07-17)
+
+### Features
+
+- **reposts**: add X and LinkedIn drafts for rag-is-immortal (#21) ([841436b](https://github.com/urmzd/urmzd.com/commit/841436b19c5e14a838ba25c5f4e2c538d95fcd7e))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.15.0...v0.16.0)
+
+
+## 0.15.0 (2026-07-17)
+
+### Features
+
+- **blog**: tighten LLM/AI analogy in rag-is-immortal ([1b4b665](https://github.com/urmzd/urmzd.com/commit/1b4b6656e62027cb832c73947afa8085c358cd68))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.14.0...v0.15.0)
+
+
+## 0.14.0 (2026-07-17)
+
+### Features
+
+- **scripts**: sync blog posts to Obsidian vault with launchd watcher ([38642d5](https://github.com/urmzd/urmzd.com/commit/38642d558275cfa91b6ee70e39cfef86a7a2a4e4))
+- **blog**: correct knowledge-graph and pipeline framing in rag-is-immortal ([45fdeed](https://github.com/urmzd/urmzd.com/commit/45fdeedb268fbf044c404102189bff3e930d1669))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.13.0...v0.14.0)
+
+
+## 0.13.0 (2026-07-16)
+
+### Features
+
+- **blog**: sharpen derivative-chain line and cite LongMemEval retrieval comparison gist ([601bc33](https://github.com/urmzd/urmzd.com/commit/601bc330adbb819064f5fdfa593e0fb842c19a21))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.12.0...v0.13.0)
+
+
+## 0.12.0 (2026-07-16)
+
+### Features
+
+- **blog**: retitle rag-is-immortal draft to "RAG is Immortal" ([3a8f39d](https://github.com/urmzd/urmzd.com/commit/3a8f39dbcd7fa1eca500a9f22109f4a4dc9f1dde))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.11.0...v0.12.0)
+
+
+## 0.11.0 (2026-07-16)
+
+### Features
+
+- **blog**: add draft "RAG Can't Die. It Was Never Alive." (rag-is-immortal) (#20) ([3ba6dbb](https://github.com/urmzd/urmzd.com/commit/3ba6dbbcbf82fce8b580f18efcfcf1694e31a22a))
+
+### Misc
+
+- bump GitHub Actions to Node 24 majors and switch app token to client-id ([b498377](https://github.com/urmzd/urmzd.com/commit/b498377a0c7d62f52364b101a751cc435fc274d5))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.10.0...v0.11.0)
+
+
 ## 0.10.0 (2026-06-14)
 
 ### Features

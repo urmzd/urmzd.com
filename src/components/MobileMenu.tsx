@@ -26,10 +26,11 @@ function MenuPortal({
         <MotionConfig reducedMotion="user">
           <motion.div
             ref={menuRef}
+            id="mobile-navigation"
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            className="fixed inset-0 z-modal flex flex-col items-center justify-center bg-background/90 backdrop-blur-xl"
+            className="mobile-navigation fixed inset-0 z-modal flex flex-col bg-background/90 backdrop-blur-xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -43,7 +44,7 @@ function MenuPortal({
               size="icon"
               onClick={close}
               aria-label="Close menu"
-              className="absolute top-4 right-4"
+              className="ml-auto shrink-0"
             >
               <svg
                 width="18"
@@ -60,7 +61,7 @@ function MenuPortal({
               </svg>
             </Button>
 
-            <nav className="flex flex-col items-center gap-2">
+            <nav className="my-auto flex shrink-0 flex-col items-center gap-1 py-4">
               {navItems.map((item, i) => {
                 const isActive =
                   item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
@@ -70,7 +71,7 @@ function MenuPortal({
                     key={item.href}
                     href={item.href}
                     onClick={close}
-                    className={`rounded-lg px-8 py-4 text-2xl font-medium tracking-wide transition-colors
+                    className={`rounded-lg px-8 py-2 text-2xl font-medium tracking-wide transition-colors
                       ${isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'}
                     `}
                     aria-current={isActive ? 'page' : undefined}
@@ -103,7 +104,10 @@ export function MobileMenu() {
   const menuRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
 
-  const close = useCallback(() => setOpen(false), []);
+  const close = useCallback(() => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -165,12 +169,15 @@ export function MobileMenu() {
     return () => document.removeEventListener('keydown', trap);
   }, [open]);
 
-  // Return focus to trigger on close
+  // A rotated phone or resized window must not retain a hidden modal.
   useEffect(() => {
-    if (!open) {
-      triggerRef.current?.focus();
-    }
-  }, [open]);
+    const desktop = window.matchMedia('(min-width: 768px)');
+    const onChange = () => {
+      if (desktop.matches) setOpen(false);
+    };
+    desktop.addEventListener('change', onChange);
+    return () => desktop.removeEventListener('change', onChange);
+  }, []);
 
   return (
     <>
@@ -180,6 +187,7 @@ export function MobileMenu() {
         size="icon"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
+        aria-controls="mobile-navigation"
         aria-label={open ? 'Close menu' : 'Open menu'}
       >
         <svg

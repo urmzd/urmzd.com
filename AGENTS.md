@@ -4,22 +4,21 @@ Instructions for AI agents working on this repository.
 
 ## Project overview
 
-Personal website and blog at [urmzd.com](https://urmzd.com). Built with Astro, React islands, Tailwind CSS v4, and Three.js. Content is authored in MDX (blog) and Markdown (stories).
+Personal website and blog at [urmzd.com](https://urmzd.com). Built with Astro, React islands, Tailwind CSS v4, and Three.js. Content is authored in MDX (blog).
 
 ## Architecture
 
 ```
 src/
-  pages/          # Astro routes (index, blog, stories, projects, research, about, rss, og)
+  pages/          # Astro routes (index, blog, projects, research, about, rss, og)
   components/     # React (.tsx) and Astro (.astro) components
   layouts/        # BaseLayout.astro — single layout wrapping all pages
   blog/           # MDX blog posts (schema: title, description, pubDate, tags, draft, heroImage)
-  stories/        # Markdown stories (schema: title, description, pubDate, tags, draft)
   data/           # Static data: projects.ts, socialLinks.ts, imageCredits.ts, research.ts, welcomeTimeline.tsx, scriptMappings.ts
   hooks/          # React hooks (useScrollDirection, useReducedMotion, useSimulatedPulse, useTextScramble)
   lib/            # Utilities (i18n, readTime, search, utils, mdxToMarkdown, enhanceCodeBlocks)
   styles/         # global.css (Tailwind v4)
-  content.config.ts  # Astro content collection schemas for blog and stories
+  content.config.ts  # Astro content collection schemas for blog and projects
 public/
   images/         # Static images (welcome timeline, logos)
   projects/       # Project demo assets organized by slug
@@ -31,10 +30,10 @@ public/
 
 - **Styling:** Tailwind CSS v4 with dark mode default. Use `cn()` from `src/lib/utils.ts` for class merging.
 - **Components:** React components use `.tsx`. Astro components use `.astro`. React islands are hydrated via `client:load` or `client:visible`.
-- **Content:** Blog posts go in `src/blog/` as `.mdx`. Stories go in `src/stories/` as `.md`. Both must include valid frontmatter matching their schema in `content.config.ts`.
+- **Content:** Blog posts go in `src/blog/` as `.mdx`. Posts must include valid frontmatter matching the schema in `content.config.ts`.
 - **Images:** Place in `public/` under the appropriate subdirectory. Third-party photos require a credit entry in `src/data/imageCredits.ts`.
 - **Glassmorphism:** All cards, pills, badges, and interactive surfaces use the glassmorphism utility classes defined in `src/styles/global.css`. Use `glass-card` for card containers, `glass-pill` for small badges/tags/pills, `glass-input` for form inputs, and `glass-panel` for larger panels. Never use plain `border border-border` for pill/badge elements — always use the corresponding glass class. The `project-card` and `tech-badge` CSS classes already compose these (e.g., `project-card` includes `glass-card`, `tech-badge` includes `glass-pill`).
-- **Index page structure:** All collection listing pages (research, projects, stories) follow the same layout: `<h1 class="mb-2 text-4xl font-bold">` followed by a `<p class="mb-10 text-muted-foreground">` subtitle explaining the page's purpose, then the card grid. The subtitle should be a single concise sentence describing what the reader will find.
+- **Index page structure:** All collection listing pages (research, projects) follow the same layout: `<h1 class="mb-2 text-4xl font-bold">` followed by a `<p class="mb-10 text-muted-foreground">` subtitle explaining the page's purpose, then the card grid. The subtitle should be a single concise sentence describing what the reader will find.
 - **Card content integrity:** All card content — including tags, metadata, and secondary links — must be inside the card container (the `<a>` or wrapping element with `glass-card` / `project-card`). Never render card-related content as a sibling outside the card. Use `event.stopPropagation()` on nested interactive elements (e.g., tag links) to prevent them from triggering the parent card's navigation.
 - **No content-visibility on cards:** Do not use `content-visibility: auto` or `contain-intrinsic-size` on card elements. These cause layout instability when actual content height differs from the estimated intrinsic size.
 - **Linting:** Biome handles lint and format. Run `npm run lint` and `npm run format:check` before committing.
@@ -123,37 +122,6 @@ Import individually or via barrel export from `../components`:
 - Support KaTeX math via `remark-math` + `rehype-katex` (`$$` for display, `$` for inline).
 - Support Mermaid diagrams via fenced ` ```mermaid ` code blocks. `src/lib/remark-mermaid.ts` converts the fence into a placeholder and `MermaidRenderer` (loaded in the blog template) lazy-loads mermaid client-side, theme-aware (re-renders on dark/light toggle).
 
-### Stories
-
-Stories are **text-only Markdown** (`.md`) in `src/stories/`. They use no React components, no images, and no MDX.
-
-**Frontmatter requires:** `title`, `description`, `pubDate`, `tags`. Optional: `updatedDate`, `draft`.
-
-**Writing style:**
-- **First-person, present-tense narration** — immediate, visceral, stream-of-consciousness.
-- **Short paragraphs** — often a single sentence or word. White space controls pacing.
-- **Dialogue is inline**, separated by blank lines. Uses `"..."` quotes with speaker attribution after.
-- **`_italics_` for internal thought** and emphasis. `*italics*` for meta-text (e.g., `*To be continued...*`).
-- **`--` for em-dashes** (double hyphen, not `—`) — used for interruption, hesitation, and mid-thought breaks.
-- **`<br/>` for forced line breaks** within a paragraph — keeps lines visually together while breaking mid-thought (e.g., multi-line dialogue from one speaker, fragmented thoughts).
-- **`---` for scene breaks** — rendered as decorative `— ✧ —` ornaments by the story CSS.
-- **No headings** within content — narrative is continuous, divided only by `---` scene breaks.
-- **No code blocks, no math, no embeds, no images** — pure prose only.
-- **Continuation marker:** Multi-part stories end with `*To be continued...*`.
-
-**Rendering:**
-- Stories render in `story-prose` class: `1.2rem` font, `line-height: 2`, `letter-spacing: 0.01em`.
-- `<hr>` renders as centered `— ✧ —` ornaments with `3rem` margin.
-- A decorative "End" footer (diamond ornament + uppercase label) is auto-appended by the `[slug].astro` template.
-- Max width: `max-w-2xl` (narrower than blog for readability).
-- OG metadata: `ogType="article"` with `publishedTime` and `tags`.
-
-**Tone:**
-- Emotionally raw, fragmented, urgent.
-- Pacing via paragraph length — shorter = faster.
-- Abrupt cuts, incomplete thoughts, and repeated `---` blackouts convey disorientation.
-- Dialogue is sparse and loaded — characters say little, imply much.
-
 ## Snippet of the Week
 
 Every blog post should close with a **"Snippet of the Week"** — a cross-domain educational tangent inside an `ExploreCard`. This is a core content convention established in the first post.
@@ -220,24 +188,18 @@ import References from '../components/References';
 - **YouTube embeds:** Use the `YouTubeEmbed` component with a valid video ID.
 - **Project demos:** Referenced in `src/data/projects.ts` — images go in `public/projects/<slug>/`.
 - **OG images:** Auto-generated via Satori at `src/pages/og/[...slug].png.ts`. Uses Inter fonts from `public/fonts/`.
-- **Stories have no visual support** — do not add images, embeds, or components to story files.
 
 ## Reposts
 
-Platform-optimized copies of a blog post live in `reposts/<slug>/` and are **generated, never hand-edited**. Regenerate them whenever the post body changes — including small wording fixes to an already-published post:
+The repost generation and publishing pipeline lives in [urmzd/broadcast](https://github.com/urmzd/broadcast). Broadcast reads this repository through `BROADCAST_BLOG_DIR`; use its documentation for setup and publishing workflows.
+
+To generate platform drafts with Broadcast installed and configured:
 
 ```bash
-npm run generate:reposts <slug>   # e.g. durable-agent-workflows-are-just-data-pipelines
+broadcast generate <slug>
 ```
 
-`scripts/generate-reposts.ts` reads `src/blog/<slug>.{md,mdx}` and writes:
-
-- `reposts/<slug>/twitter.html` / `linkedin.html` — full-body article HTML to paste into the X / LinkedIn article editors.
-- `reposts/<slug>/x-post.txt` / `linkedin-post.txt` — short feed posts, derived from frontmatter `shareText`, `description`, and `tags`.
-- `reposts/<slug>/code-*.<lang>` — each code fence as a standalone file for the platform's native code-block dialog.
-- `public/images/reposts/<slug>/` — mermaid diagrams, display math, and tables rendered to HiDPI PNGs (neither platform renders them inline), each deep-linked back to its section.
-
-Needs the `playwright` chromium browser for image rendering; `cover.png` reuses the Satori OG card, so run `npm run build` first if it is missing. Re-rendering a mermaid diagram only rewrites the nondeterministic element id in `mermaid-*.svg` — `git checkout` that file when the diagram itself is unchanged, to keep the diff clean.
+Repost generation is a separate workflow from editing blog content in this repository.
 
 ## License
 
@@ -251,7 +213,6 @@ Any contributed images must be compatible with CC BY-NC-ND 4.0 or be original wo
 - **visual-audit** (`skills/visual-audit/SKILL.md`): Audit visuals for replacements, feel consistency, reference integrity, and credit compliance. Use when adding, changing, or reviewing images and media.
 - **authoring-showcase** (`skills/authoring-showcase/SKILL.md`): Author a `SHOWCASE.md` so a GitHub repo renders on urmzd.com/projects or /research. Use when adding a repo to the portfolio or curating how it appears.
 
-Turning a post into X/LinkedIn reposts is a script, not a skill — run `npm run generate:reposts <slug>` (see [Reposts](#reposts)). It replaced the former `blog-to-tweet` and `blog-to-twitter-article` skills.
 
 ## Do not
 
@@ -259,9 +220,5 @@ Turning a post into X/LinkedIn reposts is a script, not a skill — run `npm run
 - Add images without credit entries for third-party work.
 - Modify `content.config.ts` schemas without updating all existing content to match.
 - Use `git add -A` — stage specific files to avoid committing `.env` or build artifacts.
-- Hand-edit files in `reposts/<slug>/` or `public/images/reposts/<slug>/` — they are generated; rerun `npm run generate:reposts <slug>` after editing a post.
 - Skip the Snippet of the Week in new blog posts without explicit instruction.
 - Use `client:load` for heavy visualization components — prefer `client:visible` for anything with animations or WebGL.
-- Add React components, images, or embeds to stories — stories are pure Markdown prose.
-- Use `—` (em-dash character) in stories — use `--` (double hyphen) instead.
-- Add headings (`##`, `###`, etc.) inside story content — use `---` scene breaks only.
