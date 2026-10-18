@@ -58,6 +58,10 @@ The site will be available at `http://localhost:4321`.
 
 Repost generation and publishing live in [urmzd/broadcast](https://github.com/urmzd/broadcast), which reads this blog through `BROADCAST_BLOG_DIR`. See that repository for the `broadcast generate <slug>` workflow.
 
+## Agent Skill
+
+This repo's conventions are available as portable agent skills in [`skills/`](skills/).
+
 ## License
 
 This project is dual-licensed:
