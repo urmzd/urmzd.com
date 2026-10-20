@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { postPath } from '@/lib/postPath';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { APIRoute, GetStaticPaths } from 'astro';
@@ -24,14 +25,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const posts = await getCollection('blog');
 
   const blogPaths = posts.map((post) => ({
-    params: { slug: post.id },
+    params: { slug: postPath(post) },
     props: {
       title: post.data.title,
       description: post.data.description,
       pubDate: post.data.pubDate,
       readTime: calculateReadTime(post.body || '').text,
       tags: post.data.tags,
-      slug: `blog/${post.id}`,
+      slug: `blog/${postPath(post)}`,
     },
   }));
 

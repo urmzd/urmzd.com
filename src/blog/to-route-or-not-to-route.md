@@ -5,6 +5,7 @@ pubDate: 2026-09-18
 tags: ["tech", "ai", "agents", "architecture", "cost"]
 shareText: "Can a router choose a better model for each request? Start with the work you need to solve and the evals that define success. Then measure whether selection beats the best fixed configuration, including its mistakes and overhead."
 draft: true
+codename: route
 ---
 
 Your business does not need to solve AGI. It needs to solve the problems customers pay it to solve correctly, at a profitable price point fast. Before asking which model should handle a request, decide what a successful result looks like. Build the evals for that use case. Then compare the systems that might deliver it. That ordering changes the routing question. Can an LLM predict which model will do better than a human can? Perhaps, but do you really need that for your use case? 

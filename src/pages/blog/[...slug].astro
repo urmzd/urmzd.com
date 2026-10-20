@@ -4,6 +4,7 @@ import ArticleLayout from '@/layouts/ArticleLayout.astro';
 import RelatedPosts from '@/components/RelatedPosts.astro';
 import { getCollection, render } from 'astro:content';
 import { calculateReadTime } from '@/lib/readTime';
+import { postPath } from '@/lib/postPath';
 import CodeBlockEnhancer from '@/components/CodeBlockEnhancer';
 import MermaidRenderer from '@/components/MermaidRenderer';
 import HeadingLinkEnhancer from '@/components/HeadingLinkEnhancer';
@@ -12,7 +13,7 @@ import MobileTOC from '@/components/MobileTOC';
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
-    params: { slug: post.id },
+    params: { slug: postPath(post) },
     props: { post, allPosts: posts },
   }));
 }
@@ -23,7 +24,7 @@ const { Content, headings } = await render(post);
 const readTime = calculateReadTime(post.body || '');
 
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://urmzd.com';
-const postUrl = `${siteUrl}/blog/${post.id}`;
+const postUrl = `${siteUrl}/blog/${postPath(post)}`;
 
 const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
 const showTOC = tocHeadings.length >= 3;
@@ -55,7 +56,7 @@ const showTOC = tocHeadings.length >= 3;
       heroImage: post.data.heroImage,
       tags: post.data.tags,
     }}
-    slug={post.id}
+    slug={postPath(post)}
   >
     {showTOC && (
       <div slot="before-content">

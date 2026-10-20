@@ -10,6 +10,7 @@ tags:
   - architecture
 shareText: Understanding how your models run gives you more control over their behaviour.
 draft: true
+codename: evals
 ---
 You did the right thing, you split your evals into  an execution step and an verification step. After all, you got the perfect set up, right? You ran them and now and you finally have your long awaited traces. It's show time. You ran the analysis and like the sane engineer you are, you run them again, only to find out that the analysis differs but the input hasn't changed. In shock, you arrive at urmzd.com and you realize, you're not the only one who's running into this issue. 
 

@@ -5,6 +5,7 @@ pubDate: 2026-09-23
 tags: ["tech", "agents", "software-engineering", "productivity", "tooling"]
 shareText: "Good devs get shit done. Great devs help others get shit done. With agents, 'others' now includes the agent, and the leverage moved from writing the code to optimizing the loop that writes it."
 draft: true
+codename: unicorn
 ---
 
 <!-- STATUS: thesis captured, body needs writing. Idea Backlog #7.
