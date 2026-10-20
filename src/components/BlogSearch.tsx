@@ -1,9 +1,8 @@
 'use client';
 
+import { X } from 'lucide-react';
 import { MotionConfig } from 'motion/react';
 import { useMemo, useState } from 'react';
-import { PlaceholdersAndVanishInput } from '@/components/ui/placeholders-and-vanish-input';
-import { fuzzySearch } from '@/lib/search';
 
 interface BlogPost {
   id: string;
@@ -19,112 +18,45 @@ interface BlogSearchProps {
   posts: BlogPost[];
 }
 
-const SEARCH_PLACEHOLDERS = [
-  'Search blog posts...',
-  "Try 'machine learning'...",
-  'What are you looking for?',
-  'Type to search...',
-];
-
 export default function BlogSearch({ posts }: BlogSearchProps) {
-  const [query, setQuery] = useState('');
-  const [showDrafts, setShowDrafts] = useState(false);
-  const hasDrafts = useMemo(() => posts.some((p) => p.draft), [posts]);
+  // Tag links on articles point here as /blog?tag=<tag>.
   const [activeTag, setActiveTag] = useState<string | null>(() => {
     if (typeof window === 'undefined') return null;
-    const params = new URLSearchParams(window.location.search);
-    return params.get('tag');
+    return new URLSearchParams(window.location.search).get('tag');
   });
 
-  const allTags = useMemo(() => {
-    const visiblePosts = showDrafts ? posts : posts.filter((p) => !p.draft);
-    const tagSet = new Set<string>();
-    for (const post of visiblePosts) {
-      for (const tag of post.tags ?? []) {
-        tagSet.add(tag);
-      }
-    }
-    return Array.from(tagSet).sort();
-  }, [posts, showDrafts]);
+  const filteredPosts = useMemo(
+    () => (activeTag ? posts.filter((p) => p.tags?.includes(activeTag)) : posts),
+    [posts, activeTag],
+  );
 
-  const filteredPosts = useMemo(() => {
-    let result = showDrafts ? posts : posts.filter((p) => !p.draft);
-    if (activeTag) {
-      result = result.filter((p) => p.tags?.includes(activeTag));
-    }
-    if (query) {
-      result = fuzzySearch(query, result, (post) => [post.title, post.description], 0.5);
-    }
-    return result;
-  }, [query, posts, activeTag, showDrafts]);
-
-  const handleTagClick = (tag: string) => {
-    const next = activeTag === tag ? null : tag;
-    setActiveTag(next);
+  const clearTag = () => {
+    setActiveTag(null);
     const url = new URL(window.location.href);
-    if (next) {
-      url.searchParams.set('tag', next);
-    } else {
-      url.searchParams.delete('tag');
-    }
+    url.searchParams.delete('tag');
     window.history.replaceState({}, '', url.toString());
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Search is already reactive via the query state
   };
 
   return (
     <MotionConfig reducedMotion="user">
       <search className="blog-search">
-        <div className="blog-search-input">
-          <PlaceholdersAndVanishInput
-            placeholders={SEARCH_PLACEHOLDERS}
-            onChange={handleChange}
-            onSubmit={handleSubmit}
-            ariaLabel="Search blog posts"
-          />
-        </div>
-
-        {(allTags.length > 0 || hasDrafts) && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {hasDrafts && (
-              <button
-                type="button"
-                onClick={() => setShowDrafts((v) => !v)}
-                className={`min-h-11 rounded-full px-3 py-2 text-sm transition-all ${
-                  showDrafts
-                    ? 'glass-pill border-primary bg-primary text-primary-foreground'
-                    : 'glass-pill text-muted-foreground hover:border-foreground/20 hover:text-foreground'
-                }`}
-              >
-                drafts
-              </button>
-            )}
-            {allTags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                onClick={() => handleTagClick(tag)}
-                className={`min-h-11 rounded-full px-3 py-2 text-sm transition-all ${
-                  activeTag === tag
-                    ? 'glass-pill border-primary bg-primary text-primary-foreground'
-                    : 'glass-pill text-muted-foreground hover:border-foreground/20 hover:text-foreground'
-                }`}
-              >
-                #{tag}
-              </button>
-            ))}
+        {activeTag && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>Tagged</span>
+            <button
+              type="button"
+              onClick={clearTag}
+              aria-label={`Remove tag filter ${activeTag}`}
+              className="glass-pill inline-flex items-center gap-1 rounded-full border-primary bg-primary px-2.5 py-1 text-xs text-primary-foreground"
+            >
+              #{activeTag}
+              <X className="size-3" aria-hidden="true" />
+            </button>
           </div>
         )}
 
         <div aria-live="polite" aria-atomic="true">
-          {(query || activeTag) && (
+          {activeTag && (
             <p className="blog-search-count">
               {filteredPosts.length === 0
                 ? 'No posts found'
@@ -133,7 +65,7 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
           )}
         </div>
 
-        {filteredPosts.length === 0 && !query ? (
+        {filteredPosts.length === 0 ? (
           <p className="text-muted-foreground">No posts yet. Check back soon!</p>
         ) : (
           <ul className="space-y-6">
