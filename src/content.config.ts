@@ -13,7 +13,10 @@ const blog = defineCollection({
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
     /** Short lowercase name; drafts are served at /blog/<codename>. */
-    codename: z.string().regex(/^[a-z]+$/).optional(),
+    codename: z
+      .string()
+      .regex(/^[a-z]+$/)
+      .optional(),
     shareText: z.string().optional(),
   }),
 });

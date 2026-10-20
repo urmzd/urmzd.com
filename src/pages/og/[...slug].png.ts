@@ -1,10 +1,10 @@
 import { getCollection } from 'astro:content';
-import { postPath } from '@/lib/postPath';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type { APIRoute, GetStaticPaths } from 'astro';
 import satori from 'satori';
 import sharp from 'sharp';
+import { postPath } from '@/lib/postPath';
 import { calculateReadTime } from '../../lib/readTime';
 
 const interRegular = readFileSync(join(process.cwd(), 'public/fonts/Inter-Regular.ttf'));
