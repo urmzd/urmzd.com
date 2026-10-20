@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.20.0 (2026-10-20)
+
+### Features
+
+- **blog**: drop search and tag filter UI from blog index ([e96d90e](https://github.com/urmzd/urmzd.com/commit/e96d90edb0c560cdf0558921f50d2a333752d214))
+
+### Misc
+
+- **blog**: rename nondeterminism draft to how-to-trust-evals ([a408d62](https://github.com/urmzd/urmzd.com/commit/a408d629a5bac95501a60e8357c63a07b2d3cba5))
+- **readme**: align with fleet standard (#31) ([f60291d](https://github.com/urmzd/urmzd.com/commit/f60291dc070d4738873b19fa424fd7926c73d207))
+- **deps**: bump actions/checkout from 6 to 7 (#19) ([5effb23](https://github.com/urmzd/urmzd.com/commit/5effb23cf8c61ba7adb26905b27191eec6dfa34d))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.19.1...v0.20.0)
+
+
 ## 0.19.1 (2026-10-10)
 
 ### Bug Fixes
