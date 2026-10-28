@@ -110,11 +110,11 @@ So you could either round to 3 (0 1001 000) or 3.25 (0 1001 001) and neither are
 
 ### Batch Invariance
 
-One thing to realize is that the deployment and serving of LLMs is a complex distributed systems problem, and due to the economics of hosting them, inference providers must be extremely efficient. One such way of doing that is by batching requests.
+One thing to realize is that the deployment and serving of LLMs is a complex distributed systems problem, and due to the economics of hosting them, inference providers bottom line is dependent on their inference serving efficiency. Dynamic batching is one such way of doing so.
 
-Scheduling as it's often called is the process in which requests that arrive within some proximate time are grouped and sent together, allowing for GPUs to process several of these requests in parallel. This allows several different patterns to emerge:
+Most serving stacks provide 
 
-1) Similar requests might be grouped by proximal prefixes 
+ in which requests that arrive within some proximate time are grouped and processed in parallel allowing for GPUs to process se. Some have rolling windows to maximize GPU utilization and due to the amazing abstraction 
 
 
 ## References
@@ -123,3 +123,4 @@ Scheduling as it's often called is the process in which requests that arrive wit
 2. vLLM. [Batch Invariance](https://docs.vllm.ai/en/stable/features/batch_invariance/). Documentation, accessed September 12, 2026.
 3. Fireworks AI. [Frontier-lab Training Infrastructure, Available Now as a Managed Service for GLM 5.2](https://fireworks.ai/blog/frontier-lab-training-infrastructure-as-a-service). June 24, 2026.
 4. Anthropic. [Thinking](https://platform.claude.com/docs/en/build-with-claude/thinking). Documentation, accessed October 8, 2026.
+5. https://builder.aws.com/content/3GlmK8uXPjvrNLx8YnZEWxnlAzb/the-batch-changed-the-answer-shouldnt 
