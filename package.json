@@ -60,8 +60,7 @@
     "generate:previews": "node scripts/generate-visual-previews.mjs",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "preview": "astro preview",
-    "sync:obsidian": "node scripts/sync-obsidian.mjs"
+    "preview": "astro preview"
   },
   "type": "module",
   "version": "0.20.0"
