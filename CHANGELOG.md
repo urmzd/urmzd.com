@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.21.0 (2026-10-20)
+
+### Features
+
+- **blog**: serve drafts at /blog/<codename> ([7495d0e](https://github.com/urmzd/urmzd.com/commit/7495d0e0252e99b08b1aa3d2a6b82592d7987474))
+
+### Misc
+
+- fix biome formatting and import order ([e30640b](https://github.com/urmzd/urmzd.com/commit/e30640bb19077935e6721209b765bfc9b3323b3f))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.20.0...v0.21.0)
+
+
 ## 0.20.0 (2026-10-20)
 
 ### Features
