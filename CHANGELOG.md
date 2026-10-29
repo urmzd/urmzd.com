@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.21.1 (2026-10-29)
+
+### Bug Fixes
+
+- **deps**: upgrade astro and patch vulnerable dependencies (#35) ([44e90fe](https://github.com/urmzd/urmzd.com/commit/44e90fe72a10fc692ea9583cace88aef62c48ffc))
+
+### Misc
+
+- **blog**: wip batch invariance section in how-to-trust-evals ([dc48c51](https://github.com/urmzd/urmzd.com/commit/dc48c51ea8522b058a192efdabb810c0c6d5ad3c))
+- drop sync:obsidian npm script ([1564bb0](https://github.com/urmzd/urmzd.com/commit/1564bb0358dbdddb0bf73f23d08adec52df15ec5))
+- remove Obsidian sync scripts ([67bf2f2](https://github.com/urmzd/urmzd.com/commit/67bf2f2e1c1247095f4b683bc0a5a20e7b5cd75a))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.21.0...v0.21.1)
+
+
 ## 0.21.0 (2026-10-20)
 
 ### Features
