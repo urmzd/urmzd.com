@@ -65,9 +65,5 @@
   },
   "type": "module",
   "version": "0.21.1",
-  "overrides": {
-    "fflate": "^0.8.3",
-    "katex": "^0.19.1",
-    "postcss-selector-parser": "^6.1.5"
-  }
+  "packageManager": "pnpm@11.6.0"
 }

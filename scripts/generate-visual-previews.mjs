@@ -5,8 +5,8 @@
  * in the markdown export.
  *
  * Prerequisites:
- *   npm run build && npm run preview   (in another terminal)
- *   npx playwright install chromium
+ *   pnpm run build && pnpm run preview   (in another terminal)
+ *   pnpm exec playwright install chromium
  *
  * Usage:
  *   node scripts/generate-visual-previews.mjs [base-url]
