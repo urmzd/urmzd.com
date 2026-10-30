@@ -12,7 +12,7 @@
 
 <!-- How was this tested? -->
 
-- [ ] `npm run check` passes
+- [ ] `pnpm run check` passes
 - [ ] Tests added or updated for the change
 - [ ] Docs updated (README, AGENTS.md, skills) if behavior or interface changed
 

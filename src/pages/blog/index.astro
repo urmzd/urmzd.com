@@ -6,7 +6,7 @@ import { calculateReadTime } from '@/lib/readTime';
 import { postPath } from '@/lib/postPath';
 
 // Drafts stay out of the production page, toggle included, so their titles and
-// slugs never ship in the HTML. `npm run dev` still lists them.
+// slugs never ship in the HTML. `pnpm run dev` still lists them.
 const allPosts = await getCollection('blog', ({ data }) => import.meta.env.DEV || data.draft !== true);
 const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
