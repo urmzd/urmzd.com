@@ -32,29 +32,29 @@
 ```bash
 git clone https://github.com/urmzd/urmzd.com.git
 cd urmzd.com
-npm install
+pnpm install
 cp .env.example .env
-npm run dev
+pnpm run dev
 ```
 
 The site will be available at `http://localhost:4321`.
 
-**Requires** Node.js 24+ and npm.
+**Requires** Node.js 24+ and pnpm (via corepack).
 
 ## Usage
 
 | Command | Script |
 | --- | --- |
-| Dev server | `npm run dev` |
-| Production build | `npm run build` |
-| Preview build | `npm run preview` |
-| Lint | `npm run lint` |
-| Lint (autofix) | `npm run lint:fix` |
-| Format | `npm run format` |
-| Format (check) | `npm run format:check` |
-| Type check | `npm run check` |
-| Generate icons | `npm run generate:icons` |
-| Generate previews | `npm run generate:previews` |
+| Dev server | `pnpm run dev` |
+| Production build | `pnpm run build` |
+| Preview build | `pnpm run preview` |
+| Lint | `pnpm run lint` |
+| Lint (autofix) | `pnpm run lint:fix` |
+| Format | `pnpm run format` |
+| Format (check) | `pnpm run format:check` |
+| Type check | `pnpm run check` |
+| Generate icons | `pnpm run generate:icons` |
+| Generate previews | `pnpm run generate:previews` |
 
 Repost generation and publishing live in [urmzd/broadcast](https://github.com/urmzd/broadcast), which reads this blog through `BROADCAST_BLOG_DIR`. See that repository for the `broadcast generate <slug>` workflow.
 

@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from "@tailwindcss/vite";
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
+import { unified } from '@astrojs/markdown-remark';
 import sitemap from '@astrojs/sitemap';
 import remarkMath from 'remark-math';
 import remarkGfm from 'remark-gfm';
@@ -43,8 +44,10 @@ i18n: {
     sitemap({ filter: (page) => !draftBlogPaths.has(new URL(page).pathname) }),
   ],
   markdown: {
-    remarkPlugins: [remarkGfm, remarkCallouts, remarkEmbeds, remarkMermaid, remarkMath],
-    rehypePlugins: [rehypeKatex, rehypeSlug],
+    processor: unified({
+      remarkPlugins: [remarkGfm, remarkCallouts, remarkEmbeds, remarkMermaid, remarkMath],
+      rehypePlugins: [rehypeKatex, rehypeSlug],
+    }),
   },
   vite: {
     plugins: [

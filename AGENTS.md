@@ -36,7 +36,7 @@ public/
 - **Index page structure:** All collection listing pages (research, projects) follow the same layout: `<h1 class="mb-2 text-4xl font-bold">` followed by a `<p class="mb-10 text-muted-foreground">` subtitle explaining the page's purpose, then the card grid. The subtitle should be a single concise sentence describing what the reader will find.
 - **Card content integrity:** All card content — including tags, metadata, and secondary links — must be inside the card container (the `<a>` or wrapping element with `glass-card` / `project-card`). Never render card-related content as a sibling outside the card. Use `event.stopPropagation()` on nested interactive elements (e.g., tag links) to prevent them from triggering the parent card's navigation.
 - **No content-visibility on cards:** Do not use `content-visibility: auto` or `contain-intrinsic-size` on card elements. These cause layout instability when actual content height differs from the estimated intrinsic size.
-- **Linting:** Biome handles lint and format. Run `npm run lint` and `npm run format:check` before committing.
+- **Linting:** Biome handles lint and format. Run `pnpm run lint` and `pnpm run format:check` before committing.
 - **Pre-commit:** Husky + lint-staged runs Biome on staged files.
 
 ## Available components

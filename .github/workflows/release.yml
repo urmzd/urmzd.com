@@ -62,16 +62,18 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - uses: pnpm/action-setup@v6
+
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: npm
+          cache: pnpm
 
-      - run: npm ci
+      - run: pnpm install --frozen-lockfile
 
       # The projects loader lists repos through the GitHub API; anonymous calls
       # share the runner IP's 60 req/hr limit and fail the build when it is spent.
-      - run: npm run build
+      - run: pnpm run build
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
