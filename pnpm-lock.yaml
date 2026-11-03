@@ -144,7 +144,7 @@ importers:
         specifier: ^16.2.7
         version: 16.2.7
       playwright:
-        specifier: ^1.58.2
+        specifier: 1.58.2
         version: 1.58.2
       tw-animate-css:
         specifier: ^1.4.0
