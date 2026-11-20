@@ -1,0 +1,81 @@
+name: Documentation site
+# Publishes docs.urmzd.com: the landing page in docs-site/ plus each project
+# guide built from its own repository's main branch.
+on:
+  pull_request:
+    paths:
+      - docs-site/**
+      - .github/workflows/docs-site.yml
+  push:
+    branches: [main]
+    paths:
+      - docs-site/**
+      - .github/workflows/docs-site.yml
+  workflow_dispatch:
+  repository_dispatch:
+    types: [book-updated]
+  schedule:
+    # Pick up the guides' main branches without cross-repository tokens;
+    # scheduled runs deploy only when a guide changed.
+    - cron: "*/30 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-site-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.changes.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Check for guide changes
+        id: changes
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          live=$(curl -fsS https://docs.urmzd.com/versions.json || echo '{}')
+          for book in saige orchagent humagen; do
+            head=$(git ls-remote "https://github.com/urmzd/$book.git" refs/heads/main | cut -f1)
+            if [ "$(jq -r --arg b "$book" '.[$b] // ""' <<<"$live")" != "$head" ]; then
+              echo "changed=true" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+          done
+          echo "changed=false" >> "$GITHUB_OUTPUT"
+      - name: Check landing page and 404
+        if: steps.changes.outputs.changed == 'true'
+        run: python3 docs-site/scripts/check_site.py
+      - uses: actions/setup-python@v6
+        if: steps.changes.outputs.changed == 'true'
+        with:
+          python-version: "3.13"
+      - name: Build landing page and project guides
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          python -m pip install zensical==0.1.2
+          docs-site/scripts/build_site.sh docs-site/_site
+      - uses: actions/upload-pages-artifact@v4
+        if: steps.changes.outputs.changed == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        with:
+          path: docs-site/_site
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.changed == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment
