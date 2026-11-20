@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.22.0 (2026-11-20)
+
+### Features
+
+- host docs.urmzd.com from this repository (#40) ([4f1f2ee](https://github.com/urmzd/urmzd.com/commit/4f1f2eecbf658bd2824fbd9cf61da28ea4375a9a))
+
+### Misc
+
+- **deps**: bump aws-actions/configure-aws-credentials from 4 to 6 (#34) ([4c86159](https://github.com/urmzd/urmzd.com/commit/4c86159dcda7968276ce5781e2296ff972717d06))
+- **deps**: bump actions/setup-node from 6 to 7 (#33) ([26f0392](https://github.com/urmzd/urmzd.com/commit/26f0392e3fae7245de19df4c405f7b188d710f11))
+- **deps**: bump actions/checkout from 6 to 7 (#32) ([96de186](https://github.com/urmzd/urmzd.com/commit/96de186d602e55493fd00c29d7fac7cbb4db07f9))
+- **deps**: pin playwright to 1.58.2 (#37) ([3ba3baf](https://github.com/urmzd/urmzd.com/commit/3ba3baff308e1bb97ffee6ca011568053954df6c))
+- **deps**: switch from npm to pnpm 11 (#36) ([de47743](https://github.com/urmzd/urmzd.com/commit/de47743c7c7d825d25205381a2da6fe2e68393fb))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.21.1...v0.22.0)
+
+
 ## 0.21.1 (2026-10-29)
 
 ### Bug Fixes
