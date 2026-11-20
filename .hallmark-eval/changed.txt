@@ -1,0 +1,15 @@
+src/components/Aside.tsx
+src/components/BlogSearch.tsx
+src/components/CommandPalette.tsx
+src/components/CriticalThinkingVisuals.tsx
+src/components/GPEvolutionVisualizer.tsx
+src/components/LogoMark.tsx
+src/components/ModeToggle.tsx
+src/components/ui/button.tsx
+src/components/ui/dropdown-menu.tsx
+src/components/ui/navigation-menu.tsx
+src/components/ui/placeholders-and-vanish-input.tsx
+src/components/ui/timeline.tsx
+src/pages/about.astro
+src/pages/projects/index.astro
+src/styles/global.css
