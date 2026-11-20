@@ -32,3 +32,7 @@ pnpm-debug.log*
 .claude/
 .vscode/
 .env.*
+
+# docs.urmzd.com build output
+docs-site/_site/
+.worktrees/

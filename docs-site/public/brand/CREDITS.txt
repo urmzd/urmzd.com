@@ -1,0 +1,14 @@
+Logo mark and favicon: Urmzd Mukhammadnaim, copyright 2026.
+Original SVG files from urmzd/urmzd.com, revision 4c86159dcda7968276ce5781e2296ff972717d06.
+Source: https://github.com/urmzd/urmzd.com/tree/4c86159dcda7968276ce5781e2296ff972717d06/public
+Distributed without modification under CC BY-NC-ND 4.0.
+License: https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+IBM Plex Mono: IBM Corp., distributed under the SIL Open Font License.
+Latin WOFF2 files from @fontsource/ibm-plex-mono 5.3.0.
+See IBM-Plex-Mono-LICENSE.txt for the full license.
+
+Elza Text is delivered by Adobe Fonts through the website owner's hosted kit.
+
+The GitHub, sun and moon icons in icons.svg are from lucide-react 0.562.0.
+See Lucide-LICENSE.txt for the ISC and MIT notices.

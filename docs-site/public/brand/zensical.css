@@ -1,0 +1,79 @@
+@import url("./fonts.css");
+
+/* Article palette and typography from urmzd.com/src/styles/global.css. */
+body[data-md-color-scheme][data-md-color-primary] {
+  --md-text-font: "elza-text";
+  --md-code-font: "IBM Plex Mono";
+  --guide-ink: oklch(0.145 0 0);
+  --guide-paper: white;
+  --guide-muted: oklch(0.46 0 0);
+  --guide-rule: oklch(0.922 0 0);
+  --guide-panel: oklch(0.97 0 0);
+  --guide-green: oklch(0.5 0.15 145);
+  --guide-gold: oklch(0.84 0.18 87);
+  --md-default-bg-color: var(--guide-paper);
+  --md-default-bg-color--light: color-mix(in srgb, var(--guide-paper) 95%, transparent);
+  --md-default-fg-color: var(--guide-ink);
+  --md-default-fg-color--light: var(--guide-muted);
+  --md-default-fg-color--lightest: var(--guide-rule);
+  --md-primary-fg-color: var(--guide-green);
+  --md-typeset-a-color: var(--guide-green);
+  --md-accent-fg-color: var(--guide-green);
+  --md-accent-fg-color--transparent: color-mix(in srgb, var(--guide-green) 10%, transparent);
+  --md-code-bg-color: var(--guide-panel);
+  --md-code-fg-color: var(--guide-ink);
+}
+
+body[data-md-color-scheme="slate"][data-md-color-primary] {
+  --guide-ink: oklch(0.985 0 0);
+  --guide-paper: oklch(0.145 0 0);
+  --guide-panel: oklch(0.205 0 0);
+  --guide-muted: oklch(0.708 0 0);
+  --guide-rule: oklch(0.31 0 0);
+  --guide-green: oklch(0.72 0.15 145);
+  --guide-gold: oklch(0.86 0.18 87);
+}
+
+.md-header {
+  border-block-end: 1px solid var(--guide-rule);
+  box-shadow: none;
+}
+
+.md-header__button.md-logo img {
+  height: 1.55rem;
+  width: 1.55rem;
+}
+
+[data-md-color-scheme="slate"] .md-logo img {
+  filter: invert(1);
+}
+
+@media screen {
+  .md-content .md-typeset {
+    font-size: 0.8rem;
+    line-height: 1.7;
+  }
+
+  .md-typeset h1 {
+    font-size: clamp(1.55rem, 3vw, 2rem);
+    line-height: 1.15;
+  }
+}
+
+.md-typeset a {
+  text-underline-offset: 0.17em;
+}
+
+.md-typeset pre > code {
+  border: 1px solid var(--guide-rule);
+}
+
+.md-nav--primary .md-nav__item .md-nav__link--active {
+  box-shadow: inset 2px 0 var(--guide-green);
+}
+
+.md-typeset mark,
+.md-search-result mark {
+  background: var(--guide-gold);
+  color: oklch(0.2 0.04 87);
+}

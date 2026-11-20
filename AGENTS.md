@@ -6,6 +6,8 @@ Instructions for AI agents working on this repository.
 
 Personal website and blog at [urmzd.com](https://urmzd.com). Built with Astro, React islands, Tailwind CSS v4, and Three.js. Content is authored in MDX (blog).
 
+`docs-site/` is a separate static site published to [docs.urmzd.com](https://docs.urmzd.com) by `.github/workflows/docs-site.yml`. It is not part of the Astro build; see `docs-site/README.md`.
+
 ## Architecture
 
 ```
