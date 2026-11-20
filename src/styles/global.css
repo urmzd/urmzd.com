@@ -1,3 +1,6 @@
+/* Hallmark · checked: 2026-11-19 · genre: editorial (inferred)
+ * floor: 115 FAIL open (107 are gate 48, 6 sit in unused CSS, 76 is a README image path) · fixed: 27 (10a, 19, 30a, 33, 34, 40, 67)
+ * built: the project · redesign: polish · v2.0.0 */
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "@tailwindcss/typography";
@@ -118,6 +121,11 @@
 
   --radius: 0.625rem;
 
+  /* Code comment ink, 4.5:1 or better on the github-dark block */
+  --code-comment: oklch(0.7 0.012 250);
+  /* Brand gold dark enough to carry small text on the light surface */
+  --brand-ink: oklch(0.5 0.11 87);
+
   /* Base palette */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -192,6 +200,7 @@
 }
 
 .dark {
+  --brand-ink: var(--brand);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -250,9 +259,40 @@
     font-family: "elza-text", sans-serif;
   }
 
+  html,
+  body {
+    overflow-x: clip;
+  }
+
   body.mobile-menu-open,
   body.command-palette-open {
-    overflow: hidden;
+    overflow-y: hidden;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  .prose p,
+  .prose li {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: oklch(from var(--brand) l c h / 35%);
+    color: var(--foreground);
+  }
+
+  html {
+    scrollbar-color: var(--border) transparent;
+  }
+
+  /* Shiki github-dark comments sit at 3:1 on their background; lift to AA. */
+  .astro-code span[style*="color:#6A737D"] {
+    color: var(--code-comment) !important;
   }
 
   /* Scroll margin for anchor navigation */
@@ -1111,10 +1151,9 @@
   .landing-hero-author {
     display: block;
     font-family: "elza-text", sans-serif;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
-    color: oklch(from var(--brand) l c h / 70%);
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    color: var(--brand-ink);
   }
 
   .landing-hero-author::before {
@@ -1188,7 +1227,7 @@
 
   /* Project components */
   .project-card {
-    @apply rounded-xl p-6 transition-all;
+    @apply rounded-xl p-6 transition-[color,background-color,border-color,box-shadow,translate];
     background: oklch(0 0 0 / 2%);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -1215,7 +1254,7 @@
   }
 
   .tech-badge {
-    @apply rounded-full px-2.5 py-0.5 text-xs text-muted-foreground transition-all;
+    @apply rounded-full px-2.5 py-0.5 text-xs text-muted-foreground transition-[color,background-color,border-color];
     background: oklch(0 0 0 / 2%);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
@@ -1232,11 +1271,11 @@
   }
 
   .tech-stack-card {
-    @apply flex flex-col items-center justify-center rounded-xl border border-border bg-background p-6 text-center transition-all;
+    @apply flex flex-col items-center justify-center rounded-xl border border-border bg-background p-6 text-center transition-[color,background-color,border-color,box-shadow,translate];
   }
 
   .feature-card {
-    @apply rounded-xl border border-border bg-background p-5 transition-all;
+    @apply rounded-xl border border-border bg-background p-5 transition-[color,background-color,border-color,box-shadow,translate];
   }
 
   .status-dot {
@@ -1296,7 +1335,7 @@
   }
 
   .copy-button {
-    @apply absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background/80 text-muted-foreground opacity-0 transition-all;
+    @apply absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background/80 text-muted-foreground opacity-0 transition-[color,background-color,border-color,opacity];
     backdrop-filter: blur(4px);
   }
 
@@ -1318,7 +1357,7 @@
   }
 
   .heading-link-button {
-    @apply ml-2 inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground opacity-0 transition-all;
+    @apply ml-2 inline-flex h-6 w-6 items-center justify-center rounded text-muted-foreground opacity-0 transition-[color,background-color,border-color,opacity];
     vertical-align: middle;
   }
 

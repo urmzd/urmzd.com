@@ -288,7 +288,12 @@ export default function GPEvolutionVisualizer() {
         {/* Fitness history chart */}
         <div>
           <div className="mb-1 text-center text-[10px] text-muted-foreground">Fitness History</div>
-          <svg viewBox={`0 0 ${CHART_W} ${CHART_H}`} className="w-full">
+          <svg
+            viewBox={`0 0 ${CHART_W} ${CHART_H}`}
+            className="w-full"
+            role="img"
+            aria-label="Fitness history"
+          >
             {/* Y-axis label */}
             <text
               x={10}
@@ -424,7 +429,7 @@ export default function GPEvolutionVisualizer() {
                   stripStep === i ? 'text-primary opacity-100' : 'text-muted-foreground opacity-35',
                 )}
               >
-                {i < STEPS.length - 1 ? '→' : '↩'}
+                {i < STEPS.length - 1 ? '→' : '↩\uFE0E'}
               </span>
             </div>
           ))}

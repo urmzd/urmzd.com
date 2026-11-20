@@ -214,7 +214,7 @@ export function FirstPrinciplesVisual() {
             transition={{ duration: 0.45 }}
           >
             <span
-              className="text-[11px] font-semibold tracking-[.12em] text-foreground/80"
+              className="text-[11px] font-semibold text-foreground/80"
               style={{ textDecoration: peeled > i ? 'line-through' : 'none' }}
             >
               {label}
@@ -222,12 +222,12 @@ export function FirstPrinciplesVisual() {
           </motion.div>
         ))}
         <motion.div
-          className={`rounded-lg border px-4 py-3 text-center transition-all duration-500 ${
+          className={`rounded-lg border px-4 py-3 text-center transition-colors duration-500 ${
             peeled >= 3 ? 'border-chart-2/60 bg-chart-2/12' : 'border-foreground/20'
           }`}
         >
           <motion.span
-            className="text-[13px] font-bold tracking-[.1em]"
+            className="text-[13px] font-bold"
             animate={{ opacity: peeled >= 3 ? 1 : 0.4 }}
             transition={{ duration: 0.5 }}
             style={{ color: 'var(--foreground)' }}
@@ -255,17 +255,18 @@ export function ConfirmationBiasVisual() {
     <div ref={ref} className="my-8">
       <div className="overflow-hidden rounded-xl border border-foreground/15">
         <div className="flex items-center justify-between border-b border-foreground/10 px-5 py-3">
-          <span className="text-[11px] font-semibold tracking-[.12em] text-foreground/80">
+          <span className="text-[11px] font-semibold text-foreground/80">
             {biased ? 'Through Confirmation Bias' : 'All Available Evidence'}
           </span>
           <button
             type="button"
             onClick={() => setBiased((b) => !b)}
-            className="flex items-center gap-1.5 rounded-full border border-foreground/15 px-2.5 py-1 text-[10px] font-semibold tracking-wider text-foreground/70 transition-colors hover:border-foreground/30 hover:text-foreground"
+            className="flex items-center gap-1.5 rounded-full border border-foreground/15 px-2.5 py-1 text-[10px] font-semibold text-foreground/70 transition-colors hover:border-foreground/30 hover:text-foreground"
             aria-label={biased ? 'Show all evidence' : 'Apply confirmation bias'}
           >
             {biased ? (
               <svg
+                aria-hidden="true"
                 width="14"
                 height="14"
                 viewBox="0 0 24 24"
@@ -281,6 +282,7 @@ export function ConfirmationBiasVisual() {
               </svg>
             ) : (
               <svg
+                aria-hidden="true"
                 width="14"
                 height="14"
                 viewBox="0 0 24 24"
@@ -316,7 +318,7 @@ export function ConfirmationBiasVisual() {
                     : 'bg-chart-5/20 ring-1 ring-chart-5/40'
                 }`}
               >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none">
                   {confirms ? (
                     <path
                       d="M3 7.5L5.5 10L11 4"
@@ -616,11 +618,12 @@ export function ExtrapolationVisual() {
         <button
           type="button"
           onClick={() => setJumped((j) => !j)}
-          className="flex items-center gap-1.5 rounded-full border border-foreground/15 px-3 py-1.5 text-[10px] font-semibold tracking-wider text-foreground/70 transition-colors hover:border-foreground/30 hover:text-foreground"
+          className="flex items-center gap-1.5 rounded-full border border-foreground/15 px-3 py-1.5 text-[10px] font-semibold text-foreground/70 transition-colors hover:border-foreground/30 hover:text-foreground"
         >
           {jumped ? (
             <>
               <svg
+                aria-hidden="true"
                 width="14"
                 height="14"
                 viewBox="0 0 24 24"
@@ -637,6 +640,7 @@ export function ExtrapolationVisual() {
           ) : (
             <>
               <svg
+                aria-hidden="true"
                 width="14"
                 height="14"
                 viewBox="0 0 24 24"

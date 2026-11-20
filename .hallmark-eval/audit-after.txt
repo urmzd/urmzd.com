@@ -1,0 +1,279 @@
+render tier: 35 screenshots in /Users/urmzd/github/urmzd.com/.worktrees/hallmark/.hallmark/shots (1280x800, 1440x900, 1920x1080 folds; 1440 and 375 full pages)
+src/styles/global.css
+  FAIL 7a :469 pure #000: background: oklch(0.04 0 0) (.splash-veil) | fix: Tint the base toward the anchor hue
+  FAIL 48 :203 oklch literal oklch(0.145 0 0) outside tokens (--background on .dark) | fix: Lift the value into the token block
+  FAIL 48 :204 oklch literal oklch(0.985 0 0) outside tokens (--foreground on .dark)
+  FAIL 48 :205 oklch literal oklch(0.205 0 0) outside tokens (--card on .dark)
+  FAIL 48 :206 oklch literal oklch(0.985 0 0) outside tokens (--card-foreground on .dark)
+  FAIL 48 :207 oklch literal oklch(0.205 0 0) outside tokens (--popover on .dark)
+  FAIL 48 :208 oklch literal oklch(0.985 0 0) outside tokens (--popover-foreground on .dark)
+  FAIL 48 :209 oklch literal oklch(0.922 0 0) outside tokens (--primary on .dark)
+  FAIL 48 :210 oklch literal oklch(0.205 0 0) outside tokens (--primary-foreground on .dark)
+  FAIL 48 :211 oklch literal oklch(0.269 0 0) outside tokens (--secondary on .dark)
+  FAIL 48 :212 oklch literal oklch(0.985 0 0) outside tokens (--secondary-foreground on .dark)
+  FAIL 48 :213 oklch literal oklch(0.269 0 0) outside tokens (--muted on .dark)
+  FAIL 48 :214 oklch literal oklch(0.708 0 0) outside tokens (--muted-foreground on .dark)
+  FAIL 48 :215 oklch literal oklch(0.269 0 0) outside tokens (--accent on .dark)
+  FAIL 48 :216 oklch literal oklch(0.985 0 0) outside tokens (--accent-foreground on .dark)
+  FAIL 48 :217 oklch literal oklch(0.6 0.22 29) outside tokens (--destructive on .dark)
+  FAIL 48 :218 oklch literal oklch(1 0 0 / 10%) outside tokens (--border on .dark)
+  FAIL 48 :219 oklch literal oklch(1 0 0 / 15%) outside tokens (--input on .dark)
+  FAIL 48 :220 oklch literal oklch(0.556 0 0) outside tokens (--ring on .dark)
+  FAIL 48 :223 oklch literal oklch(0.86 0.18 87) outside tokens (--brand on .dark)
+  FAIL 48 :224 oklch literal oklch(0.15 0.04 87) outside tokens (--brand-foreground on .dark)
+  FAIL 48 :225 oklch literal oklch(0.62 0.17 145) outside tokens (--brand-secondary on .dark)
+  FAIL 48 :226 oklch literal oklch(0.12 0.02 145) outside tokens (--brand-secondary-foreground on .dark)
+  FAIL 48 :229 oklch literal oklch(0.62 0.17 145) outside tokens (--success on .dark)
+  FAIL 48 :234 oklch literal oklch(0.6 0.22 29) outside tokens (--chart-1 on .dark)
+  FAIL 48 :235 oklch literal oklch(0.62 0.17 145) outside tokens (--chart-2 on .dark)
+  FAIL 48 :236 oklch literal oklch(0.84 0.18 87) outside tokens (--chart-3 on .dark)
+  FAIL 48 :237 oklch literal oklch(0.5 0.2 29) outside tokens (--chart-4 on .dark)
+  FAIL 48 :238 oklch literal oklch(0.75 0.15 87) outside tokens (--chart-5 on .dark)
+  FAIL 48 :239 oklch literal oklch(0.5 0.14 145) outside tokens (--chart-6 on .dark)
+  FAIL 48 :241 oklch literal oklch(0.205 0 0) outside tokens (--sidebar on .dark)
+  FAIL 48 :242 oklch literal oklch(0.985 0 0) outside tokens (--sidebar-foreground on .dark)
+  FAIL 48 :243 oklch literal oklch(0.62 0.17 145) outside tokens (--sidebar-primary on .dark)
+  FAIL 48 :244 oklch literal oklch(0.985 0 0) outside tokens (--sidebar-primary-foreground on .dark)
+  FAIL 48 :245 oklch literal oklch(0.269 0 0) outside tokens (--sidebar-accent on .dark)
+  FAIL 48 :246 oklch literal oklch(0.985 0 0) outside tokens (--sidebar-accent-foreground on .dark)
+  FAIL 48 :247 oklch literal oklch(1 0 0 / 10%) outside tokens (--sidebar-border on .dark)
+  FAIL 48 :248 oklch literal oklch(0.556 0 0) outside tokens (--sidebar-ring on .dark)
+  FAIL 48 :258 font-family literal ""elza-text", sans-serif" on body
+  FAIL 48 :464 oklch literal oklch(0.12 0 0) outside tokens (background on .splash-root)
+  FAIL 48 :469 oklch literal oklch(0.04 0 0) outside tokens (background on .splash-veil)
+  FAIL 48 :529 font-family literal ""Great Vibes", cursive" on .name-script
+  FAIL 48 :758 colour literal #000 outside tokens (-webkit-mask-image on .textile-fixed)
+  FAIL 48 :759 colour literal #000 outside tokens (mask-image on .textile-fixed)
+  FAIL 48 :809 font-family literal ""elza-text", sans-serif" on .film-loading-text
+  FAIL 48 :830 oklch literal oklch(0.15 0 0) outside tokens (box-shadow on .film-mask)
+  FAIL 48 :830 oklch literal oklch(0.22 0 0) outside tokens (box-shadow on .film-mask)
+  FAIL 48 :830 oklch literal oklch(0 0 0 / 80%) outside tokens (box-shadow on .film-mask)
+  FAIL 48 :845 oklch literal oklch(0.15 0 0) outside tokens (border-bottom on .film-frame)
+  FAIL 48 :850 colour literal rgba(0, 0, 0, 0.85) outside tokens (background on .film-frame-overlay)
+  FAIL 48 :850 colour literal rgba(0, 0, 0, 0.4) outside tokens (background on .film-frame-overlay)
+  FAIL 48 :869 font-family literal ""elza-text", sans-serif" on .film-frame-desc
+  FAIL 48 :874 colour literal #000 outside tokens (box-shadow on .film-sprocket)
+  FAIL 48 :900 colour literal rgba(0, 0, 0, 0.7) outside tokens (background on .film-vignette)
+  FAIL 48 :927 oklch literal oklch(0 0 0 / 80%) outside tokens (background on .rolodex-card-image::after)
+  FAIL 48 :973 colour literal rgba(255, 255, 255, 0.08) outside tokens (border on .rolodex-card-final)
+  FAIL 48 :974 oklch literal oklch(0.07 0 0) outside tokens (background on .rolodex-card-final)
+  FAIL 48 :991 oklch literal oklch(0 0 0 / 1.5%) outside tokens (background on .glass-panel)
+  FAIL 48 :994 oklch literal oklch(0 0 0 / 3%) outside tokens (border on .glass-panel)
+  FAIL 48 :997 oklch literal oklch(0 0 0 / 2%) outside tokens (box-shadow on .glass-panel)
+  FAIL 48 :1001 oklch literal oklch(1 0 0 / 1%) outside tokens (background on .dark .glass-panel)
+  FAIL 48 :1002 oklch literal oklch(1 0 0 / 2.5%) outside tokens (border-color on .dark .glass-panel)
+  FAIL 48 :1003 oklch literal oklch(0 0 0 / 8%) outside tokens (box-shadow on .dark .glass-panel)
+  FAIL 48 :1007 oklch literal oklch(0 0 0 / 2%) outside tokens (background on .glass-card)
+  FAIL 48 :1010 oklch literal oklch(0 0 0 / 4%) outside tokens (border on .glass-card)
+  FAIL 48 :1011 oklch literal oklch(0 0 0 / 2%) outside tokens (box-shadow on .glass-card)
+  FAIL 48 :1015 oklch literal oklch(1 0 0 / 1.5%) outside tokens (background on .dark .glass-card)
+  FAIL 48 :1016 oklch literal oklch(1 0 0 / 3%) outside tokens (border-color on .dark .glass-card)
+  FAIL 48 :1017 oklch literal oklch(0 0 0 / 10%) outside tokens (box-shadow on .dark .glass-card)
+  FAIL 48 :1021 oklch literal oklch(0 0 0 / 3%) outside tokens (background on .glass-input)
+  FAIL 48 :1024 oklch literal oklch(0 0 0 / 5%) outside tokens (border on .glass-input)
+  FAIL 48 :1025 oklch literal oklch(0 0 0 / 3%) outside tokens (box-shadow on .glass-input)
+  FAIL 48 :1029 oklch literal oklch(1 0 0 / 2%) outside tokens (background on .dark .glass-input)
+  FAIL 48 :1030 oklch literal oklch(1 0 0 / 4%) outside tokens (border-color on .dark .glass-input)
+  FAIL 48 :1031 oklch literal oklch(0 0 0 / 12%) outside tokens (box-shadow on .dark .glass-input)
+  FAIL 48 :1035 oklch literal oklch(0 0 0 / 2%) outside tokens (background on .glass-pill)
+  FAIL 48 :1038 oklch literal oklch(0 0 0 / 4%) outside tokens (border on .glass-pill)
+  FAIL 48 :1042 oklch literal oklch(1 0 0 / 1%) outside tokens (background on .dark .glass-pill)
+  FAIL 48 :1043 oklch literal oklch(1 0 0 / 3%) outside tokens (border-color on .dark .glass-pill)
+  FAIL 48 :1047 font-family literal ""elza-text", sans-serif" on .final-card-tagline
+  FAIL 48 :1061 font-family literal ""elza-text", sans-serif" on .final-card-title
+  FAIL 48 :1068 font-family literal ""elza-text", sans-serif" on .final-card-subtitle
+  FAIL 48 :1074 font-family literal ""elza-text", sans-serif" on .final-card-phonetic
+  FAIL 48 :1087 font-family literal ""elza-text", sans-serif" on .landing-hero-name
+  FAIL 48 :1118 font-family literal ""elza-text", sans-serif" on .landing-hero-sub
+  FAIL 48 :1143 font-family literal ""ogg-text", serif" on .landing-hero-quote
+  FAIL 48 :1152 font-family literal ""elza-text", sans-serif" on .landing-hero-author
+  FAIL 48 :1164 font-family literal ""elza-text", sans-serif" on .final-card-pronunciation
+  FAIL 48 :1172 font-family literal ""elza-text", sans-serif" on .final-card-intro
+  FAIL 48 :1179 font-family literal ""elza-text", sans-serif" on .final-card-link
+  FAIL 48 :1230 oklch literal oklch(0 0 0 / 2%) outside tokens (background on .project-card)
+  FAIL 48 :1233 oklch literal oklch(0 0 0 / 4%) outside tokens (border on .project-card)
+  FAIL 48 :1234 oklch literal oklch(0 0 0 / 2%) outside tokens (box-shadow on .project-card)
+  FAIL 48 :1238 oklch literal oklch(1 0 0 / 1.5%) outside tokens (background on .dark .project-card)
+  FAIL 48 :1239 oklch literal oklch(1 0 0 / 3%) outside tokens (border-color on .dark .project-card)
+  FAIL 48 :1240 oklch literal oklch(0 0 0 / 10%) outside tokens (box-shadow on .dark .project-card)
+  FAIL 48 :1244 oklch literal oklch(0 0 0 / 8%) outside tokens (border-color on .project-card:hover)
+  FAIL 48 :1245 oklch literal oklch(0 0 0 / 6%) outside tokens (box-shadow on .project-card:hover)
+  FAIL 48 :1246 oklch literal oklch(0 0 0 / 3.5%) outside tokens (background on .project-card:hover)
+  FAIL 48 :1250 oklch literal oklch(1 0 0 / 6%) outside tokens (border-color on .dark .project-card:hover)
+  FAIL 48 :1251 oklch literal oklch(0 0 0 / 20%) outside tokens (box-shadow on .dark .project-card:hover)
+  FAIL 48 :1252 oklch literal oklch(1 0 0 / 2.5%) outside tokens (background on .dark .project-card:hover)
+  FAIL 48 :1257 oklch literal oklch(0 0 0 / 2%) outside tokens (background on .tech-badge)
+  FAIL 48 :1260 oklch literal oklch(0 0 0 / 4%) outside tokens (border on .tech-badge)
+  FAIL 48 :1264 oklch literal oklch(1 0 0 / 1%) outside tokens (background on .dark .tech-badge)
+  FAIL 48 :1265 oklch literal oklch(1 0 0 / 3%) outside tokens (border-color on .dark .tech-badge)
+  FAIL 48 :1439 font-family literal ""elza-text", sans-serif" on .click-hint-text
+  FAIL 62 :485 .splash-burst is hidden at rest (opacity: 0) and depends on a script to appear | fix: Visible by default: scope the hidden state under a .js class the script adds, or animate from visible with @starting-style
+  FAIL 62 :595 .splash-graph-image is hidden at rest (opacity: 0) and depends on a script to appear
+  FAIL 62 :742 .landing-hidden is hidden at rest (opacity: 0) and depends on a script to appear
+  FAIL 67 :1046 .final-card-tagline: letter-spaced tracked 0.08em at 14px in a label role | fix: Labels, captions, table heads, nav links and meta are the body face (or the theme's label face), a step smaller, sentence case, untracked
+  FAIL 67 :1085 .landing-hero-name: uppercase tracked 0.06em in a label role
+  FAIL 67 :1438 .click-hint-text: uppercase tracked 0.2em at 11px in a label role
+  REFLEX 7b :18 pure #fff: --color-background: var(--background) (@theme) | fix: Tint the base toward the anchor hue
+  REFLEX 7b :20 pure #fff: --color-card: var(--card) (@theme)
+  REFLEX 7b :22 pure #fff: --color-popover: var(--popover) (@theme)
+  REFLEX 22 :129 zero-chroma oklch(1 0 0) (--background on :root) | fix: Give neutrals at least 0.005 chroma
+  REFLEX 22 :130 zero-chroma oklch(0.145 0 0) (--foreground on :root)
+  REFLEX 22 :131 zero-chroma oklch(1 0 0) (--card on :root)
+  REFLEX 22 :132 zero-chroma oklch(0.145 0 0) (--card-foreground on :root)
+  REFLEX 22 :133 zero-chroma oklch(1 0 0) (--popover on :root)
+  REFLEX 22 :134 zero-chroma oklch(0.145 0 0) (--popover-foreground on :root)
+  REFLEX 22 :135 zero-chroma oklch(0.205 0 0) (--primary on :root)
+  REFLEX 22 :136 zero-chroma oklch(0.985 0 0) (--primary-foreground on :root)
+  REFLEX 22 :137 zero-chroma oklch(0.97 0 0) (--secondary on :root)
+  REFLEX 22 :138 zero-chroma oklch(0.205 0 0) (--secondary-foreground on :root)
+  REFLEX 22 :139 zero-chroma oklch(0.97 0 0) (--muted on :root)
+  REFLEX 22 :140 zero-chroma oklch(0.556 0 0) (--muted-foreground on :root)
+  REFLEX 22 :141 zero-chroma oklch(0.97 0 0) (--accent on :root)
+  REFLEX 22 :142 zero-chroma oklch(0.205 0 0) (--accent-foreground on :root)
+  REFLEX 22 :144 zero-chroma oklch(0.922 0 0) (--border on :root)
+  REFLEX 22 :145 zero-chroma oklch(0.922 0 0) (--input on :root)
+  REFLEX 22 :146 zero-chroma oklch(0.708 0 0) (--ring on :root)
+  REFLEX 22 :160 zero-chroma oklch(0.12 0 0) (--terminal-bg on :root)
+  REFLEX 22 :171 zero-chroma oklch(0.55 0 0) (--status-archived on :root)
+  REFLEX 22 :178 zero-chroma oklch(0.175 0 0) (--chat-bg on :root)
+  REFLEX 22 :179 zero-chroma oklch(0.3 0 0) (--chat-border on :root)
+  REFLEX 22 :180 zero-chroma oklch(0.82 0 0) (--chat-text on :root)
+  REFLEX 22 :191 zero-chroma oklch(0.985 0 0) (--sidebar on :root)
+  REFLEX 22 :192 zero-chroma oklch(0.145 0 0) (--sidebar-foreground on :root)
+  REFLEX 22 :193 zero-chroma oklch(0.205 0 0) (--sidebar-primary on :root)
+  REFLEX 22 :194 zero-chroma oklch(0.985 0 0) (--sidebar-primary-foreground on :root)
+  REFLEX 22 :195 zero-chroma oklch(0.97 0 0) (--sidebar-accent on :root)
+  REFLEX 22 :196 zero-chroma oklch(0.205 0 0) (--sidebar-accent-foreground on :root)
+  REFLEX 22 :197 zero-chroma oklch(0.922 0 0) (--sidebar-border on :root)
+  REFLEX 22 :198 zero-chroma oklch(0.708 0 0) (--sidebar-ring on :root)
+  REFLEX 22 :203 zero-chroma oklch(0.145 0 0) (--background on .dark)
+  REFLEX 22 :204 zero-chroma oklch(0.985 0 0) (--foreground on .dark)
+  REFLEX 22 :205 zero-chroma oklch(0.205 0 0) (--card on .dark)
+  REFLEX 22 :206 zero-chroma oklch(0.985 0 0) (--card-foreground on .dark)
+  REFLEX 22 :207 zero-chroma oklch(0.205 0 0) (--popover on .dark)
+  REFLEX 22 :208 zero-chroma oklch(0.985 0 0) (--popover-foreground on .dark)
+  REFLEX 22 :209 zero-chroma oklch(0.922 0 0) (--primary on .dark)
+  REFLEX 22 :210 zero-chroma oklch(0.205 0 0) (--primary-foreground on .dark)
+  REFLEX 22 :211 zero-chroma oklch(0.269 0 0) (--secondary on .dark)
+  REFLEX 22 :212 zero-chroma oklch(0.985 0 0) (--secondary-foreground on .dark)
+  REFLEX 22 :213 zero-chroma oklch(0.269 0 0) (--muted on .dark)
+  REFLEX 22 :214 zero-chroma oklch(0.708 0 0) (--muted-foreground on .dark)
+  REFLEX 22 :215 zero-chroma oklch(0.269 0 0) (--accent on .dark)
+  REFLEX 22 :216 zero-chroma oklch(0.985 0 0) (--accent-foreground on .dark)
+  REFLEX 22 :220 zero-chroma oklch(0.556 0 0) (--ring on .dark)
+  REFLEX 22 :241 zero-chroma oklch(0.205 0 0) (--sidebar on .dark)
+  REFLEX 22 :242 zero-chroma oklch(0.985 0 0) (--sidebar-foreground on .dark)
+  REFLEX 22 :244 zero-chroma oklch(0.985 0 0) (--sidebar-primary-foreground on .dark)
+  REFLEX 22 :245 zero-chroma oklch(0.269 0 0) (--sidebar-accent on .dark)
+  REFLEX 22 :246 zero-chroma oklch(0.985 0 0) (--sidebar-accent-foreground on .dark)
+  REFLEX 22 :248 zero-chroma oklch(0.556 0 0) (--sidebar-ring on .dark)
+  REFLEX 22 :464 zero-chroma oklch(0.12 0 0) (background on .splash-root)
+  REFLEX 22 :469 zero-chroma oklch(0.04 0 0) (background on .splash-veil)
+  REFLEX 22 :830 zero-chroma oklch(0.15 0 0) (box-shadow on .film-mask)
+  REFLEX 22 :830 zero-chroma oklch(0.22 0 0) (box-shadow on .film-mask)
+  REFLEX 22 :845 zero-chroma oklch(0.15 0 0) (border-bottom on .film-frame)
+  REFLEX 22 :974 zero-chroma oklch(0.07 0 0) (background on .rolodex-card-final)
+  REFLEX 37 :1143 4 font families: elza-text, ibm plex mono, great vibes, ogg-text | fix: Drop the extra family; three is the ceiling
+  WARN 29 :992 glass panel: backdrop-filter blur over a translucent black on .glass-panel | fix: Solid or grained surface; elevation by lightness
+  WARN 29 :1008 glass panel: backdrop-filter blur over a translucent black on .glass-card
+  WARN 29 :1022 glass panel: backdrop-filter blur over a translucent black on .glass-input
+  WARN 29 :1036 glass panel: backdrop-filter blur over a translucent black on .glass-pill
+  WARN 29 :1231 glass panel: backdrop-filter blur over a translucent black on .project-card
+  WARN 29 :1258 glass panel: backdrop-filter blur over a translucent black on .tech-badge
+  WARN 41 :974 dark surface (L 7%) on .rolodex-card-final sets no text colour | fix: Swap text to paper in the same rule
+  WARN F24 :997 a hairline border under a wide soft shadow on .glass-panel | fix: Commit to one: a defined edge, or elevation by shadow
+src/layouts/ArticleLayout.astro
+  FAIL 34 :1 no overflow-x: clip on html and body | fix: overflow-x: clip on both html and body
+http://127.0.0.1:4404/projects/agentspec
+  FAIL 76 :1 [1440px] an image that does not load: tui-demo.gif, tui.png | fix: Point it at a file that exists, make it a data-slot placeholder, or remove it
+  REFLEX 39b :1 [1440px] control height outside 44 to 52px: button.flex 38px | fix: Marketing controls stand 44 to 52px; app UI 32 to 40px with a 44px hit target
+  REFLEX 49b :1 [320px] link "agentspec" wraps to 2 lines (a) | fix: Shorten the label or set nowrap
+  REFLEX 49b :1 [320px] link "agentspec-sdk" wraps to 3 lines (a)
+  REFLEX 49b :1 [320px] link "agentspec-usage" wraps to 2 lines (a)
+  REFLEX 49b :1 [320px] link "resource-conventions" wraps to 2 lines (a)
+  REFLEX 49b :1 [414px] link "agentspec-sdk" wraps to 2 lines (a)
+  WARN F18 :1 [1440px] slot "navigation-menu" renders at 420 x 36px | fix: The slot collapsed: give it a width from its track and a real aspect-ratio, never a percentage of a shrink-to-fit parent
+  WARN F19 :1 [1440px] 4 font weights in running use (400, 500, 600, 700) | fix: Three weights at most, display and body together, picked as extremes
+  NOTE 44c :1 [1440px] hero ends at 370px of a 900px screen | fix: Fill the first screen with the visual or the headline, not with copy
+  NOTE 58 :1 [1440px] 359 words on one screen (from y=5400) | fix: One idea per screen: cut to about 80 words, make the section an object
+  NOTE 59 :1 [1440px] smallest gap between sections is 89px (gaps: 89) | fix: 120px or more between sections, by the --section-gap steps
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included | fix: A landing strip, not a page: six to nine sections, five on a thin prompt (layout.md § 3)
+  NOTE 79 :1 [1440px] 578px of nothing between the hero's last content (y 322) and the fold | fix: Centre the content in the screen and grow the visual or the head (layout.md § 6); never fill it with copy
+http://127.0.0.1:4404/about
+  REFLEX 25 :1 [1440px] running prose set too wide: p about 92 characters a line | fix: Cap the measure at 45 to 75ch
+  WARN F18 :1 [1440px] slot "navigation-menu" renders at 420 x 36px
+  NOTE 44c :1 [1440px] hero ends at 57px of a 900px screen
+  NOTE 58 :1 [1440px] 104 words on one screen (from y=0)
+  NOTE 59 :1 [1440px] smallest gap between sections is 98px (gaps: 98)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 665px of nothing between the hero's last content (y 56) and the next section
+http://127.0.0.1:4404/blog
+  REFLEX 25 :1 [1440px] running prose set too wide: p.mt-2 about 96 characters a line, p.mt-2 about 95 characters a line
+  WARN F18 :1 [1440px] slot "navigation-menu" renders at 420 x 36px
+  NOTE 44c :1 [1440px] hero ends at 57px of a 900px screen
+  NOTE 58 :1 [1440px] 202 words on one screen (from y=1200)
+  NOTE 59 :1 [1440px] smallest gap between sections is 89px (gaps: 89)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 844px of nothing between the hero's last content (y 56) and the fold
+http://127.0.0.1:4404/blog/rag-is-immortal
+  REFLEX 25 :1 [1440px] running prose set too wide: p about 89 characters a line, p about 88 characters a line
+  REFLEX 72 :1 [1440px] text crowds the edge of its box: a.group bottom -3px; a.group bottom -3px; a.group bottom -3px | fix: Pad the box: max(8px, 0.5em) at the sides, max(4px, 0.3em) above and below
+  WARN F18 :1 [1440px] slot "navigation-menu" renders at 420 x 36px
+  WARN F19 :1 [1440px] 4 font weights in running use (400, 500, 600, 700)
+  NOTE 44c :1 [1440px] hero ends at 284px of a 900px screen
+  NOTE 58 :1 [1440px] 387 words on one screen (from y=5200)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 616px of nothing between the hero's last content (y 284) and the fold
+src/components/ChatDemo.tsx
+  REFLEX 64 :88 font-mono on "Reset ▍ Press ▶ Run to …" at 14px (<div class="my-4 overflow-hidden rounded-lg…">) | fix: Labels in the body face at a smaller size and normal case; font-mono only for code and figures
+src/components/GPEvolutionVisualizer.tsx
+  REFLEX 64 :282 font-mono on "Gen /" at 12px (<span class="font-mono font-semibold">)
+src/components/ArchitectureFlow.tsx
+  WARN 28a :554 lazy-loaded first image (likely LCP) | fix: fetchpriority=high on the LCP element
+src/components/TimelineImage.tsx
+  WARN 28a :20 lazy-loaded first image (likely LCP)
+src/components/ui/link-preview.tsx
+  WARN 28a :62 lazy-loaded first image (likely LCP)
+src/components/AutoHideHeader.tsx
+  WARN 29 :21 glass: backdrop-blur-md over bg-background/80 on <motion class="fixed top-0 left-0 right-0 z-he…"> | fix: Solid or grained surface; elevation by lightness, shadows with offset and blur
+src/components/CommandPalette.tsx
+  WARN 29 :163 glass: backdrop-blur-sm over bg-background/60 on <motion class="fixed inset-0 z-modal flex item…">
+  WARN 29 :176 glass: backdrop-blur-xl over bg-background/80 on <motion class="flex max-h-[calc(100dvh-2rem)] …">
+  WARN F24 :178 a hairline border under a wide soft shadow (border with shadow-xl or shadow-2xl)
+src/components/MobileMenu.tsx
+  WARN 29 :27 glass: backdrop-blur-xl over bg-background/90 on <motion class="mobile-navigation fixed inset-0…">
+src/components/NewsletterSignup.tsx
+  WARN 29 :70 glass: backdrop-blur-xl over bg-background/70 on <div class="fixed bottom-4 left-4 z-modal w…">
+src/components/ui/button.tsx
+  WARN 29 :7 glass: backdrop-blur-sm over bg-background/60 on cva() class string
+src/components/ui/floating-dock.tsx
+  WARN 29 :41 glass: backdrop-blur-sm over bg-background/60 on <a class="flex h-11 w-11 shrink-0 items-c…">
+  WARN 29 :128 glass: backdrop-blur-sm over bg-background/60 on <motion class="relative flex aspect-square ite…">
+  WARN 29 :139 glass: backdrop-blur-sm over bg-background/60 on <motion class="absolute -top-8 left-1/2 w-fit …">
+src/components/CriticalThinkingVisuals.tsx
+  WARN 49 :618 long clickable label "Jump to Conclusion See the Full Pic…" without nowrap | fix: Shorten the label or set nowrap
+http://127.0.0.1:4404/
+  WARN F18 :1 [1440px] slot "navigation-menu" renders at 420 x 36px
+  NOTE 44c :1 [1440px] hero ends at 534px of a 900px screen
+  NOTE 59 :1 [1440px] smallest gap between sections is -44px (gaps: -44)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 322px of nothing between the hero's last content (y 534) and the next section
+http://127.0.0.1:4404/projects
+  WARN F18 :1 [1440px] slot "navigation-menu" renders at 420 x 36px
+  NOTE 44c :1 [1440px] hero ends at 57px of a 900px screen
+  NOTE 58 :1 [1440px] 157 words on one screen (from y=1750)
+  NOTE 59 :1 [1440px] smallest gap between sections is 89px (gaps: 89)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 844px of nothing between the hero's last content (y 56) and the fold
+http://127.0.0.1:4404/research
+  WARN F18 :1 [1440px] slot "navigation-menu" renders at 420 x 36px
+  NOTE 44c :1 [1440px] hero ends at 57px of a 900px screen
+  NOTE 58 :1 [1440px] 92 words on one screen (from y=0) | fix: Close to the 80-word screen budget
+  NOTE 59 :1 [1440px] smallest gap between sections is 89px (gaps: 89)
+  NOTE 77 :1 [1440px] 2 sections, hero and footer included
+  NOTE 79 :1 [1440px] 779px of nothing between the hero's last content (y 56) and the next section
+src/components/ui/navbar-menu.tsx
+  WARN F24 :44 a hairline border under a wide soft shadow (border with shadow-xl or shadow-2xl)
+sloplint: 115 FAIL, 73 REFLEX, 32 WARN, 33 NOTE across 77 file(s) and 7 URL(s).
+kept: links 119/119, handlers 39/39, headings 64/64, figures 19/19; before 147 FAIL, 95 REFLEX, now 115 FAIL, 73 REFLEX
+compare: .hallmark/compare.html shows before and after side by side

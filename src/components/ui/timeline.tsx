@@ -217,7 +217,8 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
   const opacityTransform = useTransform(scrollYProgress, [0, 0.1], [0, 1]);
 
   const getDotStyles = (intensity: number) => {
-    const baseClasses = 'h-4 w-4 rounded-full p-2 transition-all duration-500 ease-out';
+    const baseClasses =
+      'h-4 w-4 rounded-full p-2 transition-[background-color,border-color,box-shadow] duration-500 ease-out';
 
     if (intensity > 0.1) {
       return {
@@ -252,9 +253,7 @@ export const Timeline = ({ data, title, description }: TimelineProps) => {
               {item.content?.()}
               {item.subsections?.map((sub, i) => (
                 <div key={i} className={i > 0 ? 'mt-6 pt-6 border-t border-border' : ''}>
-                  <span className="text-xs uppercase tracking-wide text-muted-foreground font-medium">
-                    {sub.label}
-                  </span>
+                  <span className="text-xs text-muted-foreground font-medium">{sub.label}</span>
                   <div className="mt-2">{sub.content()}</div>
                 </div>
               ))}

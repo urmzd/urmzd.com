@@ -214,7 +214,7 @@ function PalettePortal({
                   Array.from(sections.entries()).map(
                     ([section, { items: sectionItems, startIndex }]) => (
                       <div key={section}>
-                        <p className="px-2 py-1.5 text-[0.65rem] font-medium uppercase tracking-wider text-muted-foreground">
+                        <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
                           {section}
                         </p>
                         {sectionItems.map((item, i) => {

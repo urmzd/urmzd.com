@@ -8,7 +8,7 @@ interface AsideProps {
 export default function Aside({ children, label = 'Side Note' }: AsideProps) {
   return (
     <aside className="not-prose my-6 rounded-r-lg border-l-2 border-muted-foreground/25 bg-muted/50 px-4 py-3">
-      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
         <IconInfoCircle size={14} />
         {label}
       </p>

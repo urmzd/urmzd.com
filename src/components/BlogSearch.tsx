@@ -73,7 +73,7 @@ export default function BlogSearch({ posts }: BlogSearchProps) {
               <li key={post.id}>
                 <a
                   href={`/blog/${post.id}`}
-                  className="group block rounded-xl p-6 transition-all glass-card hover:border-primary/40"
+                  className="group block rounded-xl p-6 transition-colors glass-card hover:border-primary/40"
                 >
                   <h2 className="text-2xl font-semibold group-hover:text-primary">
                     {post.title}

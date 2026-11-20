@@ -180,6 +180,8 @@ export function PlaceholdersAndVanishInput({
       onSubmit={handleSubmit}
     >
       <canvas
+        aria-hidden="true"
+        tabIndex={-1}
         className={cn(
           'absolute pointer-events-none  text-base transform scale-50 top-[20%] left-2 sm:left-8 origin-top-left filter invert dark:invert-0 pr-20',
           !animating ? 'opacity-0' : 'opacity-100',
