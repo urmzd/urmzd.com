@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.24.0 (2026-11-21)
+
+### Features
+
+- **fonts**: self-host Instrument Sans in place of Adobe Fonts Elza Text (#43) ([a3744ee](https://github.com/urmzd/urmzd.com/commit/a3744ee310257bb20fee0bca2930472e75f9a1cc))
+
+### Misc
+
+- deploy docs.urmzd.com to S3 and link the product docs domains (#42) ([e1868a3](https://github.com/urmzd/urmzd.com/commit/e1868a338beb8fdfa5497a0881bc0d985237a664))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.23.0...v0.24.0)
+
+
 ## 0.23.0 (2026-11-21)
 
 ### Features
