@@ -145,32 +145,71 @@ function blobUrl(repo: Repo, path: string): string {
  * Images load from raw.githubusercontent.com; other links open on github.com.
  */
 function absolutizeBody(body: string, repo: Repo): string {
+  // Root-relative paths ("/docs/x.png") are repo-root paths on GitHub, so they are
+  // rewritten too; rawUrl and blobUrl strip the leading slash.
   const fix = (url: string, image: boolean) => {
-    if (!isRelative(url) || url.startsWith('/')) return url;
+    if (!isRelative(url)) return url;
     return image || IMAGE_EXT.test(url.split(/[?#]/)[0]) ? rawUrl(repo, url) : blobUrl(repo, url);
   };
+  // srcset holds "url descriptor, url descriptor"; rewrite each URL on its own.
+  const fixSrcset = (value: string) =>
+    value
+      .split(',')
+      .map((part) => part.trim().replace(/^(\S+)/, (u) => fix(u, true)))
+      .join(', ');
+
+  // Leave fenced code blocks alone: they are examples, not links.
   return body
-    .replace(
-      /(!?)\[([^\]]*)\]\(\s*<?([^)\s>]+)>?((?:\s+"[^"]*")?)\s*\)/g,
-      (_, bang, text, url, title) => {
-        return `${bang}[${text}](${fix(url, bang === '!')}${title})`;
-      },
-    )
-    .replace(
-      /(<(?:img|source)\b[^>]*?\b(?:src|srcset)=["'])([^"']+)(["'])/gi,
-      (_, pre, url, post) => {
-        return `${pre}${fix(url, true)}${post}`;
-      },
-    )
-    .replace(/(<a\b[^>]*?\bhref=["'])([^"']+)(["'])/gi, (_, pre, url, post) => {
-      return `${pre}${fix(url, false)}${post}`;
-    });
+    .split(/(^```[\s\S]*?^```)/m)
+    .map((chunk, i) => {
+      if (i % 2 === 1) return chunk;
+      return (
+        chunk
+          // Images first, so a linked image's outer [..](target) is visible to the link pass.
+          .replace(
+            /!\[([^\]]*)\]\(\s*<?([^)\s>]+)>?((?:\s+"[^"]*")?)\s*\)/g,
+            (_, alt, url, title) => {
+              return `![${alt}](${fix(url, true)}${title})`;
+            },
+          )
+          .replace(
+            /(^|[^!])\[((?:[^[\]]|!\[[^\]]*\]\([^)]*\))*)\]\(\s*<?([^)\s>]+)>?((?:\s+"[^"]*")?)\s*\)/g,
+            (_, lead, text, url, title) => `${lead}[${text}](${fix(url, false)}${title})`,
+          )
+          // Reference-style definitions: [label]: ./path
+          .replace(/^(\s{0,3}\[[^\]]+\]:\s*)(\S+)/gm, (_, pre, url) => `${pre}${fix(url, false)}`)
+          .replace(/(<(?:img|source)\b[^>]*?\bsrc=["'])([^"']+)(["'])/gi, (_, pre, url, post) => {
+            return `${pre}${fix(url, true)}${post}`;
+          })
+          .replace(
+            /(<(?:img|source)\b[^>]*?\bsrcset=["'])([^"']+)(["'])/gi,
+            (_, pre, value, post) => {
+              return `${pre}${fixSrcset(value)}${post}`;
+            },
+          )
+          .replace(/(<a\b[^>]*?\bhref=["'])([^"']+)(["'])/gi, (_, pre, url, post) => {
+            return `${pre}${fix(url, false)}${post}`;
+          })
+      );
+    })
+    .join('');
+}
+
+/** Absolute http(s) URL for an image reference, or undefined when it cannot be one. */
+function absoluteImage(url: string): string | undefined {
+  try {
+    const u = new URL(url, 'https://github.com');
+    return u.protocol === 'https:' || u.protocol === 'http:' ? u.toString() : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
  * Card image for a repo: SHOWCASE.md `image`, else the first image in the body,
  * else the first file in showcase/. A GIF is swapped for a same-named PNG when one
- * exists, so the listing page loads stills instead of animations.
+ * exists, so the listing page loads stills instead of animations. Never throws and
+ * never returns a value the content schema would reject.
  */
 async function resolveImage(
   repo: Repo,
@@ -179,25 +218,25 @@ async function resolveImage(
   token: string | undefined,
 ): Promise<string | undefined> {
   const candidate = explicit ?? firstImage(body);
-  const showcaseFiles = await listDir(repo.name, SHOWCASE_DIR, token);
 
   if (candidate) {
-    if (!isRelative(candidate)) return candidate;
+    if (!isRelative(candidate)) return absoluteImage(candidate);
     const path = candidate.replace(/^\.?\//, '');
     if (/\.gif$/i.test(path) && path.startsWith(`${SHOWCASE_DIR}/`)) {
       const png = path.slice(SHOWCASE_DIR.length + 1).replace(/\.gif$/i, '.png');
-      if (showcaseFiles.includes(png)) return rawUrl(repo, `${SHOWCASE_DIR}/${png}`);
+      const files = await listDir(repo.name, SHOWCASE_DIR, token);
+      if (files.includes(png)) return absoluteImage(rawUrl(repo, `${SHOWCASE_DIR}/${png}`));
     }
-    return rawUrl(repo, path);
+    return absoluteImage(rawUrl(repo, path));
   }
 
-  const images = showcaseFiles.filter((f) => IMAGE_EXT.test(f));
+  const images = (await listDir(repo.name, SHOWCASE_DIR, token)).filter((f) => IMAGE_EXT.test(f));
   const pick =
     images.find((f) => /^demo\.(png|webp|jpe?g)$/i.test(f)) ??
     images.find((f) => /\.(png|webp|jpe?g)$/i.test(f) && !/light/i.test(f)) ??
     images.find((f) => /\.(png|webp|jpe?g)$/i.test(f)) ??
     images[0];
-  return pick ? rawUrl(repo, `${SHOWCASE_DIR}/${pick}`) : undefined;
+  return pick ? absoluteImage(rawUrl(repo, `${SHOWCASE_DIR}/${pick}`)) : undefined;
 }
 
 /** GitHub stores the homepage as typed; add a scheme and drop anything unparsable. */
@@ -298,7 +337,9 @@ export function githubLoader(): Loader {
         const rawBody = showcaseBody || (await fetchReadme(repo.name, token));
         const topics = repo.topics ?? [];
         const isResearch = topics.includes(RESEARCH_TOPIC);
-        const image = await resolveImage(repo, asString(fields.image), rawBody, token);
+        const image = isResearch
+          ? undefined
+          : await resolveImage(repo, asString(fields.image), rawBody, token);
         const body = absolutizeBody(rawBody, repo);
 
         const data = await parseData({

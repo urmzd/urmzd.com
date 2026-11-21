@@ -1,5 +1,5 @@
 import { ArrowUpRight, Star } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import StatusBadge, { type ProjectStatus } from './StatusBadge';
 
 export interface ProjectCardData {
@@ -25,11 +25,22 @@ interface ProjectCardProps {
 const MAX_CHIPS = 4;
 
 function formatUpdated(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+  return new Date(iso).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    timeZone: 'UTC',
+  });
 }
 
 function Preview({ project }: { project: ProjectCardData }) {
   const [failed, setFailed] = useState(false);
+  const img = useRef<HTMLImageElement>(null);
+
+  // The image is server-rendered, so it can fail before hydration attaches onError.
+  useEffect(() => {
+    const el = img.current;
+    if (el?.complete && el.naturalWidth === 0) setFailed(true);
+  }, []);
 
   if (!project.image || failed) {
     return (
@@ -42,6 +53,7 @@ function Preview({ project }: { project: ProjectCardData }) {
   return (
     <div className="project-card-media">
       <img
+        ref={img}
         src={project.image}
         alt={`Preview of ${project.title}`}
         loading="lazy"

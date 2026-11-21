@@ -1251,7 +1251,7 @@
   }
 
   .project-card-monogram {
-    @apply text-5xl font-semibold tracking-tight text-foreground/70;
+    @apply max-w-full truncate text-4xl font-semibold tracking-tight text-foreground/70 sm:text-5xl;
   }
 
   .tech-badge {
