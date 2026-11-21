@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.23.0 (2026-11-21)
+
+### Features
+
+- **projects**: list every public repo with search, category pills and previews (#41) ([8dc006d](https://github.com/urmzd/urmzd.com/commit/8dc006d72b819ce7536914f5b447f0106796c83e))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.22.0...v0.23.0)
+
+
 ## 0.22.0 (2026-11-20)
 
 ### Features
