@@ -1141,8 +1141,17 @@
     display: block;
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     color: oklch(from var(--foreground) l c h / 75%);
+    /* Background-matched halo keeps the thin serif clear of the plexus dots. */
+    text-shadow:
+      0 0 3px var(--background),
+      0 0 8px var(--background);
+  }
+
+  /* 15.3:1 on the dark background (75% alpha is 9.3:1 in light mode). */
+  .dark .landing-hero-quote {
+    color: oklch(from var(--foreground) l c h / 90%);
   }
 
   /* Author attribution — small caps, gold tint */
@@ -1533,7 +1542,7 @@
   }
 
   .landing-hero-quote {
-    font-size: 0.85rem;
+    font-size: 1rem;
   }
 }
 
