@@ -28,6 +28,18 @@
     U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Instrument Serif italic: self-hosted static font (latin), SIL Open Font
+ * License. See public/fonts/Instrument-Serif-OFL.txt. Used for the hero quote. */
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url("/fonts/instrument-serif-latin-400-italic.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme inline {
   --animate-aurora: aurora 60s linear infinite;
   --radius-sm: calc(var(--radius) - 4px);
@@ -94,6 +106,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
   --font-mono: "IBM Plex Mono", monospace;
   --font-script: "Great Vibes", cursive;
   --z-index-header: var(--z-header);
@@ -116,6 +129,7 @@
  *
  * Fonts
  *   --font-sans   "Instrument Sans" — body copy, headings (self-hosted, OFL)
+ *   --font-serif  "Instrument Serif" — hero quote, italic only (self-hosted, OFL)
  *   --font-mono   "IBM Plex Mono"  — code, terminals
  *   --font-script "Great Vibes"    — decorative name treatment
  *
@@ -1122,10 +1136,10 @@
     opacity: 0.35;
   }
 
-  /* Quote body — serif italic for literary quality (system serif, no web font) */
+  /* Quote body — serif italic for literary quality */
   .landing-hero-quote {
     display: block;
-    font-family: ui-serif, Georgia, "Times New Roman", serif;
+    font-family: var(--font-serif);
     font-style: italic;
     font-size: 0.8rem;
     color: oklch(from var(--foreground) l c h / 75%);
