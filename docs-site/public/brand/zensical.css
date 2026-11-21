@@ -2,7 +2,7 @@
 
 /* Article palette and typography from urmzd.com/src/styles/global.css. */
 body[data-md-color-scheme][data-md-color-primary] {
-  --md-text-font: "elza-text";
+  --md-text-font: "Instrument Sans";
   --md-code-font: "IBM Plex Mono";
   --guide-ink: oklch(0.145 0 0);
   --guide-paper: white;

@@ -8,7 +8,9 @@ IBM Plex Mono: IBM Corp., distributed under the SIL Open Font License.
 Latin WOFF2 files from @fontsource/ibm-plex-mono 5.3.0.
 See IBM-Plex-Mono-LICENSE.txt for the full license.
 
-Elza Text is delivered by Adobe Fonts through the website owner's hosted kit.
+Instrument Sans: The Instrument Sans Project Authors, distributed under the SIL Open Font License.
+Latin variable (wght, wdth) WOFF2 files from @fontsource-variable/instrument-sans 5.3.0.
+See Instrument-Sans-LICENSE.txt for the full license.
 
 The GitHub, sun and moon icons in icons.svg are from lucide-react 0.562.0.
 See Lucide-LICENSE.txt for the ISC and MIT notices.
