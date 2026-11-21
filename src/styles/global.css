@@ -1214,6 +1214,46 @@
     background: oklch(1 0 0 / 2.5%);
   }
 
+  /* Preview strip at the top of a project card: a screenshot, or a quiet
+     monogram tile when the repo has no showcase image. */
+  .project-card-media {
+    @apply relative aspect-[16/9] w-full overflow-hidden;
+    background: var(--muted);
+    border-bottom: 1px solid oklch(0 0 0 / 5%);
+  }
+
+  .dark .project-card-media {
+    border-bottom-color: oklch(1 0 0 / 4%);
+  }
+
+  .project-card-media img {
+    @apply h-full w-full object-cover object-top transition-transform duration-300;
+  }
+
+  .project-card:hover .project-card-media img {
+    transform: scale(1.02);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-card:hover .project-card-media img {
+      transform: none;
+    }
+  }
+
+  .project-card-placeholder {
+    @apply flex flex-col items-start justify-end gap-1 p-5;
+    background-image: radial-gradient(oklch(0 0 0 / 10%) 1px, transparent 1px);
+    background-size: 14px 14px;
+  }
+
+  .dark .project-card-placeholder {
+    background-image: radial-gradient(oklch(1 0 0 / 9%) 1px, transparent 1px);
+  }
+
+  .project-card-monogram {
+    @apply max-w-full truncate text-4xl font-semibold tracking-tight text-foreground/70 sm:text-5xl;
+  }
+
   .tech-badge {
     @apply rounded-full px-2.5 py-0.5 text-xs text-muted-foreground transition-all;
     background: oklch(0 0 0 / 2%);

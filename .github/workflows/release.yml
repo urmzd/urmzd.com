@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # Daily rebuild so /projects picks up new and newly archived repos.
+  schedule:
+    - cron: '17 9 * * *'
 
 concurrency:
   group: release

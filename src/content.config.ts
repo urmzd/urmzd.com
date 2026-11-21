@@ -28,6 +28,10 @@ const projects = defineCollection({
     title: z.string(),
     description: z.string(),
     tags: z.array(z.string()).default([]),
+    /** Raw GitHub topics, used to derive a category when none is set. */
+    topics: z.array(z.string()).default([]),
+    category: z.string().optional(),
+    image: z.string().url().optional(),
     status: z.enum(['active', 'archived']),
     githubUrl: z.string().url(),
     homepageUrl: z.string().url().optional(),

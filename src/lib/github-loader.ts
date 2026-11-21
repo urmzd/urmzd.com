@@ -6,6 +6,14 @@ const API = 'https://api.github.com';
 const SHOWCASE_TOPIC = 'showcase';
 const RESEARCH_TOPIC = 'research';
 const SHOWCASE_FILE = 'SHOWCASE.md';
+const SHOWCASE_DIR = 'showcase';
+/** Repos that are not portfolio entries: the profile README and the docs index. */
+const EXCLUDED = new Set([OWNER, 'docs.urmzd.com']);
+/** Opt-out topic for a public repo that should stay off the site. */
+const HIDDEN_TOPIC = 'unlisted';
+/** Topics that route or flag an entry; they are not shown as tags. */
+const META_TOPICS = new Set([SHOWCASE_TOPIC, RESEARCH_TOPIC, HIDDEN_TOPIC]);
+const IMAGE_EXT = /\.(png|jpe?g|gif|webp|svg|avif)$/i;
 
 interface Repo {
   name: string;
@@ -90,6 +98,158 @@ async function fetchReadme(repo: string, token: string | undefined): Promise<str
   }
 }
 
+interface DirEntry {
+  name: string;
+  type: string;
+}
+
+async function listDir(repo: string, path: string, token: string | undefined): Promise<string[]> {
+  try {
+    const entries = await gh<DirEntry[]>(`/repos/${OWNER}/${repo}/contents/${path}`, token);
+    return Array.isArray(entries)
+      ? entries.filter((e) => e.type === 'file').map((e) => e.name)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+const BADGE = /shields\.io|badge|codecov|\/actions\/workflows\/|\/workflows\/.*\.svg/i;
+
+/** First non-badge image referenced by a Markdown or HTML body. */
+function firstImage(body: string): string | undefined {
+  const re = /!\[[^\]]*\]\(\s*<?([^)\s>]+)>?[^)]*\)|<img\b[^>]*?\bsrc=["']([^"']+)["']/gi;
+  for (const m of body.matchAll(re)) {
+    const src = m[1] ?? m[2];
+    if (src && !BADGE.test(src)) return src;
+  }
+  return undefined;
+}
+
+function isRelative(url: string): boolean {
+  return !/^(?:[a-z][a-z0-9+.-]*:|\/\/|#)/i.test(url);
+}
+
+function rawUrl(repo: Repo, path: string): string {
+  const clean = path.replace(/^\.?\//, '');
+  return `https://raw.githubusercontent.com/${OWNER}/${repo.name}/${repo.default_branch}/${clean}`;
+}
+
+function blobUrl(repo: Repo, path: string): string {
+  const clean = path.replace(/^\.?\//, '');
+  return `${repo.html_url}/blob/${repo.default_branch}/${clean}`;
+}
+
+/**
+ * Point repo-relative links and images at GitHub so they resolve on urmzd.com.
+ * Images load from raw.githubusercontent.com; other links open on github.com.
+ */
+function absolutizeBody(body: string, repo: Repo): string {
+  // Root-relative paths ("/docs/x.png") are repo-root paths on GitHub, so they are
+  // rewritten too; rawUrl and blobUrl strip the leading slash.
+  const fix = (url: string, image: boolean) => {
+    if (!isRelative(url)) return url;
+    return image || IMAGE_EXT.test(url.split(/[?#]/)[0]) ? rawUrl(repo, url) : blobUrl(repo, url);
+  };
+  // srcset holds "url descriptor, url descriptor"; rewrite each URL on its own.
+  const fixSrcset = (value: string) =>
+    value
+      .split(',')
+      .map((part) => part.trim().replace(/^(\S+)/, (u) => fix(u, true)))
+      .join(', ');
+
+  // Leave fenced code blocks alone: they are examples, not links.
+  return body
+    .split(/(^```[\s\S]*?^```)/m)
+    .map((chunk, i) => {
+      if (i % 2 === 1) return chunk;
+      return (
+        chunk
+          // Images first, so a linked image's outer [..](target) is visible to the link pass.
+          .replace(
+            /!\[([^\]]*)\]\(\s*<?([^)\s>]+)>?((?:\s+"[^"]*")?)\s*\)/g,
+            (_, alt, url, title) => {
+              return `![${alt}](${fix(url, true)}${title})`;
+            },
+          )
+          .replace(
+            /(^|[^!])\[((?:[^[\]]|!\[[^\]]*\]\([^)]*\))*)\]\(\s*<?([^)\s>]+)>?((?:\s+"[^"]*")?)\s*\)/g,
+            (_, lead, text, url, title) => `${lead}[${text}](${fix(url, false)}${title})`,
+          )
+          // Reference-style definitions: [label]: ./path
+          .replace(/^(\s{0,3}\[[^\]]+\]:\s*)(\S+)/gm, (_, pre, url) => `${pre}${fix(url, false)}`)
+          .replace(/(<(?:img|source)\b[^>]*?\bsrc=["'])([^"']+)(["'])/gi, (_, pre, url, post) => {
+            return `${pre}${fix(url, true)}${post}`;
+          })
+          .replace(
+            /(<(?:img|source)\b[^>]*?\bsrcset=["'])([^"']+)(["'])/gi,
+            (_, pre, value, post) => {
+              return `${pre}${fixSrcset(value)}${post}`;
+            },
+          )
+          .replace(/(<a\b[^>]*?\bhref=["'])([^"']+)(["'])/gi, (_, pre, url, post) => {
+            return `${pre}${fix(url, false)}${post}`;
+          })
+      );
+    })
+    .join('');
+}
+
+/** Absolute http(s) URL for an image reference, or undefined when it cannot be one. */
+function absoluteImage(url: string): string | undefined {
+  try {
+    const u = new URL(url, 'https://github.com');
+    return u.protocol === 'https:' || u.protocol === 'http:' ? u.toString() : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Card image for a repo: SHOWCASE.md `image`, else the first image in the body,
+ * else the first file in showcase/. A GIF is swapped for a same-named PNG when one
+ * exists, so the listing page loads stills instead of animations. Never throws and
+ * never returns a value the content schema would reject.
+ */
+async function resolveImage(
+  repo: Repo,
+  explicit: string | undefined,
+  body: string,
+  token: string | undefined,
+): Promise<string | undefined> {
+  const candidate = explicit ?? firstImage(body);
+
+  if (candidate) {
+    if (!isRelative(candidate)) return absoluteImage(candidate);
+    const path = candidate.replace(/^\.?\//, '');
+    if (/\.gif$/i.test(path) && path.startsWith(`${SHOWCASE_DIR}/`)) {
+      const png = path.slice(SHOWCASE_DIR.length + 1).replace(/\.gif$/i, '.png');
+      const files = await listDir(repo.name, SHOWCASE_DIR, token);
+      if (files.includes(png)) return absoluteImage(rawUrl(repo, `${SHOWCASE_DIR}/${png}`));
+    }
+    return absoluteImage(rawUrl(repo, path));
+  }
+
+  const images = (await listDir(repo.name, SHOWCASE_DIR, token)).filter((f) => IMAGE_EXT.test(f));
+  const pick =
+    images.find((f) => /^demo\.(png|webp|jpe?g)$/i.test(f)) ??
+    images.find((f) => /\.(png|webp|jpe?g)$/i.test(f) && !/light/i.test(f)) ??
+    images.find((f) => /\.(png|webp|jpe?g)$/i.test(f)) ??
+    images[0];
+  return pick ? absoluteImage(rawUrl(repo, `${SHOWCASE_DIR}/${pick}`)) : undefined;
+}
+
+/** GitHub stores the homepage as typed; add a scheme and drop anything unparsable. */
+function normalizeUrl(raw: string | null): string | undefined {
+  const v = raw?.trim();
+  if (!v) return undefined;
+  try {
+    return new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(v) ? v : `https://${v}`).toString();
+  } catch {
+    return undefined;
+  }
+}
+
 function parseFrontmatter(raw: string): {
   fields: Record<string, string | string[]>;
   body: string;
@@ -160,12 +320,13 @@ export function githubLoader(): Loader {
 
       const token = resolveToken(logger);
       const repos = await listRepos(token);
+      // Every public, non-fork repo is listed so new work appears without tagging.
+      // The `unlisted` topic opts a public repo out.
       const eligible = repos.filter((r) => {
-        if (r.private || r.fork) return false;
-        const topics = r.topics ?? [];
-        return topics.includes(SHOWCASE_TOPIC) || topics.includes(RESEARCH_TOPIC);
+        if (r.private || r.fork || EXCLUDED.has(r.name)) return false;
+        return !(r.topics ?? []).includes(HIDDEN_TOPIC);
       });
-      logger.info(`Found ${eligible.length} showcase/research repos (of ${repos.length} total)`);
+      logger.info(`Found ${eligible.length} public repos (of ${repos.length} total)`);
 
       for (const repo of eligible) {
         const showcase = await fetchFile(repo.name, SHOWCASE_FILE, token);
@@ -173,8 +334,13 @@ export function githubLoader(): Loader {
           ? parseFrontmatter(showcase)
           : { fields: {}, body: '' };
 
-        const body = showcaseBody || (await fetchReadme(repo.name, token));
-        const isResearch = (repo.topics ?? []).includes(RESEARCH_TOPIC);
+        const rawBody = showcaseBody || (await fetchReadme(repo.name, token));
+        const topics = repo.topics ?? [];
+        const isResearch = topics.includes(RESEARCH_TOPIC);
+        const image = isResearch
+          ? undefined
+          : await resolveImage(repo, asString(fields.image), rawBody, token);
+        const body = absolutizeBody(rawBody, repo);
 
         const data = await parseData({
           id: repo.name,
@@ -182,10 +348,13 @@ export function githubLoader(): Loader {
             kind: isResearch ? 'research' : 'project',
             title: asString(fields.title) ?? repo.name,
             description: asString(fields.description) ?? repo.description ?? '',
-            tags: asStringArray(fields.tags) ?? repo.topics ?? [],
+            tags: (asStringArray(fields.tags) ?? topics).filter((t) => !META_TOPICS.has(t)),
+            topics,
+            category: asString(fields.category),
+            image,
             status: repo.archived ? 'archived' : 'active',
             githubUrl: repo.html_url,
-            homepageUrl: repo.homepage || undefined,
+            homepageUrl: normalizeUrl(repo.homepage),
             language: repo.language ?? undefined,
             stars: repo.stargazers_count,
             pushedAt: repo.pushed_at,
