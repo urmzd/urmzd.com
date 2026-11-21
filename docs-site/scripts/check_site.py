@@ -6,9 +6,9 @@ import re
 from urllib.parse import urlsplit
 
 PUBLIC = Path(__file__).resolve().parents[1] / "public"
-BOOKS = {"/saige/", "/orchagent/", "https://docs.humagen.com/"}
+BOOKS = {"/saige/", "/orchagent/", "https://docs.withhumagen.com/", "https://docs.o4ve.com/"}
 # Guides that moved to their own domain: the old directory must redirect there.
-MOVED = {"humagen": "https://docs.humagen.com/"}
+MOVED = {"humagen": "https://docs.withhumagen.com/"}
 
 
 class Links(HTMLParser):
@@ -47,9 +47,14 @@ for name, required in [("index.html", BOOKS), ("404.html", {"/"})]:
             raise SystemExit(f"The 404 stylesheet must resolve from a missing nested URL: {href}")
 
 for book, target in MOVED.items():
-    stub = PUBLIC / book / "index.html"
-    if not stub.is_file() or f'url={target}' not in stub.read_text():
+    stubs = sorted((PUBLIC / book).rglob("index.html"))
+    if PUBLIC / book / "index.html" not in stubs:
         raise SystemExit(f"/{book}/ must redirect to {target}")
+    for stub in stubs:
+        rel = stub.parent.relative_to(PUBLIC / book).as_posix()
+        url = target + (rel + "/" if rel != "." else "")
+        if f'content="0; url={url}"' not in stub.read_text():
+            raise SystemExit(f"{stub.relative_to(PUBLIC)} must redirect to {url}")
     if f'{book}: "{target}"' not in (PUBLIC / "404.html").read_text():
         raise SystemExit(f"404.html must send /{book}/ deep links to {target}")
 

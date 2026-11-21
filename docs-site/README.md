@@ -6,7 +6,8 @@ This directory is the account site at [docs.urmzd.com](https://docs.urmzd.com/),
 | --- | --- | --- |
 | Agent SDK guide | [urmzd/saige](https://github.com/urmzd/saige) | [Saige](https://docs.urmzd.com/saige/) |
 | Agent orchestration guide | [urmzd/orchagent](https://github.com/urmzd/orchagent) | [Orchagent](https://docs.urmzd.com/orchagent/) |
-| Workspace guide | [urmzd/humagen](https://github.com/urmzd/humagen) | [Humagen](https://docs.humagen.com/), published from its own repository |
+| Workspace guide | [urmzd/humagen](https://github.com/urmzd/humagen) | [Humagen](https://docs.withhumagen.com/), published from its own repository |
+| Agent systems guide | [urmzd/o4ve](https://github.com/urmzd/o4ve) | [O4VE](https://docs.o4ve.com/), published from its own repository |
 
 ## Change the landing page
 
@@ -25,7 +26,7 @@ docs-site/scripts/build_site.sh docs-site/_site
 python3 docs-site/scripts/serve.py --directory docs-site/_site
 ```
 
-Open a pull request for the landing page change. The workflow checks the HTML on pull requests and publishes `docs-site/public/` and the guides through the `github-pages` environment on `main`. Changes outside `docs-site/` do not run it.
+Open a pull request for the landing page change. The workflow checks the HTML on pull requests and publishes `docs-site/public/` and the guides to S3 through the `production` environment on `main`. Changes outside `docs-site/` do not run it.
 
 ## Shared appearance
 
@@ -35,7 +36,7 @@ Books can load `/brand/zensical.css`, `/brand/logo-mark.svg` and `/brand/favicon
 
 ## Preview a guide with the shared brand
 
-Build the guide in its product repository. Keep a checkout of [urmzd.com](https://github.com/urmzd/urmzd.com) beside that repository. From the product root, mount its generated `site/` and the account’s brand assets under the same paths that Pages serves.
+Build the guide in its product repository. Keep a checkout of [urmzd.com](https://github.com/urmzd/urmzd.com) beside that repository. From the product root, mount its generated `site/` and the account’s brand assets under the same paths that the published site serves.
 
 ```sh
 project=saige  # or orchagent
@@ -53,6 +54,6 @@ Change the Markdown and `zensical.toml` in the product repository and merge to `
 
 ## How URLs resolve
 
-`docs.urmzd.com` is the Pages custom domain of the `urmzd/urmzd.com` repository, which otherwise deploys `urmzd.com` to S3. The docs subdomain has a Route 53 CNAME to `urmzd.github.io` managed in `urmzd/infra`. Saige and Orchagent are directories of this one Pages artifact, so those repositories need no Pages site of their own. Each book's `site_url` in `zensical.toml` must match its published address above.
+`docs.urmzd.com` is served from the S3 bucket `docs.urmzd.com` behind CloudFront. [`urmzd/infra`](https://github.com/urmzd/infra) manages the bucket, distribution, DNS and the `DOCS_AWS_ROLE_ARN` and `DOCS_AWS_REGION` secrets this repository deploys with. CloudFront serves `index.html` for a directory and `404.html` for a missing path. Saige and Orchagent are directories of this one site. Each book's `site_url` in `zensical.toml` must match its published address above.
 
-Humagen and O4VE publish their own guides from their repositories' GitHub Pages, at `docs.humagen.com` and `docs.o4ve.com`. This site only links to them. `public/humagen/index.html` and the script in `public/404.html` send the old `docs.urmzd.com/humagen/...` addresses to the same path on `docs.humagen.com`; `scripts/check_site.py` checks both.
+Humagen and O4VE publish their own guides the same way, from their own repositories, at `docs.withhumagen.com` and `docs.o4ve.com`. This site links to them. S3 cannot redirect, so `public/humagen/` holds a meta-refresh stub for every page the guide had at `docs.urmzd.com/humagen/`, each pointing at the same path on `docs.withhumagen.com`, and `public/404.html` covers any other `/humagen/...` address. `scripts/check_site.py` checks both.
