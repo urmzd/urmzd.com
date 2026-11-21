@@ -7,7 +7,10 @@
 # otherwise each book is cloned into a temporary directory.
 set -euo pipefail
 
-BOOKS=(saige orchagent humagen)
+# Humagen and O4VE publish their own guides at docs.withhumagen.com and
+# docs.o4ve.com. Stubs in public/humagen/ and public/404.html redirect
+# Humagen's old addresses there.
+BOOKS=(saige orchagent)
 root=$(cd "$(dirname "$0")/.." && pwd)
 out=${1:-"$root/_site"}
 books_dir=${BOOKS_DIR:-$(mktemp -d)}

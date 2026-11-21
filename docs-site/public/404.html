@@ -10,6 +10,17 @@
   <link rel="stylesheet" href="/brand/fonts.css">
   <link rel="stylesheet" href="/style.css">
   <script src="/brand/theme.js"></script>
+  <script>
+    // Guides that moved to their own domain keep their old deep links. Each
+      // old page also has a stub under its old path; this covers the rest.
+    (function () {
+      var moved = { humagen: "https://docs.withhumagen.com/" };
+      var match = location.pathname.match(/^\/([^/]+)\/(.*)$/);
+      if (match && moved[match[1]]) {
+        location.replace(moved[match[1]] + match[2] + location.search + location.hash);
+      }
+    })();
+  </script>
 </head>
 <body>
   <a class="skip" href="#main">Skip to main content</a>

@@ -1,6 +1,8 @@
 name: Documentation site
 # Publishes docs.urmzd.com: the landing page in docs-site/ plus each project
-# guide built from its own repository's main branch.
+# guide built from its own repository's main branch. It uploads to S3 behind
+# CloudFront; the bucket, distribution and DOCS_AWS_* secrets come from
+# urmzd/infra, and the deploy is skipped until DOCS_AWS_ROLE_ARN exists.
 on:
   pull_request:
     paths:
@@ -31,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       changed: ${{ steps.changes.outputs.changed }}
+      deploy: ${{ steps.gate.outputs.deploy }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -42,7 +45,7 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
           live=$(curl -fsS https://docs.urmzd.com/versions.json || echo '{}')
-          for book in saige orchagent humagen; do
+          for book in saige orchagent; do
             head=$(git ls-remote "https://github.com/urmzd/$book.git" refs/heads/main | cut -f1)
             if [ "$(jq -r --arg b "$book" '.[$b] // ""' <<<"$live")" != "$head" ]; then
               echo "changed=true" >> "$GITHUB_OUTPUT"; exit 0
@@ -61,21 +64,71 @@ jobs:
         run: |
           python -m pip install zensical==0.1.2
           docs-site/scripts/build_site.sh docs-site/_site
-      - uses: actions/upload-pages-artifact@v4
-        if: steps.changes.outputs.changed == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+      - uses: actions/upload-artifact@v4
+        if: steps.changes.outputs.changed == 'true'
         with:
+          name: docs
           path: docs-site/_site
+          retention-days: 7
+      # Secrets cannot be read in a job's `if`, so this step decides.
+      - name: Deploy on this run?
+        id: gate
+        env:
+          HAS_ROLE: ${{ secrets.DOCS_AWS_ROLE_ARN != '' }}
+        run: |
+          if [ "${{ steps.changes.outputs.changed }}" = true ] && [ "${{ github.event_name }}" != pull_request ] && [ "${{ github.ref }}" = refs/heads/main ] && [ "$HAS_ROLE" = true ]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "Not deploying: event ${{ github.event_name }}, ref ${{ github.ref }}, DOCS_AWS_ROLE_ARN set: $HAS_ROLE"
+          fi
 
   deploy:
     needs: build
-    if: needs.build.outputs.changed == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    if: needs.build.outputs.deploy == 'true'
     runs-on: ubuntu-latest
     permissions:
-      pages: write
+      contents: read
       id-token: write
     environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      name: production
+      url: https://docs.urmzd.com
+    concurrency:
+      group: deploy-docs
+      cancel-in-progress: false
+    env:
+      BUCKET: docs.urmzd.com
+      DOMAIN: docs.urmzd.com
     steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
+      - uses: actions/download-artifact@v4
+        with:
+          name: docs
+          path: site
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.DOCS_AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.DOCS_AWS_REGION }}
+      # Zensical's hashed bundles (*.min.js, *.min.css) are immutable and go
+      # first, so pages never reference a missing bundle. Everything else
+      # (pages, the theme in brand/, images, search.json) keeps its name across
+      # builds and must revalidate; that pass deletes what the build dropped.
+      - name: Upload to S3
+        working-directory: site
+        run: |
+          aws s3 sync . "s3://$BUCKET" \
+            --cache-control "public, max-age=31536000, immutable" \
+            --exclude "*" --include "*.min.js" --include "*.min.css"
+          aws s3 sync . "s3://$BUCKET" --delete \
+            --cache-control "public, max-age=0, must-revalidate" \
+            --exclude "*.min.js" --exclude "*.min.css"
+      - name: Invalidate CloudFront
+        run: |
+          id=$(aws cloudfront list-distributions \
+            --query "DistributionList.Items[?Aliases.Items && contains(Aliases.Items, '$DOMAIN')].Id | [0]" \
+            --output text)
+          if [ -z "$id" ] || [ "$id" = None ]; then
+            echo "::error::No CloudFront distribution has the alias $DOMAIN"
+            exit 1
+          fi
+          aws cloudfront create-invalidation --distribution-id "$id" --paths "/*"
+          echo "Deployed https://$DOMAIN" >> "$GITHUB_STEP_SUMMARY"
