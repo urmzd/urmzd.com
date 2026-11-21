@@ -8,7 +8,7 @@
   --line: light-dark(#ebebeb, #282828);
   --chip: light-dark(#f2f2f2, #1b1b1b);
   --focus: light-dark(oklch(0.46 0.13 145), oklch(0.86 0.18 87));
-  font-family: elza-text, Arial, sans-serif;
+  font-family: var(--font-sans);
   background: var(--paper);
   color: var(--ink);
 }

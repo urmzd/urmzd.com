@@ -32,7 +32,7 @@ Open a pull request for the landing page change. The workflow checks the HTML on
 
 The index uses the logo, Elza Text and neutral surfaces from [the portfolio’s project directory](https://urmzd.com/projects/). Theme selection starts with the system setting. The header control saves an explicit light or dark choice for the account index and its 404 page.
 
-Books can load `/brand/zensical.css`, `/brand/logo-mark.svg` and `/brand/favicon.svg` from this account site. The stylesheet imports `/brand/fonts.css`, which references the portfolio’s Adobe Fonts kit and two local IBM Plex Mono weights. Publish compatible changes to these paths before deploying a book that uses them. See the [asset credits and licenses](public/brand/CREDITS.txt).
+Books can load `/brand/zensical.css`, `/brand/logo-mark.svg` and `/brand/favicon.svg` from this account site. The stylesheet imports `/brand/fonts.css`, which self-hosts Instrument Sans (variable, latin) and two IBM Plex Mono weights. Publish compatible changes to these paths before deploying a book that uses them. See the [asset credits and licenses](public/brand/CREDITS.txt).
 
 ## Preview a guide with the shared brand
 

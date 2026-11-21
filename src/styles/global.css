@@ -4,6 +4,42 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Instrument Sans: self-hosted variable font (latin), SIL Open Font License.
+ * See public/fonts/Instrument-Sans-OFL.txt. Axes: wght 400-700, wdth 75-100. */
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  src: url("/fonts/instrument-sans-latin-wdth-normal.woff2") format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400 700;
+  font-stretch: 75% 100%;
+  src: url("/fonts/instrument-sans-latin-wdth-italic.woff2") format("woff2-variations");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Instrument Serif italic: self-hosted static font (latin), SIL Open Font
+ * License. See public/fonts/Instrument-Serif-OFL.txt. Used for the hero quote. */
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url("/fonts/instrument-serif-latin-400-italic.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme inline {
   --animate-aurora: aurora 60s linear infinite;
   --radius-sm: calc(var(--radius) - 4px);
@@ -69,7 +105,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-sans: "elza-text", sans-serif;
+  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
   --font-mono: "IBM Plex Mono", monospace;
   --font-script: "Great Vibes", cursive;
   --z-index-header: var(--z-header);
@@ -91,7 +128,8 @@
  *   Achromatic grays (0 chroma) for all neutral surfaces.
  *
  * Fonts
- *   --font-sans   "elza-text"      — body copy, headings
+ *   --font-sans   "Instrument Sans" — body copy, headings (self-hosted, OFL)
+ *   --font-serif  "Instrument Serif" — hero quote, italic only (self-hosted, OFL)
  *   --font-mono   "IBM Plex Mono"  — code, terminals
  *   --font-script "Great Vibes"    — decorative name treatment
  *
@@ -247,7 +285,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
   }
 
   body.mobile-menu-open,
@@ -767,7 +805,7 @@
 
   .film-loading-text {
     @apply text-sm text-white/60;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: 0.1em;
   }
 
@@ -827,7 +865,7 @@
 
   .film-frame-desc {
     @apply text-sm text-white/60;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
   }
 
   .film-sprocket {
@@ -1005,7 +1043,7 @@
   }
 
   .final-card-tagline {
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.85rem;
     letter-spacing: 0.08em;
     color: var(--muted-foreground);
@@ -1019,20 +1057,20 @@
 
   .final-card-title {
     @apply text-2xl font-bold sm:text-4xl;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: 0.04em;
     line-height: 1.1;
   }
 
   .final-card-subtitle {
     @apply text-xs uppercase tracking-[0.25em] text-muted-foreground;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     line-height: 1.2;
   }
 
   .final-card-phonetic {
     @apply text-xs text-foreground;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: 0.06em;
     line-height: 1.2;
     margin-top: 0.5rem;
@@ -1045,7 +1083,7 @@
 
   .landing-hero-name {
     @apply flex flex-wrap justify-center;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     font-size: clamp(1.6rem, 5vw, 3.5rem);
     font-weight: 700;
     letter-spacing: 0.06em;
@@ -1076,7 +1114,7 @@
 
   .landing-hero-sub {
     position: relative;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: 0.04em;
     line-height: 1.5;
     overflow-wrap: break-word;
@@ -1101,16 +1139,25 @@
   /* Quote body — serif italic for literary quality */
   .landing-hero-quote {
     display: block;
-    font-family: "ogg-text", serif;
+    font-family: var(--font-serif);
     font-style: italic;
-    font-size: 0.8rem;
+    font-size: 0.95rem;
     color: oklch(from var(--foreground) l c h / 75%);
+    /* Background-matched halo keeps the thin serif clear of the plexus dots. */
+    text-shadow:
+      0 0 3px var(--background),
+      0 0 8px var(--background);
+  }
+
+  /* 15.3:1 on the dark background (75% alpha is 9.3:1 in light mode). */
+  .dark .landing-hero-quote {
+    color: oklch(from var(--foreground) l c h / 90%);
   }
 
   /* Author attribution — small caps, gold tint */
   .landing-hero-author {
     display: block;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.65rem;
     text-transform: uppercase;
     letter-spacing: 0.18em;
@@ -1123,7 +1170,7 @@
 
   .final-card-pronunciation {
     @apply text-xs text-muted-foreground/60;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     letter-spacing: 0.04em;
     line-height: 1.2;
     font-style: italic;
@@ -1131,14 +1178,14 @@
 
   .final-card-intro {
     @apply text-sm text-foreground/80;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     line-height: 1.4;
     max-width: 30rem;
   }
 
   .final-card-link {
     @apply text-xs uppercase tracking-[0.25em] text-muted-foreground;
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     transition: color 0.2s ease;
   }
 
@@ -1438,7 +1485,7 @@
   }
 
   .click-hint-text {
-    font-family: "elza-text", sans-serif;
+    font-family: var(--font-sans);
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.2em;
@@ -1495,7 +1542,7 @@
   }
 
   .landing-hero-quote {
-    font-size: 0.85rem;
+    font-size: 1rem;
   }
 }
 
