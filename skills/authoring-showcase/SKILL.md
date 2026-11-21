@@ -18,16 +18,19 @@ Portfolio and research pages on urmzd.com are auto-generated from GitHub. Each r
 
 ## How the pipeline works
 
-At build time, `src/lib/github-loader.ts` queries the GitHub API for all repos owned by `urmzd` and filters to:
+At build time, `src/lib/github-loader.ts` queries the GitHub API for all repos owned by `urmzd` and lists every one that is:
 
 - `private: false`
 - `fork: false`
-- `topics` includes `showcase` OR `research`
+- not the profile repo (`urmzd`) or `docs.urmzd.com`
+- not tagged `unlisted`
 
-Topic determines routing:
+The site rebuilds daily, so a new public repo appears within a day without any topic. Topic determines routing:
 
 - `research` → `urmzd.com/research/<repo>`
 - otherwise → `urmzd.com/projects/<repo>`
+
+On /projects, entries are sorted newest push first, grouped by category (see `src/data/projectCategories.ts`), and archived repos sit in a separate Archived section. The card image is the SHOWCASE.md `image`, else the first non-badge image in the body, else the first image in the repo's `showcase/` directory. A `showcase/*.gif` is swapped for a same-named `.png` when one exists.
 
 For each eligible repo the body is resolved in this order:
 
@@ -44,14 +47,14 @@ For each eligible repo the body is resolved in this order:
 
 ## Instructions
 
-### 1. Opt the repo in
+### 1. Route the repo
+
+Public repos appear on /projects automatically. Route to /research or hide one with a topic:
 
 ```bash
-gh repo edit urmzd/<repo> --add-topic showcase   # for /projects
 gh repo edit urmzd/<repo> --add-topic research   # for /research
+gh repo edit urmzd/<repo> --add-topic unlisted   # keep a public repo off the site
 ```
-
-A repo with both topics is treated as research (takes precedence).
 
 ### 2. Decide whether SHOWCASE.md is needed
 
@@ -122,6 +125,8 @@ All fields are optional. Missing fields fall back to GitHub metadata.
 - `title` — display name on the site. Defaults to repo name.
 - `description` — 1-sentence tagline, under 80 chars. Defaults to the repo's GitHub description.
 - `tags` — array of strings shown as chips. Defaults to the repo's GitHub topics.
+- `image` — card image on /projects, relative to the repo root or absolute. Defaults to the first image in the body.
+- `category` — one of `agents`, `devtools`, `infra`, `ml`, `learning`. Defaults to a topic-based guess.
 
 **Research-only:**
 - `year` — publication year (number). Controls sort order on /research.
@@ -135,7 +140,7 @@ All fields are optional. Missing fields fall back to GitHub metadata.
 - **Concrete over generic** — name algorithms, protocols, architectures, metrics. Avoid marketing copy.
 - **Assume no prior context** — a reader arriving from the portfolio index has not seen the README.
 - **Research body uses four sections**: `## Motivation`, `## Approach`, `## Results`, `## Key Takeaway`.
-- **Markdown only** — no MDX components, no relative image paths (use absolute URLs).
+- **Markdown only** — no MDX components. Relative image and link paths are rewritten to GitHub URLs.
 
 ### 6. Verify
 
@@ -143,10 +148,10 @@ After pushing, trigger a site rebuild and confirm the page appears at the expect
 
 ## Gotchas
 
-- The `showcase` / `research` topic is the gate — without it, SHOWCASE.md is ignored and the repo does not appear.
-- Archived repos still appear if the topic is set; they render with an "Archived" badge.
+- Every public, non-fork repo appears unless tagged `unlisted`. The `showcase` topic is no longer required.
+- Archived repos appear in the Archived section with an "Archived" badge.
 - Forks are always excluded regardless of topic.
-- Relative image paths in SHOWCASE.md will 404 on the site — use absolute URLs (GitHub raw links or a CDN).
+- Relative paths resolve against the repo's default branch on GitHub.
 - Frontmatter `tags` fully replaces GitHub topics for display; to show both, duplicate the topics in `tags`.
 - A repo tagged both `showcase` and `research` renders as research.
 
