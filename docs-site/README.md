@@ -6,7 +6,7 @@ This directory is the account site at [docs.urmzd.com](https://docs.urmzd.com/),
 | --- | --- | --- |
 | Agent SDK guide | [urmzd/saige](https://github.com/urmzd/saige) | [Saige](https://docs.urmzd.com/saige/) |
 | Agent orchestration guide | [urmzd/orchagent](https://github.com/urmzd/orchagent) | [Orchagent](https://docs.urmzd.com/orchagent/) |
-| Workspace guide | [urmzd/humagen](https://github.com/urmzd/humagen) | [Humagen](https://docs.urmzd.com/humagen/) |
+| Workspace guide | [urmzd/humagen](https://github.com/urmzd/humagen) | [Humagen](https://docs.humagen.com/), published from its own repository |
 
 ## Change the landing page
 
@@ -17,7 +17,7 @@ python3 docs-site/scripts/check_site.py
 python3 docs-site/scripts/serve.py --directory docs-site/public
 ```
 
-Open [the local preview](http://127.0.0.1:8000/). Check the three guide links and try a missing URL to verify its link back to the index. The local server serves the account site's files. To preview the full site with all three guides, build it first:
+Open [the local preview](http://127.0.0.1:8000/). Check the guide links and try a missing URL to verify its link back to the index. The local server serves the account site's files. To preview the full site with the guides it builds, build it first:
 
 ```sh
 python3 -m pip install zensical==0.1.2
@@ -38,14 +38,14 @@ Books can load `/brand/zensical.css`, `/brand/logo-mark.svg` and `/brand/favicon
 Build the guide in its product repository. Keep a checkout of [urmzd.com](https://github.com/urmzd/urmzd.com) beside that repository. From the product root, mount its generated `site/` and the account’s brand assets under the same paths that Pages serves.
 
 ```sh
-project=saige  # or orchagent or humagen
+project=saige  # or orchagent
 preview_dir=$(mktemp -d)
 ln -s "$PWD/site" "$preview_dir/$project"
 ln -s "$PWD/../urmzd.com/docs-site/public/brand" "$preview_dir/brand"
 python3 -m http.server 8000 --bind 127.0.0.1 --directory "$preview_dir"
 ```
 
-For `project=saige`, open [the local Saige guide](http://127.0.0.1:8000/saige/). Use `/orchagent/` or `/humagen/` for the other guides. Stop with Ctrl+C. The temporary directory contains only links to the guide and shared assets.
+For `project=saige`, open [the local Saige guide](http://127.0.0.1:8000/saige/). Use `/orchagent/` for the other guide. Stop with Ctrl+C. The temporary directory contains only links to the guide and shared assets.
 
 ## Publish a project guide
 
@@ -53,4 +53,6 @@ Change the Markdown and `zensical.toml` in the product repository and merge to `
 
 ## How URLs resolve
 
-`docs.urmzd.com` is the Pages custom domain of the `urmzd/urmzd.com` repository, which otherwise deploys `urmzd.com` to S3. The docs subdomain has a Route 53 CNAME to `urmzd.github.io` managed in `urmzd/infra`. Every guide is a directory of this one Pages artifact, so the product repositories need no Pages site of their own. Each book's `site_url` in `zensical.toml` must match its published address above.
+`docs.urmzd.com` is the Pages custom domain of the `urmzd/urmzd.com` repository, which otherwise deploys `urmzd.com` to S3. The docs subdomain has a Route 53 CNAME to `urmzd.github.io` managed in `urmzd/infra`. Saige and Orchagent are directories of this one Pages artifact, so those repositories need no Pages site of their own. Each book's `site_url` in `zensical.toml` must match its published address above.
+
+Humagen and O4VE publish their own guides from their repositories' GitHub Pages, at `docs.humagen.com` and `docs.o4ve.com`. This site only links to them. `public/humagen/index.html` and the script in `public/404.html` send the old `docs.urmzd.com/humagen/...` addresses to the same path on `docs.humagen.com`; `scripts/check_site.py` checks both.

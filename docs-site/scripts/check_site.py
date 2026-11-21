@@ -6,7 +6,9 @@ import re
 from urllib.parse import urlsplit
 
 PUBLIC = Path(__file__).resolve().parents[1] / "public"
-BOOKS = {"/saige/", "/orchagent/", "/humagen/"}
+BOOKS = {"/saige/", "/orchagent/", "https://docs.humagen.com/"}
+# Guides that moved to their own domain: the old directory must redirect there.
+MOVED = {"humagen": "https://docs.humagen.com/"}
 
 
 class Links(HTMLParser):
@@ -44,6 +46,13 @@ for name, required in [("index.html", BOOKS), ("404.html", {"/"})]:
         if name == "404.html" and not href.startswith("/"):
             raise SystemExit(f"The 404 stylesheet must resolve from a missing nested URL: {href}")
 
+for book, target in MOVED.items():
+    stub = PUBLIC / book / "index.html"
+    if not stub.is_file() or f'url={target}' not in stub.read_text():
+        raise SystemExit(f"/{book}/ must redirect to {target}")
+    if f'{book}: "{target}"' not in (PUBLIC / "404.html").read_text():
+        raise SystemExit(f"404.html must send /{book}/ deep links to {target}")
+
 # Product repos load this stylesheet directly from the account domain.
 if not (PUBLIC / "brand/zensical.css").is_file():
     raise SystemExit("Missing shared Zensical stylesheet")
@@ -55,4 +64,4 @@ for css in PUBLIC.rglob("*.css"):
         target = PUBLIC / url.path.lstrip("/") if url.path.startswith("/") else css.parent / url.path
         if not target.is_file():
             raise SystemExit(f"{css.name} references missing asset {ref}")
-print("Verified project links, 404 recovery and shared assets")
+print("Verified project links, moved-guide redirects, 404 recovery and shared assets")

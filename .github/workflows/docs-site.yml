@@ -42,7 +42,7 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"; exit 0
           fi
           live=$(curl -fsS https://docs.urmzd.com/versions.json || echo '{}')
-          for book in saige orchagent humagen; do
+          for book in saige orchagent; do
             head=$(git ls-remote "https://github.com/urmzd/$book.git" refs/heads/main | cut -f1)
             if [ "$(jq -r --arg b "$book" '.[$b] // ""' <<<"$live")" != "$head" ]; then
               echo "changed=true" >> "$GITHUB_OUTPUT"; exit 0
