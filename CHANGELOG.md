@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.26.0 (2026-11-22)
+
+### Features
+
+- **projects**: dark-mode card images and legible hero headers (#45) ([b1a73a6](https://github.com/urmzd/urmzd.com/commit/b1a73a69132f83c30fa9275b14439c0d4322f062))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.25.0...v0.26.0)
+
+
 ## 0.25.0 (2026-11-22)
 
 ### Features
