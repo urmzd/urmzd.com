@@ -36,3 +36,4 @@ pnpm-debug.log*
 # docs.urmzd.com build output
 docs-site/_site/
 .worktrees/
+project-heroes/

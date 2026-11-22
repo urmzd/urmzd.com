@@ -59,6 +59,7 @@
     "format:check": "biome format .",
     "generate:icons": "node scripts/generate-icons.mjs",
     "generate:previews": "node scripts/generate-visual-previews.mjs",
+    "generate:heroes": "node scripts/generate-project-heroes.mjs",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "preview": "astro preview"

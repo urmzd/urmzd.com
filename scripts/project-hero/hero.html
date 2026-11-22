@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Project hero</title>
+<!-- Rendered by scripts/generate-project-heroes.mjs at 1600x900. -->
+<style>
+  @font-face { font-family: "Instrument Sans"; src: url("/docs-site/public/brand/instrument-sans-latin-wdth-normal.woff2") format("woff2"); font-weight: 400 700; font-stretch: 75% 100%; }
+  @font-face { font-family: "IBM Plex Mono"; src: url("/docs-site/public/brand/ibm-plex-mono-latin-500-normal.woff2") format("woff2"); font-weight: 500; }
+  :root {
+    --ink: oklch(0.145 0 0); --paper: oklch(0.985 0 0); --muted: oklch(0.46 0 0);
+    --rule: oklch(0.885 0 0); --dot: oklch(0 0 0 / 9%); --tile: oklch(0.145 0 0); --tile-ink: oklch(0.985 0 0);
+    --shadow: 0 24px 64px oklch(0 0 0 / 14%), 0 2px 6px oklch(0 0 0 / 6%);
+  }
+  :root[data-theme="dark"] {
+    --ink: oklch(0.985 0 0); --paper: oklch(0.145 0 0); --muted: oklch(0.708 0 0);
+    --rule: oklch(0.31 0 0); --dot: oklch(1 0 0 / 8%); --tile: oklch(0.985 0 0); --tile-ink: oklch(0.145 0 0);
+    --shadow: 0 24px 64px oklch(0 0 0 / 55%), 0 2px 6px oklch(0 0 0 / 30%);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1600px; height: 900px; overflow: hidden; }
+  body {
+    position: relative; background: var(--paper); color: var(--ink);
+    background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px); background-size: 18px 18px;
+    font-family: "Instrument Sans", sans-serif;
+  }
+  header { position: absolute; left: 80px; right: 80px; top: 64px; display: flex; align-items: center; gap: 24px; }
+  .icon { width: 72px; height: 72px; border-radius: 18px; overflow: hidden; flex: none; display: grid; place-items: center; box-shadow: 0 0 0 1px var(--rule); }
+  .icon img { width: 100%; height: 100%; display: block; }
+  .mono { background: var(--tile); color: var(--tile-ink); font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 30px; letter-spacing: -0.02em; }
+  h1 { font-size: 44px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.05; }
+  p { font-size: 24px; color: var(--muted); margin-top: 6px; line-height: 1.25; }
+  .mark { margin-left: auto; align-self: flex-start; margin-top: 8px; display: flex; align-items: center; gap: 10px; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 20px; }
+  .mark svg { width: 30px; height: 30px; color: var(--ink); }
+  .shot {
+    position: absolute; left: 80px; right: 80px; top: 200px; bottom: -24px;
+    border-radius: 16px; overflow: hidden; border: 1px solid var(--rule); box-shadow: var(--shadow); background: var(--paper);
+  }
+  .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+  /* Terminal captures are short and already framed: show them whole, centered. */
+  body.contain .shot { border: 0; background: none; box-shadow: none; overflow: visible; bottom: 64px; display: flex; align-items: center; justify-content: center; }
+  body.contain .shot img { flex: none; border-radius: 14px; box-shadow: var(--shadow); }
+</style>
+</head>
+<body>
+<header>
+  <div class="icon" id="icon"></div>
+  <div><h1 id="name"></h1><p id="tagline"></p></div>
+  <div class="mark" id="mark" aria-label="urmzd"></div>
+</header>
+<div class="shot"><img id="shot" alt=""></div>
+<script>
+  const q = new URLSearchParams(location.search);
+  document.documentElement.dataset.theme = q.get('theme') || 'light';
+  if (q.get('fit') === 'contain') document.body.classList.add('contain');
+  document.getElementById('name').textContent = q.get('name');
+  document.getElementById('tagline').textContent = q.get('tagline');
+  const icon = document.getElementById('icon');
+  if (q.get('icon')) { const i = new Image(); i.src = q.get('icon'); icon.append(i); }
+  else { icon.classList.add('mono'); icon.textContent = q.get('monogram') || q.get('name').slice(0, 2); }
+  const shot = document.getElementById('shot');
+  shot.onload = () => {
+    if (!document.body.classList.contains('contain')) return;
+    const box = shot.parentElement.getBoundingClientRect();
+    const k = Math.min(box.width / shot.naturalWidth, box.height / shot.naturalHeight);
+    shot.style.width = shot.naturalWidth * k + 'px'; shot.style.height = shot.naturalHeight * k + 'px';
+  };
+  shot.src = q.get('shot');
+  fetch('/docs-site/public/brand/logo-mark.svg').then(r => r.text()).then(t => { document.getElementById('mark').innerHTML = t + '<span>urmzd</span>'; });
+</script>
+</body>
+</html>
