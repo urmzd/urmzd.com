@@ -11,6 +11,8 @@ export interface ProjectCardData {
   language?: string;
   href?: string;
   image?: string;
+  /** Shown instead of `image` when the site is in dark mode. */
+  imageDark?: string;
   stars?: number;
   /** ISO date of the last push. */
   updated?: string;
@@ -35,11 +37,14 @@ function formatUpdated(iso: string): string {
 function Preview({ project }: { project: ProjectCardData }) {
   const [failed, setFailed] = useState(false);
   const img = useRef<HTMLImageElement>(null);
+  const imgDark = useRef<HTMLImageElement>(null);
 
-  // The image is server-rendered, so it can fail before hydration attaches onError.
+  // The images are server-rendered, so one can fail before hydration attaches onError.
+  // A hidden lazy image never loads, so only a visible one that finished empty counts.
   useEffect(() => {
-    const el = img.current;
-    if (el?.complete && el.naturalWidth === 0) setFailed(true);
+    for (const el of [img.current, imgDark.current]) {
+      if (el?.complete && el.naturalWidth === 0 && el.offsetParent !== null) setFailed(true);
+    }
   }, []);
 
   if (!project.image || failed) {
@@ -56,10 +61,22 @@ function Preview({ project }: { project: ProjectCardData }) {
         ref={img}
         src={project.image}
         alt={`Preview of ${project.title}`}
+        className={project.imageDark ? 'project-card-image-light' : undefined}
         loading="lazy"
         decoding="async"
         onError={() => setFailed(true)}
       />
+      {project.imageDark && (
+        <img
+          ref={imgDark}
+          src={project.imageDark}
+          alt={`Preview of ${project.title}`}
+          className="project-card-image-dark"
+          loading="lazy"
+          decoding="async"
+          onError={() => setFailed(true)}
+        />
+      )}
     </div>
   );
 }

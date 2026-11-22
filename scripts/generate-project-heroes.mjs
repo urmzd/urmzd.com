@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
 /**
- * Renders branded 1600x900 hero images for featured projects, in light and dark.
- * Each hero puts the project icon, name and tagline over a current screenshot,
- * with the urmzd mark, Instrument Sans and IBM Plex Mono from docs-site/public/brand.
+ * Renders branded 1600x900 hero images for projects, in light and dark.
+ * Each hero puts the project icon and name over a current screenshot, with the
+ * urmzd mark, Instrument Sans and IBM Plex Mono from docs-site/public/brand.
+ * The project card shows the description under the image, so the image leaves it out.
  *
  * Projects live in scripts/project-hero/projects.json. A project's screenshot is
  * `image` (a URL or path, or one per theme as {light, dark}) or `url`, a page this
@@ -12,11 +13,12 @@
  * Usage:
  *   node scripts/generate-project-heroes.mjs [--out DIR] [--image NAME=PATH] [NAME...]
  *
- * Writes DIR/NAME/hero-light.png and DIR/NAME/hero-dark.png (default DIR: project-heroes).
- * Copy them into each repo's showcase/ and point SHOWCASE.md `image` at hero-light.png.
+ * Writes DIR/NAME/showcase/hero-light.png, DIR/NAME/showcase/hero-dark.png and
+ * DIR/NAME/SHOWCASE.md (default DIR: project-heroes). Copy them into the repo root:
+ * SHOWCASE.md points the urmzd.com card at both images and sets its description.
  */
 
-import { createReadStream, existsSync, mkdirSync, readFileSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import { dirname, extname, join, resolve } from 'node:path';
@@ -64,7 +66,11 @@ const browser = await chromium.launch();
 try {
   for (const [name, project] of Object.entries(PROJECTS)) {
     if (only.length && !only.includes(name)) continue;
-    mkdirSync(join(out, name), { recursive: true });
+    mkdirSync(join(out, name, 'showcase'), { recursive: true });
+    writeFileSync(
+      join(out, name, 'SHOWCASE.md'),
+      `---\ndescription: ${JSON.stringify(project.description)}\nimage: showcase/hero-light.png\nimage_dark: showcase/hero-dark.png\n---\n`,
+    );
     for (const theme of THEMES) {
       let shot;
       if (overrides[name]) shot = served(overrides[name]);
@@ -81,7 +87,7 @@ try {
         shot = /^https?:/.test(src) ? src : served(resolve(src));
       }
 
-      const query = new URLSearchParams({ name, tagline: project.tagline, theme, shot });
+      const query = new URLSearchParams({ name, theme, shot });
       for (const key of ['icon', 'monogram', 'fit']) if (project[key]) query.set(key, project[key]);
       const page = await browser.newPage({ viewport: { width: 1600, height: 900 } });
       await page.goto(`${origin}/scripts/project-hero/hero.html?${query}`, { waitUntil: 'networkidle' });
@@ -93,7 +99,7 @@ try {
         [...document.fonts].filter((f) => f.status === 'loaded').map((f) => f.family),
       );
       if (!fonts.includes('Instrument Sans')) throw new Error(`${name} ${theme}: Instrument Sans did not load`);
-      const file = join(out, name, `hero-${theme}.png`);
+      const file = join(out, name, 'showcase', `hero-${theme}.png`);
       await page.screenshot({ path: file });
       await page.close();
       console.log(file);

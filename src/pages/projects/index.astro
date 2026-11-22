@@ -16,6 +16,7 @@ const projects: ExplorerProject[] = entries
     status: entry.data.status,
     language: entry.data.language,
     image: entry.data.image,
+    imageDark: entry.data.imageDark,
     stars: entry.data.stars,
     updated: entry.data.pushedAt.toISOString(),
     category: categoryFor(entry.id, entry.data.topics, entry.data.category),

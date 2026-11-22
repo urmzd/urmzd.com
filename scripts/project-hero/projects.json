@@ -1,6 +1,6 @@
 {
   "humagen": {
-    "tagline": "A self-hosted workspace where people and AI agents share projects, knowledge, and rules",
+    "description": "A self-hosted workspace where people and AI agents share projects, knowledge, and rules",
     "icon": "https://raw.githubusercontent.com/urmzd/humagen/main/apps/site/public/icon.svg",
     "image": {
       "light": "https://raw.githubusercontent.com/urmzd/humagen/main/showcase/agents-light.png",
@@ -8,18 +8,18 @@
     }
   },
   "saige": {
-    "tagline": "A Go SDK, CLI, and MCP server to build, ground, and evaluate AI agents",
+    "description": "A Go SDK, CLI, and MCP server to build, ground, and evaluate AI agents",
     "monogram": "sa",
     "fit": "contain",
     "image": "https://raw.githubusercontent.com/urmzd/saige/main/showcase/agent-basic.png"
   },
   "openlearn": {
-    "tagline": "Free technical books on mathematics, AI, systems, and software",
+    "description": "Free technical books on mathematics, AI, systems, and software",
     "icon": "https://raw.githubusercontent.com/urmzd/openlearn/main/apps/web/public/icon.svg",
     "url": "https://openlearn.urmzd.com/"
   },
   "sr": {
-    "tagline": "Version, changelog, and publish releases from conventional commits",
+    "description": "Version, changelog, and publish releases from conventional commits",
     "monogram": "sr",
     "image": "https://raw.githubusercontent.com/urmzd/sr/main/showcase/sr-plan.png"
   }

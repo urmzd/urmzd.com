@@ -1277,6 +1277,16 @@
     @apply h-full w-full object-cover object-top transition-transform duration-300;
   }
 
+  /* A card with a dark-mode image shows one of its two images per theme. */
+  .project-card-media .project-card-image-dark,
+  .dark .project-card-media .project-card-image-light {
+    display: none;
+  }
+
+  .dark .project-card-media .project-card-image-dark {
+    display: block;
+  }
+
   .project-card:hover .project-card-media img {
     transform: scale(1.02);
   }
