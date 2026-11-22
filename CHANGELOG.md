@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.25.0 (2026-11-22)
+
+### Features
+
+- **scripts**: generate branded hero images for featured projects (#44) ([eb6e696](https://github.com/urmzd/urmzd.com/commit/eb6e69613047109cc5a8187fa5bc360ba6293ffd))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.24.0...v0.25.0)
+
+
 ## 0.24.0 (2026-11-21)
 
 ### Features
