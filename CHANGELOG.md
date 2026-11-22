@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.27.0 (2026-11-22)
+
+### Features
+
+- **scripts**: add hero entries for seven more tools (#46) ([4313d46](https://github.com/urmzd/urmzd.com/commit/4313d46d6b4d8de1326bdbb9b0253d30cc2928bf))
+
+[Full Changelog](https://github.com/urmzd/urmzd.com/compare/v0.26.0...v0.27.0)
+
+
 ## 0.26.0 (2026-11-22)
 
 ### Features
