@@ -22,5 +22,45 @@
     "description": "Version, changelog, and publish releases from conventional commits",
     "monogram": "sr",
     "image": "https://raw.githubusercontent.com/urmzd/sr/main/showcase/sr-plan.png"
+  },
+  "agentspec": {
+    "description": "Manage agent skills and sub-agents across AI coding tools, with a TUI",
+    "monogram": "as",
+    "fit": "contain",
+    "image": "https://raw.githubusercontent.com/urmzd/agentspec/main/showcase/tui.png"
+  },
+  "oag": {
+    "description": "Generate TypeScript, React, and FastAPI code from OpenAPI 3.x",
+    "monogram": "oa",
+    "fit": "contain",
+    "image": "https://raw.githubusercontent.com/urmzd/oag/main/showcase/demo.png"
+  },
+  "teasr": {
+    "description": "Capture screenshots and GIFs from web pages, terminals, and screens",
+    "monogram": "te",
+    "fit": "contain",
+    "image": "https://raw.githubusercontent.com/urmzd/teasr/main/showcase/cli-help.png"
+  },
+  "fsrc": {
+    "description": "Embed source files into any text file using comment markers",
+    "monogram": "fs",
+    "image": "https://raw.githubusercontent.com/urmzd/fsrc/main/showcase/after.png"
+  },
+  "incipit": {
+    "description": "Turn structured resume data into PDF, HTML, LaTeX, and DOCX",
+    "monogram": "in",
+    "image": "https://raw.githubusercontent.com/urmzd/incipit/main/showcase/modern-html.png"
+  },
+  "linear-gp": {
+    "description": "Linear Genetic Programming for RL and classification, in Rust",
+    "monogram": "lg",
+    "fit": "contain",
+    "image": "https://raw.githubusercontent.com/urmzd/linear-gp/main/showcase/run-experiment.png"
+  },
+  "gymnasia": {
+    "description": "OpenAI Gymnasium environments in pure Rust",
+    "monogram": "gy",
+    "fit": "contain",
+    "image": "https://raw.githubusercontent.com/urmzd/gymnasia/main/showcase/cartpole.png"
   }
 }
