@@ -340,6 +340,11 @@ export function githubLoader(): Loader {
         const image = isResearch
           ? undefined
           : await resolveImage(repo, asString(fields.image), rawBody, token);
+        // Optional dark-mode card image, set only through SHOWCASE.md `image_dark`.
+        const darkField = isResearch ? undefined : asString(fields.image_dark);
+        const imageDark = darkField
+          ? absoluteImage(isRelative(darkField) ? rawUrl(repo, darkField) : darkField)
+          : undefined;
         const body = absolutizeBody(rawBody, repo);
 
         const data = await parseData({
@@ -352,6 +357,7 @@ export function githubLoader(): Loader {
             topics,
             category: asString(fields.category),
             image,
+            imageDark,
             status: repo.archived ? 'archived' : 'active',
             githubUrl: repo.html_url,
             homepageUrl: normalizeUrl(repo.homepage),

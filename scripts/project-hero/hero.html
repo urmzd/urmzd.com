@@ -24,16 +24,16 @@
     background-image: radial-gradient(var(--dot) 1.2px, transparent 1.2px); background-size: 18px 18px;
     font-family: "Instrument Sans", sans-serif;
   }
-  header { position: absolute; left: 80px; right: 80px; top: 64px; display: flex; align-items: center; gap: 24px; }
-  .icon { width: 72px; height: 72px; border-radius: 18px; overflow: hidden; flex: none; display: grid; place-items: center; box-shadow: 0 0 0 1px var(--rule); }
+  /* Cards show this image near 480px wide, so the header is sized to stay legible at that scale. */
+  header { position: absolute; left: 80px; right: 80px; top: 52px; display: flex; align-items: center; gap: 32px; }
+  .icon { width: 120px; height: 120px; border-radius: 28px; overflow: hidden; flex: none; display: grid; place-items: center; box-shadow: 0 0 0 1px var(--rule); }
   .icon img { width: 100%; height: 100%; display: block; }
-  .mono { background: var(--tile); color: var(--tile-ink); font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 30px; letter-spacing: -0.02em; }
-  h1 { font-size: 44px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.05; }
-  p { font-size: 24px; color: var(--muted); margin-top: 6px; line-height: 1.25; }
-  .mark { margin-left: auto; align-self: flex-start; margin-top: 8px; display: flex; align-items: center; gap: 10px; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 20px; }
-  .mark svg { width: 30px; height: 30px; color: var(--ink); }
+  .mono { background: var(--tile); color: var(--tile-ink); font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 50px; letter-spacing: -0.02em; }
+  h1 { font-size: 96px; font-weight: 650; letter-spacing: -0.03em; line-height: 1; }
+  .mark { margin-left: auto; display: flex; align-items: center; gap: 14px; color: var(--muted); font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 36px; }
+  .mark svg { width: 52px; height: 52px; color: var(--ink); }
   .shot {
-    position: absolute; left: 80px; right: 80px; top: 200px; bottom: -24px;
+    position: absolute; left: 80px; right: 80px; top: 232px; bottom: -24px;
     border-radius: 16px; overflow: hidden; border: 1px solid var(--rule); box-shadow: var(--shadow); background: var(--paper);
   }
   .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
@@ -45,7 +45,7 @@
 <body>
 <header>
   <div class="icon" id="icon"></div>
-  <div><h1 id="name"></h1><p id="tagline"></p></div>
+  <h1 id="name"></h1>
   <div class="mark" id="mark" aria-label="urmzd"></div>
 </header>
 <div class="shot"><img id="shot" alt=""></div>
@@ -54,7 +54,6 @@
   document.documentElement.dataset.theme = q.get('theme') || 'light';
   if (q.get('fit') === 'contain') document.body.classList.add('contain');
   document.getElementById('name').textContent = q.get('name');
-  document.getElementById('tagline').textContent = q.get('tagline');
   const icon = document.getElementById('icon');
   if (q.get('icon')) { const i = new Image(); i.src = q.get('icon'); icon.append(i); }
   else { icon.classList.add('mono'); icon.textContent = q.get('monogram') || q.get('name').slice(0, 2); }

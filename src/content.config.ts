@@ -32,6 +32,8 @@ const projects = defineCollection({
     topics: z.array(z.string()).default([]),
     category: z.string().optional(),
     image: z.string().url().optional(),
+    /** Card image for dark mode, from SHOWCASE.md `image_dark`. */
+    imageDark: z.string().url().optional(),
     status: z.enum(['active', 'archived']),
     githubUrl: z.string().url(),
     homepageUrl: z.string().url().optional(),
