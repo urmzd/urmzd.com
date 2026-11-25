@@ -55,7 +55,7 @@ jobs:
       - name: Check landing page and 404
         if: steps.changes.outputs.changed == 'true'
         run: python3 docs-site/scripts/check_site.py
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         if: steps.changes.outputs.changed == 'true'
         with:
           python-version: "3.13"
