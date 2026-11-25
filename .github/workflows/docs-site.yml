@@ -104,7 +104,7 @@ jobs:
         with:
           name: docs
           path: site
-      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.DOCS_AWS_ROLE_ARN }}
           aws-region: ${{ secrets.DOCS_AWS_REGION }}
